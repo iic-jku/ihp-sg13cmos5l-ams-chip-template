@@ -1,4 +1,4 @@
-# An Open-Source Analog-Mixed Signal Chip Design Template & Tutorial for the ihp-sg13cmos5l Open-PDK
+# An Open-Source Analog-Mixed Signal Chip Design Template for the ihp-sg13cmos5l Open-PDK
 
 (c) 2026 Simon Dorrer and Harald Pretl
 
