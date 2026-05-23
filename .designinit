@@ -1,0 +1,13 @@
+# shellcheck shell=bash
+
+# IHP Microelectronics: ihp-sg13cmos5l
+export PDK=ihp-sg13cmos5l
+export PDKPATH=$PDK_ROOT/$PDK
+export STD_CELL_LIBRARY=sg13cmos5l_stdcell
+export SPICE_USERINIT_DIR=$PDKPATH/libs.tech/ngspice
+export KLAYOUT_PATH=$PDKPATH/libs.tech/klayout
+
+# Wrap xschem so it always loads the project xschemrc.
+xschem() {
+    command xschem --rcfile "$DESIGNS/ihp-sg13cmos5l-ams-chip-template/schematic/xschem/xschemrc" "$@"
+}
