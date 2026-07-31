@@ -1,7 +1,7 @@
-﻿# ihp-sg13g2 counter FPGA Flow
+﻿# ihp-sg13cmos5l counter FPGA Flow
 
 > [!IMPORTANT]
-> This flow is intended to run inside the `ihp-sg13g2-ams-chip-template/macros/counter/fpga/` directory and requires an FPGA toolchain with `verilator`, `yosys`, `nextpnr-ice40`, `icepack`, `dfu-util`, `netlistsvg`, `svgo`, and `rsvg-convert`.
+> This flow is intended to run inside the `ihp-sg13cmos5l-ams-chip-template/macros/counter/fpga/` directory and requires an FPGA toolchain with `verilator`, `yosys`, `nextpnr-ice40`, `icepack`, `dfu-util`, `netlistsvg`, `svgo`, and `rsvg-convert`.
 >
 > The default synthesis flow targets iCE40 (`TARGET=synth_ice40`).
 

@@ -15,7 +15,7 @@ meta:
 INSERT_ECO_BUFFERS:
   # === East Pads ===
   # - target: output19/X # enable_i
-  # buffer: sg13g2_buf_4
+  # buffer: sg13cmos5l_buf_4
   # === END OF ECO_BUFFERS ===
     
 DESIGN_NAME: counter_top
@@ -26,7 +26,7 @@ VERILOG_FILES: ["dir::../../rtl/constants.sv",
 # Enable plugin for better SystemVerilog support
 # USE_SLANG: True
 
-# Slightly smaller file sizes
+# The sg13cmos5l PDK already defaults to KLayout for GDS streamout
 # PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 
 # Layout / Floorplan Rules
@@ -41,7 +41,7 @@ RUN_CTS: true
 # AREA 3 = slowest, but smallest area
 SYNTH_STRATEGY: DELAY 4
 # MAX_FANOUT_CONSTRAINT: 6
-# RT_MAX_LAYER: Metal5
+# RT_MAX_LAYER: Metal4
 FP_PIN_ORDER_CFG: dir::pin_order.cfg
 FP_PDN_MULTILAYER: false
 FP_SIZING: absolute
@@ -61,27 +61,27 @@ CLOCK_NET: clock_i
 CLOCK_PERIOD: 20 # in ns == 50 MHz
 
 # Define Standard Cells
-STD_CELL_LIBRARY: sg13g2_stdcell
+STD_CELL_LIBRARY: sg13cmos5l_stdcell
 
 # Technology LIBs
 LIB:
   "*_fast_1p32V_m40C":
-    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_fast_1p32V_m40C.lib
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p32V_m40C.lib
 
   "*_fast_1p65V_m40C":
-    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_fast_1p65V_m40C.lib
-  
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p65V_m40C.lib
+
   "*_slow_1p08V_125C":
-    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p08V_125C.lib
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p08V_125C.lib
 
   "*_slow_1p35V_125C":
-    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_slow_1p35V_125C.lib
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p35V_125C.lib
 
   "*_typ_1p20V_25C":
-    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p20V_25C.lib
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p20V_25C.lib
 
   "*_typ_1p50V_25C":
-    - pdk_dir::libs.ref/sg13g2_stdcell/lib/sg13g2_stdcell_typ_1p50V_25C.lib
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p50V_25C.lib
 
 # Corners
 STA_CORNERS:

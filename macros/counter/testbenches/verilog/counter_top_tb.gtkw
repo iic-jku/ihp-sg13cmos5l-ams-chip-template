@@ -2,10 +2,10 @@
 [*] GTKWave Analyzer v4.0.0-prealpha (8ba24ab) (w)1999-2022 BSI
 [*] Thu May  7 21:18:07 2026
 [*]
-[dumpfile] "/foss/designs/ihp-sg13g2-ams-chip-template/macros/counter/testbenches/verilog/counter_top_tb.vcd"
+[dumpfile] "/foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/counter/testbenches/verilog/counter_top_tb.vcd"
 [dumpfile_mtime] "Thu May  7 21:16:41 2026"
 [dumpfile_size] 19558
-[savefile] "/foss/designs/ihp-sg13g2-ams-chip-template/macros/counter/testbenches/verilog/counter_top_tb.gtkw"
+[savefile] "/foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/counter/testbenches/verilog/counter_top_tb.gtkw"
 [timestart] 0
 [size] 1427 600
 [pos] -1 -1

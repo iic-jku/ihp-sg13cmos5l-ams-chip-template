@@ -208,9 +208,7 @@ format="tcleval( @value )"
 value="
 .lib cornerMOSlv.lib mos_tt
 .lib cornerMOShv.lib mos_tt
-.lib cornerHBT.lib hbt_typ
 .lib cornerRES.lib res_typ
-.lib cornerCAP.lib cap_typ
 .lib cornerDIO.lib dio_tt
 "}
 C {counter_top.sym} 1100 -440 0 0 {name=x1}

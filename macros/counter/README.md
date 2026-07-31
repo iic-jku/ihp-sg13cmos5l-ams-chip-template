@@ -1,11 +1,11 @@
-﻿# ihp-sg13g2 Counter
+﻿# ihp-sg13cmos5l Counter
 
 <p align="center">
   <a href="render/img/counter_top_white.png">
-    <img src="render/img/counter_top_white.png" alt="Render of the ihp-sg13g2 counter layout (200um x 100um)" width=50%>
+    <img src="render/img/counter_top_white.png" alt="Render of the ihp-sg13cmos5l counter layout (200um x 100um)" width=50%>
   </a>
   <br>
-  <em>Render of the ihp-sg13g2 counter layout (200um x 100um).</em>
+  <em>Render of the ihp-sg13cmos5l counter layout (200um x 100um).</em>
 </p>
 
 

@@ -25,14 +25,14 @@ def main(input_layout, output_image, width, height, oversampling, pdk_root, pdk)
 
     # Load the layer properties
     lv.load_layer_props(
-        os.path.join(pdk_root, pdk, "libs.tech", "klayout", "tech", "sg13g2.lyp")
+        os.path.join(pdk_root, pdk, "libs.tech", "klayout", "tech", "sg13cmos5l.lyp")
     )
 
     # Disable some layers
+    # sg13cmos5l metal stack: M1-M4-TM1 (no Metal5, TopMetal2, or MIM)
     enabled_layers = [
         (1, 0),      # Activ
         (31, 0),     # NWell
-        (32, 0),     # nBuLay
         (44, 0),     # ThickGateOx
         (5, 0),      # GatPoly
         (7, 0),      # nSD
@@ -46,15 +46,9 @@ def main(input_layout, output_image, width, height, oversampling, pdk_root, pdk)
         (30, 0),     # Metal3
         (49, 0),     # Via3
         (50, 0),     # Metal4
-        (66, 0),     # Via4
-        (36, 0),     # MIM
-        (129, 0),    # Via MIM
-        (67, 0),     # Metal5
         (125, 0),    # TopVia1
         (126, 0),    # TopMetal1
-        (133, 0),    # TopVia2
-        (134, 0),    # TopMetal2
-        # (134, 22), # TopMetal2 Filler
+        # (126, 22), # TopMetal1 Filler
         (9, 0),      # Passiv
     ]
     for lyp in lv.each_layer():
@@ -114,7 +108,7 @@ def main(input_layout, output_image, width, height, oversampling, pdk_root, pdk)
 if __name__ == "__main__":
 
     pdk_root = os.getenv("PDK_ROOT", "IHP-Open-PDK")
-    pdk = os.getenv("PDK", "ihp-sg13g2")
+    pdk = os.getenv("PDK", "ihp-sg13cmos5l")
 
     parser = argparse.ArgumentParser(
         prog="lay2img", description="Convert a layout to an image."

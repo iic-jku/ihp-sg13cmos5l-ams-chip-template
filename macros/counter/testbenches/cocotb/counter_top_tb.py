@@ -13,8 +13,8 @@ from cocotb_tools.runner import get_runner
 
 sim      = os.getenv("SIM", "icarus")
 pdk_root = os.getenv("PDK_ROOT", Path("~/.ciel").expanduser())
-pdk      = os.getenv("PDK", "ihp-sg13g2")
-scl      = os.getenv("SCL", "sg13g2_stdcell")
+pdk      = os.getenv("PDK", "ihp-sg13cmos5l")
+scl      = os.getenv("SCL", "sg13cmos5l_stdcell")
 # GL=1 selects the gate-level netlist; anything else (unset, "0", "") stays in RTL mode.
 gl       = os.getenv("GL", "0").strip().lower() in ("1", "true", "yes", "on")
 
@@ -160,7 +160,7 @@ def counter_top_runner():
     if gl:
         # SCL models
         sources.append(Path(pdk_root) / pdk / "libs.ref" / scl / "verilog" / f"{scl}.v")
-        sources.append(Path(pdk_root) / pdk / "libs.ref" / scl / "verilog" / "sg13g2_udp.v")
+        sources.append(Path(pdk_root) / pdk / "libs.ref" / scl / "verilog" / "sg13cmos5l_udp.v")
 
         # Unpowered gate-level netlist of the macro
         sources.append(proj_path / f"../../final/nl/{hdl_toplevel}.nl.v")
@@ -175,7 +175,7 @@ def counter_top_runner():
     build_args = []
 
     if sim == "icarus":
-        # -gno-specify: skip specify blocks; sg13g2_stdcell.v uses
+        # -gno-specify: skip specify blocks; sg13cmos5l_stdcell.v uses
         # `ifnone with edge-sensitive paths`, which iverilog can't parse.
         build_args = ["-DSIM", "-gno-specify"]
 
