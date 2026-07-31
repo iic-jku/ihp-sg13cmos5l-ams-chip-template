@@ -11,38 +11,46 @@ MACRO counter_top
     DIRECTION INOUT ;
     USE POWER ;
     PORT
-      LAYER TopMetal1 ;
-        RECT 18.260 14.900 20.460 83.380 ;
+      LAYER Metal4 ;
+        RECT 15.260 14.900 16.260 83.380 ;
     END
     PORT
-      LAYER TopMetal1 ;
-        RECT 93.860 14.900 96.060 83.380 ;
+      LAYER Metal4 ;
+        RECT 65.260 14.900 66.260 83.380 ;
     END
     PORT
-      LAYER TopMetal1 ;
-        RECT 169.460 14.900 171.660 83.380 ;
+      LAYER Metal4 ;
+        RECT 115.260 14.900 116.260 83.380 ;
+    END
+    PORT
+      LAYER Metal4 ;
+        RECT 165.260 14.900 166.260 83.380 ;
     END
   END VDD
   PIN VSS
     DIRECTION INOUT ;
     USE GROUND ;
     PORT
-      LAYER TopMetal1 ;
-        RECT 24.460 14.490 26.660 83.790 ;
+      LAYER Metal4 ;
+        RECT 18.260 14.900 19.260 83.380 ;
     END
     PORT
-      LAYER TopMetal1 ;
-        RECT 100.060 14.490 102.260 83.790 ;
+      LAYER Metal4 ;
+        RECT 68.260 14.900 69.260 83.380 ;
     END
     PORT
-      LAYER TopMetal1 ;
-        RECT 175.660 14.490 177.860 83.790 ;
+      LAYER Metal4 ;
+        RECT 118.260 14.900 119.260 83.380 ;
+    END
+    PORT
+      LAYER Metal4 ;
+        RECT 168.260 14.900 169.260 83.380 ;
     END
   END VSS
   PIN clock_i
     DIRECTION INPUT ;
     USE SIGNAL ;
-    ANTENNAGATEAREA 1.450800 ;
+    ANTENNAGATEAREA 0.725400 ;
     PORT
       LAYER Metal3 ;
         RECT 0.000 82.540 0.400 82.940 ;
@@ -162,10 +170,6 @@ MACRO counter_top
         RECT 0.400 17.630 188.305 49.570 ;
         RECT 0.610 16.810 188.305 17.630 ;
         RECT 0.400 15.020 188.305 16.810 ;
-      LAYER Metal4 ;
-        RECT 18.440 14.975 177.680 83.305 ;
-      LAYER Metal5 ;
-        RECT 18.395 14.810 177.725 83.470 ;
   END
 END counter_top
 END LIBRARY
