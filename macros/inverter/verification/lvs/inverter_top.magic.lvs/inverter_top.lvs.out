@@ -35,33 +35,33 @@ Class inverter_top (1):  Merged 6 parallel devices.
 Subcircuit summary:
 Circuit 1: inverter_top                    |Circuit 2: inverter_top                    
 -------------------------------------------|-------------------------------------------
-sg13_lv_nmos (88->5)                       |sg13_lv_nmos (8->5)                        
 sg13_lv_pmos (88->5)                       |sg13_lv_pmos (8->5)                        
+sg13_lv_nmos (88->5)                       |sg13_lv_nmos (8->5)                        
 Number of devices: 10                      |Number of devices: 10                      
 Number of nets: 10                         |Number of nets: 10                         
 ---------------------------------------------------------------------------------------
 Resolving symmetries by property value.
 Resolving symmetries by pin name.
 Netlists match uniquely with property errors.
-sg13_lv_pmos:1 vs. inverter:1/sg13_lv_pmos:Mdummy2:
+sg13_lv_nmos:19 vs. inverter:1/sg13_lv_nmos:Mdummy1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:34 vs. inverter:1/sg13_lv_pmos:M2:
+sg13_lv_nmos:6 vs. inverter:1/sg13_lv_nmos:M1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:11 vs. inverter:2/sg13_lv_pmos:M2:
+sg13_lv_nmos:2 vs. inverter:2/sg13_lv_nmos:M1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:6 vs. inverter:3/sg13_lv_pmos:M2:
+sg13_lv_nmos:10 vs. inverter:3/sg13_lv_nmos:M1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:4 vs. inverter:4/sg13_lv_pmos:M2:
+sg13_lv_nmos:5 vs. inverter:4/sg13_lv_nmos:M1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:2 vs. inverter:1/sg13_lv_nmos:Mdummy1:
+sg13_lv_pmos:27 vs. inverter:1/sg13_lv_pmos:Mdummy2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:16 vs. inverter:1/sg13_lv_nmos:M1:
+sg13_lv_pmos:24 vs. inverter:1/sg13_lv_pmos:M2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:5 vs. inverter:2/sg13_lv_nmos:M1:
+sg13_lv_pmos:1 vs. inverter:2/sg13_lv_pmos:M2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:0 vs. inverter:3/sg13_lv_nmos:M1:
+sg13_lv_pmos:12 vs. inverter:3/sg13_lv_pmos:M2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:7 vs. inverter:4/sg13_lv_nmos:M1:
+sg13_lv_pmos:0 vs. inverter:4/sg13_lv_pmos:M2:
 Property mm_ok in circuit2 has no matching property in circuit1
 
 Subcircuit pins:
@@ -69,14 +69,14 @@ Circuit 1: inverter_top                    |Circuit 2: inverter_top
 -------------------------------------------|-------------------------------------------
 VDD                                        |VDD                                        
 VSS                                        |VSS                                        
+vin3                                       |vin3                                       
 vin1                                       |vin1                                       
 vin2                                       |vin2                                       
 vin4                                       |vin4                                       
-vin3                                       |vin3                                       
+vout3                                      |vout3                                      
 vout1                                      |vout1                                      
 vout2                                      |vout2                                      
 vout4                                      |vout4                                      
-vout3                                      |vout3                                      
 ---------------------------------------------------------------------------------------
 Cell pin lists are equivalent.
 Device classes inverter_top and inverter_top are equivalent.
