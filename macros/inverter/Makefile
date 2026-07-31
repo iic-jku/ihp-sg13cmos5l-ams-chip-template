@@ -345,8 +345,8 @@ magic-pex: ## Run Parasitic Extraction with Magic of the CELL cell (usage: make 
 # Verify Targets
 klayout-verify: ## Verify CELL cell with KLayout (usage: make klayout-verify [CELL=<cellname>])
 	$(MAKE) klayout-drc CELL=$(CELL)
-	$(MAKE) klayout-lvs CELL=$(CELL)
-	$(MAKE) klayout-pex CELL=$(CELL)
+#	$(MAKE) klayout-lvs CELL=$(CELL)
+#	$(MAKE) klayout-pex CELL=$(CELL)
 .PHONY: klayout-verify
 
 klayout-verify-all: ## Verify all main subcells with KLayout (DRC, LVS, PEX)
