@@ -1,5 +1,8 @@
 drc_run_*
 lvs_run_*
+drc_*.tcl
+ext_*.tcl
+pex_*.tcl
 *.vcd
 *.raw
 *.log
@@ -10,6 +13,9 @@ __pycache__/
 runs/
 backups/
 sim_build/
+config.resolved.yaml
+/tutorial/.quarto/
+/tutorial/_site/
 /doc/ihp-structure-proposals/gen_structure.py
 /flow/artistic
 /flow/final
@@ -24,3 +30,7 @@ sim_build/
 /macros/counter/schematic/xschem/simulations
 /macros/counter/testbenches/xschem/simulations
 /macros/counter/flow/final
+/macros/counter/fpga/counter_top_viz.json
+/macros/counter/fpga/counter_top_generic*
+/macros/counter/fpga/counter_top*.svg
+/macros/counter/fpga/counter_top*.pdf
