@@ -1,11 +1,11 @@
-﻿# ihp-sg13g2 Inverter
+﻿# ihp-sg13cmos5l Inverter
 
 <p align="center">
   <a href="render/img/inverter_top_white.png">
-    <img src="render/img/inverter_top_white.png" alt="Render of the ihp-sg13g2 inverter layout (54um x 82um)" width=70%>
+    <img src="render/img/inverter_top_white.png" alt="Render of the ihp-sg13cmos5l inverter layout (54um x 82um)" width=70%>
   </a>
   <br>
-  <em>Render of the ihp-sg13g2 inverter layout (54um x 82um).</em>
+  <em>Render of the ihp-sg13cmos5l inverter layout (54um x 82um).</em>
 </p>
 
 

@@ -129,9 +129,7 @@ format="tcleval( @value )"
 value="
 .lib cornerMOSlv.lib mos_tt
 .lib cornerMOShv.lib mos_tt
-.lib cornerHBT.lib hbt_typ
 .lib cornerRES.lib res_typ
-.lib cornerCAP.lib cap_typ
 .lib cornerDIO.lib dio_tt
 "}
 C {devices/vsource.sym} 1320 -1030 0 0 {name=VDD value=\{VDD\}}

@@ -144,9 +144,7 @@ format="tcleval( @value )"
 value="
 .lib cornerMOSlv.lib mos_tt
 .lib cornerMOShv.lib mos_tt
-.lib cornerHBT.lib hbt_typ
 .lib cornerRES.lib res_typ
-.lib cornerCAP.lib cap_typ
 .lib cornerDIO.lib dio_tt
 "}
 C {devices/gnd.sym} 1100 -740 0 0 {name=l1 lab=GND}

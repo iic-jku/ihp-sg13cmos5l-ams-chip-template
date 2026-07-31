@@ -150,7 +150,7 @@ lef: ## Export LEF from the TOP cell layout using Magic
 		'load $(TOP)' \
 		'lef write $(LEF_DIR)/$(TOP).lef -hide -pinonly 2um' | \
 		magic -dnull -noconsole \
-		-rcfile $(PDK_ROOT)/$(PDK)/libs.tech/magic/ihp-sg13g2.magicrc
+		-rcfile $(PDK_ROOT)/$(PDK)/libs.tech/magic/ihp-sg13cmos5l.magicrc
 .PHONY: lef
 # ================================================================================================
 
