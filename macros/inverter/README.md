@@ -420,6 +420,9 @@ python3 scripts/check_pex_ports.py -v netlist/pex/*.spice     # -v also prints t
 
 **KLayout PEX** uses `kpex` with the Magic extraction engine currently (2.5D engine is work in progress):
 
+> [!WARNING]
+> `kpex` does not support the `ihp-sg13cmos5l` PDK yet, so the `klayout-pex` target currently fails. Use `magic-pex` for parasitic extraction until kpex gains CMOS5L support. In the `klayout-verify` target, the `klayout-pex` target is currently commented out.
+
 ```sh
 make klayout-pex
 make klayout-pex CELL=inverter_top
