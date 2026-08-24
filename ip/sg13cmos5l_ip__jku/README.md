@@ -1,0 +1,111 @@
+# sg13cmos5l_ip__jku
+
+A logo IP block for [Johannes Kepler University Linz](https://www.jku.at/), rendered as a GDSII layout on a configurable metal layer (default `Metal4`) with `NoMetFiller` for the IHP SG13CMOS5L 130 nm CMOS process.
+
+## Directory Structure
+
+<details>
+<summary>Show Directory Structure</summary>
+
+```text
+📁 sg13cmos5l_ip__jku/
+├─ Makefile                   # Build automation
+├─ 📁 logo/
+│  └─ jku_logo.png            # Source PNG image
+├─ 📁 script/
+│  └─ img2lay.py              # PNG-to-GDS converter
+├─ 📁 final/
+│  ├─ 📁 gds/
+│  │  └─ sg13cmos5l_ip__jku.gds   # Generated GDSII layout
+│  ├─ 📁 lef/
+│  │  └─ sg13cmos5l_ip__jku.lef   # LEF macro for place-and-route
+│  ├─ 📁 lib/
+│  │  └─ sg13cmos5l_ip__jku.lib   # Liberty timing stub
+│  └─ 📁 vh/
+│     └─ sg13cmos5l_ip__jku.vh    # Verilog blackbox stub
+└─ 📁 verification/
+   └─ 📁 drc/                 # DRC reports
+```
+
+</details>
+
+
+## Usage
+
+The default Make target is `help`, so running `make` prints usage and all available targets with short descriptions.
+
+```bash
+make
+make help
+```
+
+Build everything (clean, generate logo GDS, LEF, Liberty, Verilog stub, run DRC):
+
+```bash
+make all
+```
+
+### Individual Targets
+
+| Target        | Description                                              |
+|---------------|----------------------------------------------------------|
+| `logo`        | Convert PNG to GDSII using `img2lay.py`                  |
+| `lef`         | Generate LEF macro (CLASS BLOCK, OBS on `$(LAYER)`) |
+| `lib`         | Generate Liberty timing stub (empty cell)                |
+| `verilog`     | Generate Verilog blackbox stub (no ports)                |
+| `klayout-drc` | Run KLayout DRC using `sak-drc.sh` (usage: `make klayout-drc [CELL=<cellname>] [DRC_LEVEL=<precheck\|macro\|regular>]`) |
+| `magic-drc`   | Run Magic DRC using `sak-drc.sh` (usage: `make magic-drc [CELL=<cellname>]`)                                         |
+| `open`        | Browse this folder with `sak-open.py` and open each file in its tool      |
+| `clean`       | Remove all generated output directories                  |
+
+### Parameters
+
+The following Makefile variables can be overridden:
+
+| Variable      | Default  | Description                                                                           |
+|---------------|----------|---------------------------------------------------------------------------------------|
+| `BLOCK_SIZE`  | `100`    | Block edge in µm, the image is scaled to it                                           |
+| `PIXEL_SIZE`  | `0.50`   | Pixel size in µm (must be ≥ 0.21 µm, the Metal4 minimum space, single pixels and single-pixel gaps are drawn as is) |
+| `LAYER`       | `Metal4` | Metal layer the logo is drawn on, one of `Metal1`..`Metal4` or `TopMetal1`            |
+
+Setting `LAYER` keeps the GDS artwork (`logo` target) and the LEF obstruction (`lef` target) consistent. The `logo` target hands the name to `img2lay.py`, which resolves it through the PDK's KLayout layer properties (`Metal4` is `50/0`), and the `lef` target writes the same name into the `OBS`.
+
+```sh
+make all LAYER=TopMetal1
+```
+
+The image is scaled to `BLOCK_SIZE`, so the GDS boundary and the LEF `SIZE` always agree.
+
+
+## Logo Generator Script
+
+The `script/img2lay.py` script converts a PNG image into a GDSII layout:
+
+- Each horizontal run of dark pixels becomes a rectangle on the layer selected via `LAYER` (default `Metal4`, resolved to `50/0`)
+- Boundary layers `prBoundary` (189/0) and `NoMetFiller` (160/0) mark the block outline
+- Layers are given as `<layer>/<datatype>` or as a drawing-layer name of the active PDK, read from `$PDK_ROOT/$PDK/libs.tech/klayout/tech/<pdk>.lyp`
+- `--invert` inverts the image (dark ↔ light)
+- `--merge` merges the rectangles into polygons to reduce the polygon count
+- `--pixel-size` sets the physical size of each pixel in µm
+- `--block-size` scales the image to the given block edge in µm and draws the boundary layers at that size
+- `--scale` downscales the image by a plain factor instead
+
+
+## Design Rule Check (DRC)
+
+Runs DRC on the GDS layout in `final/gds/`. Both flows use `sak-drc.sh` and write their reports into per-cell run folders: `verification/drc/<CELL>.magic.drc/` (Magic) and `verification/drc/<CELL>.klayout.drc/` (KLayout, `.lyrdb`).
+
+**KLayout DRC** uses `sak-drc.sh` at the selected `DRC_LEVEL` (`precheck`, `macro` [default], or `regular`):
+
+```sh
+make klayout-drc
+make klayout-drc CELL=sg13cmos5l_ip__jku
+make klayout-drc DRC_LEVEL=regular
+```
+
+**Magic DRC** uses `sak-drc.sh`:
+
+```sh
+make magic-drc
+make magic-drc CELL=sg13cmos5l_ip__jku
+```
