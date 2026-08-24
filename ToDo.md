@@ -1,3 +1,3 @@
 ﻿# ToDo List
 
-- [ ] update `xschemrc` by removing `append_xschem_library_path_unique $env(PDK_ROOT)/$env(PDK)/libs.tech/xschem/sg13cmos5l_pr` in the next release
+- [ ] see https://github.com/iic-jku/ihp-sg13g2-ams-chip-template/blob/main/ToDo.md

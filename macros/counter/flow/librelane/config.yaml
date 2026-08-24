@@ -70,7 +70,7 @@ LIB:
 
   "*_fast_1p65V_m40C":
     - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p65V_m40C.lib
-
+  
   "*_slow_1p08V_125C":
     - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p08V_125C.lib
 
