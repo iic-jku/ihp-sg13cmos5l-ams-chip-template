@@ -364,9 +364,10 @@ C {devices/lab_wire.sym} 580 -1200 3 1 {name=p3 sig_type=std_logic lab=counter1_
 C {code_shown.sym} 1470 -2230 0 0 {name=PAD_MODELS
 only_toplevel=true
 value="
-* Include the repo copy of the pad netlist, which is the one LibreLane and cocotb use.
-* On SG13CMOS5L it is identical to the PDK sg13cmos5l_io.spi, and its subcircuit
-* pin order matches the PDK Xschem pad symbols (vss vdd iovss iovdd ...).
+* Repo copy of the pad netlist, the one LibreLane and cocotb use.
+* On SG13CMOS5L it equals the PDK sg13cmos5l_io.spi, and its
+* subcircuit pin order matches the PDK Xschem pad symbols
+* (vss vdd iovss iovdd ...).
 .include ../../../ip/sg13cmos5l_io_custom/spice/sg13cmos5l_io.spi
 "
 spice_ignore=false
