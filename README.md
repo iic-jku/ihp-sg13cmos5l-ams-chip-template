@@ -937,7 +937,7 @@ The following netlist folders are exported:
 - `netlist/spice` -> `release/v.<VERSION>/netlist/spice`
 
 > [!NOTE]
-> `netlist/pex` is **not** copied by the `release` target. It holds the Magic-extracted top-level netlist (`chip_top_magic_pex_1.spice`, tens of megabytes and several hundred thousand lines even in the C-decoupled `EXT_MODE=1`). Since `release/` is committed to the repository, copying it would add all of that to every released version. The netlist stays available in `netlist/pex/`.
+> `netlist/pex` is **not** copied by the `release` target. It holds the Magic-extracted top-level netlist (`chip_top_magic_pex_1.spice`, ~67 MiB and ~479k lines even in the C-decoupled `EXT_MODE=1`). Since `release/` is committed to the repository, copying it would add those ~67 MiB to every released version. The netlist stays available in `netlist/pex/`.
 
 > [!NOTE]
 > `netlist/schematic` and `netlist/layout` are still empty. The schematic netlist is written by `klayout-lvs-netlist` / `magic-lvs-netlist` and the extracted layout netlist by `klayout-lvs` / `magic-lvs`, and the top-level LVS is not finished yet. Both folders fill up once it runs through.
