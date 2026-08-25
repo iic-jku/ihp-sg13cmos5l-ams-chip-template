@@ -299,6 +299,8 @@ Exports a LEF file (`final/lef/<TOP>.lef`) from the top-level layout GDS in `lay
 make lef
 ```
 
+`-hide` writes one `PORT` per labelled pin rectangle (`<Metal>.pin`, datatype 2) and turns the rest of the macro into obstruction. Draw the pin rectangles of the power ring so that they do not overlap: rectangles that merge into an L shape are dropped from the LEF without a warning, and the chip flow then cannot connect the ring (`PDN-0232`, the macro grid contains no shapes). The `inverter_top` ring lies on Metal4 only, so the top-level TopMetal1 power stripes cross it and land TopVia1 stacks on every segment. Check that `final/lef/<TOP>.lef` lists all four segments of each supply net as `PORT` after a layout change.
+
 
 ### Liberty Timing Library
 

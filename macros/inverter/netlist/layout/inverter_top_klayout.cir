@@ -1,10 +1,10 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 24/08/2026 17:09
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 25/08/2026 09:15
 
 .SUBCKT inverter_top VDD VSS vin1 vin2 vin3 vin4 vout1 vout2 vout3 vout4
-X$19 VSS VDD vout4 vin4 inverter
-X$20 VSS VDD vout2 vin2 inverter
-X$21 VSS VDD vout1 vin1 inverter
-X$22 VSS VDD vout3 vin3 inverter
+X$11 VSS VDD vout4 vin4 inverter
+X$12 VSS VDD vout2 vin2 inverter
+X$13 VSS VDD vout1 vin1 inverter
+X$14 VSS VDD vout3 vin3 inverter
 .ENDS inverter_top
 
 .SUBCKT inverter VSS VDD vout vin
