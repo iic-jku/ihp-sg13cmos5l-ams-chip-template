@@ -5,6 +5,7 @@
 [![Regression](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/actions/workflows/regression.yml/badge.svg?branch=main)](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/actions/workflows/regression.yml)
 [![License Check](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/actions/workflows/license-check.yml/badge.svg?branch=main)](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/actions/workflows/license-check.yml)
 [![Tutorial](https://img.shields.io/badge/Tutorial-online-orange?logo=quarto)](https://iic-jku.github.io/ihp-sg13cmos5l-ams-chip-template/index.html)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.22115134.svg)](https://doi.org/10.5281/zenodo.22115134)
 
 (c) 2026 Simon Dorrer and Harald Pretl
 
@@ -1098,7 +1099,8 @@ The two example macros are themselves templates for the two kinds of block. See 
 	month = aug,
 	year = {2026},
 	title = {{GitHub Repository of an Open-Source Analog Mixed-Signal Chip Design Template for the ihp-sg13cmos5l Open-PDK}},
-	url = {https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template}
+	url = {https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template},
+	doi = {10.5281/zenodo.22115134}
 }
 ```
 
