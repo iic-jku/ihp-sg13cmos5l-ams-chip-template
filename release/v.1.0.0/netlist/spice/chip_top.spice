@@ -69,7 +69,7 @@
 .ends
 
 * Black-box entry subcircuit for inverter_top abstract view
-.subckt inverter_top vin1 vin2 vin3 vin4 vout1 vout2 vout3 vout4 VDD VSS
+.subckt inverter_top vin1 vin2 vin3 vin4 VDD VSS vout1 vout2 vout3 vout4
 .ends
 
 * Black-box entry subcircuit for sg13cmos5l_Corner abstract view
@@ -8109,8 +8109,8 @@ XFILLER_69_1091 VDD VSS sg13cmos5l_decap_8
 XFILLER_3_266 VDD VSS sg13cmos5l_decap_8
 XFILLER_193_77 VDD VSS sg13cmos5l_decap_8
 Xi_chip_core.inverter1 i_chip_core.inverter1/vin1 i_chip_core.inverter1/vin2 i_chip_core.inverter1/vin3
-+ i_chip_core.inverter1/vin4 i_chip_core.inverter1/vout1 i_chip_core.inverter1/vout2
-+ i_chip_core.inverter1/vout3 i_chip_core.inverter1/vout4 VDD VSS inverter_top
++ i_chip_core.inverter1/vin4 VDD VSS i_chip_core.inverter1/vout1 i_chip_core.inverter1/vout2
++ i_chip_core.inverter1/vout3 i_chip_core.inverter1/vout4 inverter_top
 XFILLER_156_1050 VDD VSS sg13cmos5l_decap_8
 XFILLER_175_1695 VDD VSS sg13cmos5l_decap_8
 XFILLER_136_1679 VDD VSS sg13cmos5l_decap_8
@@ -9301,8 +9301,8 @@ XFILLER_193_56 VDD VSS sg13cmos5l_decap_8
 XFILLER_180_588 VDD VSS sg13cmos5l_decap_8
 XFILLER_175_1674 VDD VSS sg13cmos5l_decap_8
 Xi_chip_core.inverter2 i_chip_core.inverter2/vin1 i_chip_core.inverter2/vin2 i_chip_core.inverter2/vin3
-+ i_chip_core.inverter2/vin4 i_chip_core.inverter2/vout1 i_chip_core.inverter2/vout2
-+ i_chip_core.inverter2/vout3 i_chip_core.inverter2/vout4 VDD VSS inverter_top
++ i_chip_core.inverter2/vin4 VDD VSS i_chip_core.inverter2/vout1 i_chip_core.inverter2/vout2
++ i_chip_core.inverter2/vout3 i_chip_core.inverter2/vout4 inverter_top
 XFILLER_134_994 VDD VSS sg13cmos5l_decap_8
 XFILLER_49_1688 VDD VSS sg13cmos5l_decap_8
 XFILLER_62_1800 VDD VSS sg13cmos5l_decap_8
