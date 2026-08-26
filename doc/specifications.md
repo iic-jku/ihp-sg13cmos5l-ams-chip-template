@@ -148,6 +148,6 @@ The IHP SRAM macros are not characterised for every corner of this template, in 
 
 - One IOVDD/IOVSS pair powers the I/O ring. Filler pads in the padframe distribute the supply around the four sides.
 - One VDD/VSS pair powers the core. The chip's PDN ring sits on Metal4 (vertical) and TopMetal1 (horizontal), 15 µm wide, with 5 µm spacing. Both PDN layers are below the 30 µm width above which the layout rules require slotting.
-- Each `inverter_top` instance has its own internal power ring, drawn on Metal4 only. The chip's TopMetal1 stripes cross it and feed it through the macro grid in [pdn_cfg.tcl](../flow/librelane/pdn_cfg.tcl).
+- Each `inverter_top` instance has its own internal power ring, 2.2 µm wide, with the horizontal segments on Metal3 and the vertical ones on Metal4. The chip's TopMetal1 stripes cross it and feed it through the macro grid in [pdn_cfg.tcl](../flow/librelane/pdn_cfg.tcl).
 - The SRAM's supply pins are vertical Metal4 stripes, which is the chip's own vertical PDN layer, so its grid (`sram` in [pdn_cfg.tcl](../flow/librelane/pdn_cfg.tcl)) is a plain Metal4 to TopMetal1 connect with no extra stripes.
 - Active-low reset on `rst_n_PAD`. The counter macro converts polarity internally and feeds a synchronous active-high reset to its FFs.

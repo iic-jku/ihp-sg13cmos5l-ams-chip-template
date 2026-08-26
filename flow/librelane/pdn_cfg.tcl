@@ -199,9 +199,9 @@ add_pdn_connect \
 
 # Custom connect for the inverter macros (inverter1, inverter2).
 # The top-level PDN is on Metal4 (vertical) and TopMetal1 (horizontal).
-# Each inverter has its own power ring on Metal4 only, so the top-level TopMetal1 stripes
-# cross the ring and one Metal4 to TopMetal1 connect feeds it. A ring on both PDN layers
-# would make pdngen cut every top-level stripe at the macro and leave the ring unfed (PSM-0069).
+# Each inverter has its own power ring with the horizontal segments on Metal3 and the vertical segments on Metal4, so TopMetal1 stays free.
+# The top-level TopMetal1 stripes therefore cross the macro and one Metal4 to TopMetal1 connect feeds the ring.
+# A ring that occupied both PDN layers would make pdngen cut every top-level stripe at the macro and leave the ring unfed (PSM-0069).
 # Note: within an inverter's power ring no top-level Metal4 or TopMetal1 power rails are routed.
 define_pdn_grid \
     -macro \

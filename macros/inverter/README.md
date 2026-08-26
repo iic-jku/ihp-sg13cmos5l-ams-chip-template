@@ -8,6 +8,8 @@
   <em>Render of the ihp-sg13cmos5l inverter layout (54um x 82um).</em>
 </p>
 
+The top cell `inverter_top` is 54.18 µm × 81.92 µm and holds four `inverter` instances. A `VSS` ring frames them and a `VDD` ring sits inside it, both 2.2 µm wide, with the horizontal segments on Metal3 and the vertical segments on Metal4, joined by a 4 × 5 `Via3` array at each of the eight ring corners. The rails of the four inverters reach the vertical segments on Metal3 through ten more `Via3` stacks. TopMetal1 is deliberately kept out of the macro, because it is the horizontal layer of the chip's power grid: the chip's TopMetal1 stripes cross the macro and feed the ring through the `inverter_top` grid in [pdn_cfg.tcl](../../flow/librelane/pdn_cfg.tcl), see [doc/floorplan.md](../../doc/floorplan.md).
+
 
 ## Directory Structure
 
@@ -159,6 +161,16 @@ At most 400 buttons are drawn at once, because each one is an X window, and what
 > This target needs a display. Run it inside the container's VNC/noVNC desktop or over X11 forwarding. In a shell-only container it stops with `cannot open a window`. The `.png` and `.pdf` buttons hand the file to the desktop's registered handler, so those two need the full VNC/noVNC session and do not work over a bare X forward.
 
 
+### Layout Sources and the Exported Tapeout GDS
+
+`layout/<TOP>.klay.gds` is the source of truth. It is the KLayout editing source: it references the PDK PCells and pulls the `inverter` cell in as a library through `layout/<TOP>.klay.klib`, so every device is still live and editable. `layout/<TOP>.gds` is exported from it with `File > Export Layout For Tapeout`, which resolves every PCell and library reference into a static cell, and it is what every build and sign-off target reads.
+
+> [!IMPORTANT]
+> Re-export after every layout change and never hand-edit `layout/<TOP>.gds`. Keeping the two in step by editing both is how they drift apart, and the drift is invisible because the sign-off targets only look at the exported file.
+
+The export re-evaluates the PCells against the **installed** PDK, so device geometry can change even though nobody touched the editing source. That happened here. For the identical stored parameters the installed `SG13_dev` `pmos` draws its `NWell` (`31/0`) 0.11 µm tighter on every side than the geometry frozen into the exported GDS, which pulled the two mirrored pmos wells away from the hand-drawn `NWell` straps that bridge them at `y = 24.53` and `y = 55.09` and left a 0.11 µm gap, reported as four `NW.b1` markers (min. PWell width between NWell regions). The straps were re-derived from the wells they have to join, so they abut either revision. Today's SG13G2 PDK still draws the wider well, so a layout carried between the two templates has to be re-exported under the target PDK and re-checked, not copied. Re-run DRC, LVS and PEX after every export.
+
+
 ### Layout File Extension Usage
 
 The Makefile defines a `_GDS_EXT` variable that auto-selects the layout file extension: it prefers `.gds` when available, and falls back to `.klay.gds` otherwise.
@@ -299,7 +311,7 @@ Exports a LEF file (`final/lef/<TOP>.lef`) from the top-level layout GDS in `lay
 make lef
 ```
 
-`-hide` writes one `PORT` per labelled pin rectangle (`<Metal>.pin`, datatype 2) and turns the rest of the macro into obstruction. Draw the pin rectangles of the power ring so that they do not overlap: rectangles that merge into an L shape are dropped from the LEF without a warning, and the chip flow then cannot connect the ring (`PDN-0232`, the macro grid contains no shapes). The `inverter_top` ring lies on Metal4 only, so the top-level TopMetal1 power stripes cross it and land TopVia1 stacks on every segment. Check that `final/lef/<TOP>.lef` lists all four segments of each supply net as `PORT` after a layout change.
+`-hide` writes one `PORT` per labelled pin rectangle (`<Metal>.pin`, datatype 2) and turns the rest of the macro into obstruction. Draw the pin rectangles of the power ring so that they do not overlap on one layer: rectangles that merge into an L shape are dropped from the LEF without a warning, and the chip flow then cannot connect the ring (`PDN-0232`, the macro grid contains no shapes). The `inverter_top` ring puts its horizontal segments on Metal3 and its vertical ones on Metal4, so the four segments of a supply net never overlap within a layer, and TopMetal1 stays free for the top-level power stripes, which cross the macro and land TopVia1 stacks on the Metal4 segments. Check that `final/lef/<TOP>.lef` lists all four segments of each supply net as `PORT` after a layout change, two on `Metal3` and two on `Metal4`.
 
 
 ### Liberty Timing Library
@@ -607,7 +619,7 @@ The inverter is meant to be the starting point for a new analog macro. It alread
 2. Run `make clean` in the new folder so that no output of the inverter is left behind.
 3. Set `TOP` in the `Makefile`. Every target derives its paths from `TOP` (and from `CELL`, which defaults to `TOP`), so the design files must carry the same name.
 4. Rename the Xschem schematics, symbols and testbenches in `schematic/xschem/` and `testbenches/xschem/`. Note that the macro holds two cells, the unit cell `inverter` and the top cell `inverter_top`, so a rename to `amp` gives `amp` and `amp_top`.
-5. Rename the layout files in `layout/` **and the top cell inside each GDS** (open it in KLayout, rename the cell, save). The DRC, LVS and PEX targets pass the file name as the cell name, so the two must match. Note that `inverter_top.klay.gds` is a KLayout-saved layout that pulls in `inverter.gds` as a library through `inverter_top.klay.klib`, so update `lib_name` and `lib_path` in that `.klib` file too. Nothing regenerates these, they are layout sources like the plain `.gds` files.
+5. Rename the layout files in `layout/` **and the top cell inside each GDS** (open it in KLayout, rename the cell, save). The DRC, LVS and PEX targets pass the file name as the cell name, so the two must match. Note that `inverter_top.klay.gds` is a KLayout-saved layout that pulls in `inverter.gds` as a library through `inverter_top.klay.klib`, so update `lib_name` and `lib_path` in that `.klib` file too. `inverter_top.klay.gds` and `inverter.gds` are the layout sources, `inverter_top.gds` is exported from the first one, see [Layout Sources and the Exported Tapeout GDS](#layout-sources-and-the-exported-tapeout-gds).
 6. Rename the CACE files `verification/cace/inverter.yaml`, `verification/cace/templates/inverter_tb_ac.sch` and `verification/cace/scripts/inverter_tb_ac.{py,csv}`, and set `name:` in the yaml.
 7. Rename the plotting scripts in `testbenches/xschem/plot_simulations/`. The sizing notebook `scripts/sizing/sizing_inverter.ipynb` and the figures next to it are specific to the inverter, so adapt or delete them.
 8. Search and replace the remaining `inverter` references inside the renamed files. Xschem schematics, the CACE yaml and the plot scripts are all plain text. The ones that matter are the `inverter.sym` instances in the testbenches, the `.include` of the PEX netlist, the `template:` and `script:` keys in the CACE yaml, and the raw file names in the plot scripts.

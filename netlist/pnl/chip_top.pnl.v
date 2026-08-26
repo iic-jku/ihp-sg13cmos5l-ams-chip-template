@@ -84743,22 +84743,22 @@ module chip_top (clk_PAD,
     .vin2(\i_chip_core.inv1_din2 ),
     .vin3(\i_chip_core.inv1_din3 ),
     .vin4(\i_chip_core.inv1_din4 ),
+    .VDD(VDD),
+    .VSS(VSS),
     .vout1(\i_chip_core.inv1_dout1 ),
     .vout2(\i_chip_core.inv1_dout2 ),
     .vout3(\i_chip_core.inv1_dout3 ),
-    .vout4(\i_chip_core.inv1_dout4 ),
-    .VDD(VDD),
-    .VSS(VSS));
+    .vout4(\i_chip_core.inv1_dout4 ));
  inverter_top \i_chip_core.inverter2  (.vin1(\analog_PADRES[0] ),
     .vin2(\analog_PADRES[1] ),
     .vin3(net),
     .vin4(net1),
+    .VDD(VDD),
+    .VSS(VSS),
     .vout1(\analog_PADBARE[2] ),
     .vout2(\analog_PADBARE[3] ),
     .vout3(net2),
-    .vout4(net3),
-    .VDD(VDD),
-    .VSS(VSS));
+    .vout4(net3));
  sg13cmos5l_tielo \i_chip_core.inverter2_1  (.VDD(VDD),
     .VSS(VSS),
     .L_LO(net));
