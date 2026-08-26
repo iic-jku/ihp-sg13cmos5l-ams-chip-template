@@ -1,6 +1,6 @@
 * NGSPICE file created from inverter_top.ext - technology: ihp-sg13cmos5l
 
-.subckt inverter_top vin1 vin2 vin3 vin4 vout1 vout2 vout3 vout4 VDD VSS
+.subckt inverter_top vin1 vin2 vin3 vin4 VDD VSS vout1 vout2 vout3 vout4
 X0 vout4 vin4 VDD VDD sg13_lv_pmos ad=1.14p pd=6.38u as=1.14p ps=6.38u w=6u l=1u
 X1 VDD vin2 vout2 VDD sg13_lv_pmos ad=1.14p pd=6.38u as=1.14p ps=6.38u w=6u l=1u
 X2 VSS vin2 vout2 VSS sg13_lv_nmos ad=0.19p pd=1.38u as=0.19p ps=1.38u w=1u l=1u
