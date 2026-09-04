@@ -8,6 +8,23 @@ TOP = sg13cmos5l_ip__bondpad_70x70
 
 .DEFAULT_GOAL := help
 
+# PDK Guard
+# Override with: make <target> REQUIRED_PDK=<pdk>, an empty value skips the check
+REQUIRED_PDK ?= ihp-sg13cmos5l
+
+# Goals that do not read the PDK
+PDK_FREE_GOALS = help clean
+
+ifneq ($(REQUIRED_PDK),)
+ifneq ($(filter-out $(PDK_FREE_GOALS),$(or $(MAKECMDGOALS),$(.DEFAULT_GOAL))),)
+ifneq ($(PDK),$(REQUIRED_PDK))
+$(error PDK is "$(PDK)", but this IP needs "$(REQUIRED_PDK)". Run `sak-pdk $(REQUIRED_PDK)` in this shell and retry, or pass REQUIRED_PDK= to skip this check)
+endif
+endif
+endif
+# ================================================================================================
+
+
 # Cell name for verification targets (default: top-level cell)
 # Override with: make <target> CELL=<cellname>
 CELL ?= $(TOP)
@@ -43,6 +60,7 @@ help: ## Show this help message
 	@echo 'SHAPE defaults to $(SHAPE). Allowed: square, octagon, circle.'
 	@echo 'BOTTOM_METAL defaults to $(BOTTOM_METAL) (1=Metal1 .. 4=Metal4). Top is fixed to TopMetal1.'
 	@echo 'CELL defaults to $(TOP). Override to verify subcells.'
+	@echo 'REQUIRED_PDK defaults to $(REQUIRED_PDK). Every target except help and clean aborts if $$PDK differs.'
 .PHONY: help
 # ================================================================================================
 

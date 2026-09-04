@@ -45,6 +45,18 @@ Build everything (clean, generate logo GDS, LEF, Liberty, Verilog stub, run DRC)
 make all
 ```
 
+### PDK Guard
+
+Every target except `help` and `clean` needs the `ihp-sg13cmos5l` PDK. The container starts with `ihp-sg13g2` selected, so the wrong PDK is the default state here, and it splits the IP across two technologies: `img2lay.py` resolves the `LAYER` name through the layer properties of the active PDK, and `sak-drc.sh` runs the DRC against its rule deck, while the metal stack the logo is meant for is the CMOS5L one. The Makefile therefore compares `$PDK` against `REQUIRED_PDK` once when it is parsed, before any target runs:
+
+```bash
+$ make all
+Makefile:21: *** PDK is "ihp-sg13g2", but this IP needs "ihp-sg13cmos5l". Run `sak-pdk ihp-sg13cmos5l` in this shell and retry, or pass REQUIRED_PDK= to skip this check.  Stop.
+```
+
+The check is a parse-time conditional at the top of the Makefile, not a prerequisite of each target. Switch the PDK with `sak-pdk ihp-sg13cmos5l`, pass `REQUIRED_PDK=` to skip the check, or `REQUIRED_PDK=<pdk>` to require a different PDK.
+
+
 ### Individual Targets
 
 | Target        | Description                                              |
