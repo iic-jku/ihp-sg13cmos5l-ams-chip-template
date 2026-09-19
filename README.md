@@ -55,7 +55,7 @@ This template is available for the following open-source PDKs:
 - **ihp-sg13g2**: [ihp-sg13g2-ams-chip-template](https://github.com/iic-jku/ihp-sg13g2-ams-chip-template)
 - **ihp-sg13cmos5l**: this repository
 - **sky130A**: coming soon
-- **gf180mcuD**: coming soon
+- **gf180mcuD**: [gf180mcuD-ams-chip-template](https://github.com/iic-jku/gf180mcuD-ams-chip-template)
 
 
 ## Tutorial
