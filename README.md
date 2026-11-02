@@ -774,7 +774,7 @@ make klayout-drc CELL=chip_top
 make klayout-drc CELL=chip_top DRC_LEVEL=regular
 ```
 
-**Magic DRC** runs a Magic DRC with all subcells flattened (`sak-drc.sh -f "*"`):
+**Magic DRC** runs a hierarchical Magic DRC (`sak-drc.sh -m`):
 
 ```sh
 make magic-drc
