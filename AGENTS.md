@@ -2,7 +2,7 @@
 
 Guidance for coding agents and contributors working in this repo (a Makefile-driven analog mixed-signal chip on the ihp-sg13cmos5l Open-PDK).
 
-This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items marked (template) describe the shipped example content (the `counter` and `inverter` macros, the logos), which a derived chip renames, replaces or removes. `README.md` documents every top-level target, and `macros/README.md` and each `macros/<name>/README.md` document the macro targets.
+This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items marked (template) describe the shipped example content (the `counter`, `inverter` and `vco` macros, the logos), which a derived chip renames, replaces or removes. `README.md` documents every top-level target, and `macros/README.md` and each `macros/<name>/README.md` document the macro targets.
 
 ## Repository layout
 
@@ -12,6 +12,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 - `macros/<name>/`: one hard macro per folder with its own `Makefile` (`help`, `all`, `clean`, PDK guard) and `README.md`. The chip reads the committed views in `macros/<name>/final/`.
 - `macros/counter/` (template, digital): `rtl/`, `flow/librelane/`, `fpga/`, `testbenches/{verilog,cocotb,xschem}/`, hardened with LibreLane.
 - `macros/inverter/` (template, analog): `schematic/xschem/`, `layout/`, `testbenches/xschem/`, `verification/cace/`, verified with KLayout and Magic.
+- `macros/vco/` (template, RF, under construction): `schematic/xschem/`, `testbenches/xschem/` with ngspice and VACASK benches (a `_vacask` in the testbench name selects VACASK), the KLayout Python scripts in `scripts/layout/` that write every layout, the coil included (`make klayout-script-all`, edit the script, never the GDS), the Palace EM simulation of the coil in `verification/em/` (`make sim-em`, its stackup from the ihp-sg13g2 Palace workflow), and its snp2le model in `netlist/spice/` and `netlist/spectre/` (`make snp2le`). `make sim-corners` runs the start-up transient over corners, and `vco_top_tb_tran_lpe` is the post-layout bench. The MoM caps are `cap_cmomf`: `make check-mom` checks their size and stack, which LVS does not, and `make check-coil-tap` checks the coil's center tap, which no LVS sees. Two supplies: `VDD` and the core's own `vdd_core`. Not built by the chip yet.
 - `macros/Makefile`: one job, `make macro FROM=<macro> NAME=<name>` starts a new macro as a renamed copy of an existing one.
 - `ip/`: bondpad `sg13cmos5l_ip__bondpad_70x70` and the logos `sg13cmos5l_ip__jku` and `sg13cmos5l_ip__jku_names` (template), each with a `Makefile`. `ip/sg13cmos5l_io_custom/` is third-party IHP IO cell data.
 - `schematic/xschem/`, `testbenches/xschem/`, `testbenches/cocotb/`: chip schematic, symbols and testbenches. Every folder holding schematics has its own `xschemrc`, see "Xschem Configuration" in `README.md`.
@@ -23,7 +24,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 
 ## Environment and PDK
 
-- Run every target inside the IIC-OSIC-TOOLS container, tag `2026.09` or later. CI uses `hpretl/iic-osic-tools:latest`.
+- Run every target inside the IIC-OSIC-TOOLS container, tag `2026.10` or later. CI uses `hpretl/iic-osic-tools:latest`.
 - The PDK is `ihp-sg13cmos5l`. A fresh container starts on `ihp-sg13g2`, so select the PDK before any target runs.
 - `sak-pdk ihp-sg13cmos5l` selects it for the current shell only. `.designinit` exports the same variables (`PDK`, `PDKPATH`, `STD_CELL_LIBRARY`, `SPICE_USERINIT_DIR`, `KLAYOUT_PATH`), and copied into the container's `designs/` folder it selects the PDK at every start. In a shell that does not keep state between commands, select the PDK in the same command line as `make`.
 - PDK guard: the top-level, `macros/`, macro and IP Makefiles compare `$PDK` with `REQUIRED_PDK` (default `ihp-sg13cmos5l`) when parsed and stop with an error that names the `sak-pdk` call to run. Exempt goals are `help` and `clean` (`macros/Makefile`: `help` only), plus `clean-all` at the top level. Fix the PDK instead of passing `REQUIRED_PDK=`: a wrong PDK runs the wrong rule decks, LEFs and cells, and the results still look valid.

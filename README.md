@@ -14,7 +14,7 @@ Institute for Integrated Circuits and Quantum Computing, Johannes Kepler Univers
 
 <!-- /template-only -->
 > [!IMPORTANT]
-> This repository requires the [IIC-OSIC-TOOLS](https://github.com/iic-jku/IIC-OSIC-TOOLS) container with tag `2026.09` or later.
+> This repository requires the [IIC-OSIC-TOOLS](https://github.com/iic-jku/IIC-OSIC-TOOLS) container with tag `2026.10` or later.
 
 
 <!-- template-only -->
@@ -175,6 +175,17 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  │  ├─ Makefile
 │  │  └─ README.md
 │  ├─ 📁 scripts/
+│  ├─ 📁 vco/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 layout/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
 │  ├─ Makefile
 │  └─ README.md
 ├─ 📁 netlist/
@@ -275,6 +286,8 @@ Xschem reads exactly one `xschemrc` at start-up, and that file decides which sym
 | [`macros/inverter/verification/cace/templates/xschemrc`](macros/inverter/verification/cace/templates/xschemrc) | CACE testbench templates |
 | [`macros/counter/schematic/xschem/xschemrc`](macros/counter/schematic/xschem/xschemrc) | counter schematics |
 | [`macros/counter/testbenches/xschem/xschemrc`](macros/counter/testbenches/xschem/xschemrc) | counter testbenches |
+| [`macros/vco/schematic/xschem/xschemrc`](macros/vco/schematic/xschem/xschemrc) | VCO schematics |
+| [`macros/vco/testbenches/xschem/xschemrc`](macros/vco/testbenches/xschem/xschemrc) | VCO testbenches |
 
 
 ### What Every File Does
@@ -360,6 +373,7 @@ Every component follows the same principle. The simulations always run last, so 
 | --- | --- |
 | [`macros/counter/`](macros/counter/) (digital) | lint -> build (FPGA and LibreLane, including the XSPICE model) -> extract (PEX of the hardened GDS) -> simulate. DRC and LVS run inside the LibreLane flow. |
 | [`macros/inverter/`](macros/inverter/) (analog) | verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate |
+| [`macros/vco/`](macros/vco/) (RF) | layouts (KLayout Python scripts) -> coil EM (Palace) -> lumped-element model (snp2le) -> verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate (ngspice and VACASK). Under construction, not part of the chip build yet. |
 | [`ip/*`](ip/) (bondpad, logos) | build -> verify (DRC) |
 | top level | build -> verify (DRC) -> simulate -> package |
 
