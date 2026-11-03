@@ -5,49 +5,49 @@
 // device models needed (declared by your testbench): capacitor, inductor, mutual, resistor
 // NOTE: ground is 'GND'. Your testbench must declare it as the ground (Xschem's spectre netlist does this with `ground GND`), otherwise the circuit floats and the result is wrong.
 subckt vco_ind_le (p1 p2 p3)
-  Rs_h1_1 (p1 a_h1_1) resistor r=0.5810028102813867
-  Ls_h1_1 (a_h1_1 b_h1_1) inductor l=5.270832963656439e-11
-  Rskin1_h1_1 (b_h1_1 d_h1_1) resistor r=0.5950233773289959
-  Lskin1_h1_1 (b_h1_1 d_h1_1) inductor l=5.609878843196505e-12
-  Rskin2_h1_1 (d_h1_1 c1) resistor r=83.6948164769154
-  Lskin2_h1_1 (d_h1_1 c1) inductor l=2.2375707000728886e-11
-  Rs_h1_2 (c1 a_h1_2) resistor r=0.5810028102813867
-  Ls_h1_2 (a_h1_2 b_h1_2) inductor l=5.270832963656439e-11
-  Rskin1_h1_2 (b_h1_2 d_h1_2) resistor r=0.5950233773289959
-  Lskin1_h1_2 (b_h1_2 d_h1_2) inductor l=5.609878843196505e-12
-  Rskin2_h1_2 (d_h1_2 m) resistor r=83.6948164769154
-  Lskin2_h1_2 (d_h1_2 m) inductor l=2.2375707000728886e-11
-  Rs_h2_1 (m a_h2_1) resistor r=0.8153415373186785
-  Ls_h2_1 (a_h2_1 b_h2_1) inductor l=5.270832963656439e-11
-  Rskin1_h2_1 (b_h2_1 d_h2_1) resistor r=0.5981097263663429
-  Lskin1_h2_1 (b_h2_1 d_h2_1) inductor l=5.609878843196505e-12
-  Rskin2_h2_1 (d_h2_1 c3) resistor r=82.23675572888887
-  Lskin2_h2_1 (d_h2_1 c3) inductor l=2.2375707000728886e-11
-  Rs_h2_2 (c3 a_h2_2) resistor r=0.8153415373186785
-  Ls_h2_2 (a_h2_2 b_h2_2) inductor l=5.270832963656439e-11
-  Rskin1_h2_2 (b_h2_2 d_h2_2) resistor r=0.5981097263663429
-  Lskin1_h2_2 (b_h2_2 d_h2_2) inductor l=5.609878843196505e-12
-  Rskin2_h2_2 (d_h2_2 p2) resistor r=82.23675572888887
-  Lskin2_h2_2 (d_h2_2 p2) inductor l=2.2375707000728886e-11
-  Cs (p1 p2) capacitor c=1.898153521621918e-15
-  Rct (m p3) resistor r=0.22494644780819625
-  Cox_n0 (p1 s0) capacitor c=4.120638488445363e-15
-  Rsi_n0 (s0 GND) resistor r=2081.304413332788
-  Csi_n0 (s0 GND) capacitor c=1.8733930913970725e-14
-  Cox_n1 (c1 s1) capacitor c=9.984279704055897e-15
-  Rsi_n1 (s1 GND) resistor r=1958.33646302066
-  Csi_n1 (s1 GND) capacitor c=1.873692487942408e-14
-  Cox_n2 (m s2) capacitor c=1.1727282431221068e-14
-  Rsi_n2 (s2 GND) resistor r=16572.994479169643
-  Csi_n2 (s2 GND) capacitor c=5.987930906709655e-18
-  Cox_n3 (c3 s3) capacitor c=9.984279704055897e-15
-  Rsi_n3 (s3 GND) resistor r=1958.33646302066
-  Csi_n3 (s3 GND) capacitor c=1.873692487942408e-14
-  Cox_n4 (p2 s4) capacitor c=4.120638488445363e-15
-  Rsi_n4 (s4 GND) resistor r=2081.304413332788
-  Csi_n4 (s4 GND) capacitor c=1.8733930913970725e-14
-  K1 () mutual k=0.2451344024725275 ind1="Ls_h1_1" ind2="Ls_h2_1"
-  K2 () mutual k=0.2451344024725275 ind1="Ls_h1_1" ind2="Ls_h2_2"
-  K3 () mutual k=0.2451344024725275 ind1="Ls_h1_2" ind2="Ls_h2_1"
-  K4 () mutual k=0.2451344024725275 ind1="Ls_h1_2" ind2="Ls_h2_2"
+  Rs_h1_1 (p1 a_h1_1) resistor r=0.5207556902338409
+  Ls_h1_1 (a_h1_1 b_h1_1) inductor l=5.82429569468624e-11
+  Rskin1_h1_1 (b_h1_1 d_h1_1) resistor r=0.49620730225685045
+  Lskin1_h1_1 (b_h1_1 d_h1_1) inductor l=4.69409034746942e-12
+  Rskin2_h1_1 (d_h1_1 c1) resistor r=12.106697085060418
+  Lskin2_h1_1 (d_h1_1 c1) inductor l=7.705409426853064e-12
+  Rs_h1_2 (c1 a_h1_2) resistor r=0.5207556902338409
+  Ls_h1_2 (a_h1_2 b_h1_2) inductor l=5.82429569468624e-11
+  Rskin1_h1_2 (b_h1_2 d_h1_2) resistor r=0.49620730225685045
+  Lskin1_h1_2 (b_h1_2 d_h1_2) inductor l=4.69409034746942e-12
+  Rskin2_h1_2 (d_h1_2 m) resistor r=12.106697085060418
+  Lskin2_h1_2 (d_h1_2 m) inductor l=7.705409426853064e-12
+  Rs_h2_1 (m a_h2_1) resistor r=0.7557746789365789
+  Ls_h2_1 (a_h2_1 b_h2_1) inductor l=5.82429569468624e-11
+  Rskin1_h2_1 (b_h2_1 d_h2_1) resistor r=0.5129795926674904
+  Lskin1_h2_1 (b_h2_1 d_h2_1) inductor l=4.69409034746942e-12
+  Rskin2_h2_1 (d_h2_1 c3) resistor r=12.325328545710343
+  Lskin2_h2_1 (d_h2_1 c3) inductor l=7.705409426853064e-12
+  Rs_h2_2 (c3 a_h2_2) resistor r=0.7557746789365789
+  Ls_h2_2 (a_h2_2 b_h2_2) inductor l=5.82429569468624e-11
+  Rskin1_h2_2 (b_h2_2 d_h2_2) resistor r=0.5129795926674904
+  Lskin1_h2_2 (b_h2_2 d_h2_2) inductor l=4.69409034746942e-12
+  Rskin2_h2_2 (d_h2_2 p2) resistor r=12.325328545710343
+  Lskin2_h2_2 (d_h2_2 p2) inductor l=7.705409426853064e-12
+  Cs (p1 p2) capacitor c=1.8598222275752565e-15
+  Rct (m p3) resistor r=0.12283579537392228
+  Cox_n0 (p1 s0) capacitor c=3.766934304432153e-15
+  Rsi_n0 (s0 GND) resistor r=2685.282174628249
+  Csi_n0 (s0 GND) capacitor c=1.4807557858583543e-14
+  Cox_n1 (c1 s1) capacitor c=8.577523119517139e-15
+  Rsi_n1 (s1 GND) resistor r=2460.3506506515414
+  Csi_n1 (s1 GND) capacitor c=1.5382074698326064e-14
+  Cox_n2 (m s2) capacitor c=9.621177630169971e-15
+  Rsi_n2 (s2 GND) resistor r=14686.104528002401
+  Csi_n2 (s2 GND) capacitor c=1.149033679485041e-15
+  Cox_n3 (c3 s3) capacitor c=8.577523119517139e-15
+  Rsi_n3 (s3 GND) resistor r=2460.3506506515414
+  Csi_n3 (s3 GND) capacitor c=1.5382074698326064e-14
+  Cox_n4 (p2 s4) capacitor c=3.766934304432153e-15
+  Rsi_n4 (s4 GND) resistor r=2685.282174628249
+  Csi_n4 (s4 GND) capacitor c=1.4807557858583543e-14
+  K1 () mutual k=0.2233647794940436 ind1="Ls_h1_1" ind2="Ls_h2_1"
+  K2 () mutual k=0.2233647794940436 ind1="Ls_h1_1" ind2="Ls_h2_2"
+  K3 () mutual k=0.2233647794940436 ind1="Ls_h1_2" ind2="Ls_h2_1"
+  K4 () mutual k=0.2233647794940436 ind1="Ls_h1_2" ind2="Ls_h2_2"
 ends

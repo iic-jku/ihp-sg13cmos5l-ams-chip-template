@@ -6,7 +6,7 @@ MACRO vco_top
   CLASS BLOCK ;
   FOREIGN vco_top ;
   ORIGIN 0.000 0.000 ;
-  SIZE 143.000 BY 218.900 ;
+  SIZE 143.000 BY 176.900 ;
   PIN di_en
     ANTENNAGATEAREA 0.195000 ;
     PORT
@@ -48,14 +48,14 @@ MACRO vco_top
     ANTENNADIFFAREA 7.600000 ;
     PORT
       LAYER Metal3 ;
-        RECT 119.300 0.000 121.700 7.200 ;
+        RECT 116.500 0.000 124.500 7.200 ;
     END
   END vdd_core
   PIN VSS
     USE GROUND ;
     PORT
       LAYER TopMetal1 ;
-        RECT 0.000 2.500 3.270 4.500 ;
+        RECT 0.000 0.500 3.270 4.500 ;
     END
   END VSS
   PIN VDD
@@ -73,7 +73,7 @@ MACRO vco_top
       LAYER Metal2 ;
         RECT 0.750 6.965 141.000 78.900 ;
       LAYER Metal3 ;
-        RECT 0.750 22.510 141.000 188.900 ;
+        RECT 0.750 22.510 141.000 166.900 ;
         RECT 5.630 21.690 141.000 22.510 ;
         RECT 0.750 20.110 141.000 21.690 ;
         RECT 5.395 19.290 141.000 20.110 ;
@@ -83,13 +83,13 @@ MACRO vco_top
         RECT 60.010 2.295 70.990 2.505 ;
         RECT 72.010 2.295 82.990 2.505 ;
         RECT 84.010 7.410 141.000 17.445 ;
-        RECT 84.010 2.295 119.090 7.410 ;
-        RECT 121.910 2.295 141.000 7.410 ;
+        RECT 84.010 2.295 116.290 7.410 ;
+        RECT 124.710 2.295 141.000 7.410 ;
       LAYER Metal4 ;
-        RECT 0.600 2.210 142.300 188.900 ;
+        RECT 0.600 2.210 142.300 166.900 ;
       LAYER TopMetal1 ;
-        RECT 2.950 6.140 143.000 188.900 ;
-        RECT 4.910 2.450 143.000 6.140 ;
+        RECT 2.950 6.140 143.000 166.900 ;
+        RECT 4.910 0.500 143.000 6.140 ;
   END
 END vco_top
 END LIBRARY

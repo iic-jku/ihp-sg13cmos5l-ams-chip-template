@@ -4,7 +4,7 @@
 xbias ibias_100u di_en VDD VSS vbg_buf vbn_buf vco_bias
 xcore vdd_core VSS vtune rf_p rf_n vco_core
 xbuf vbn_buf vbg_buf VDD VSS rf_p rf_n rf_out_p rf_out_n vco_buf
-LLind rf_p rf_n VSS inductor w=4e-6 s=4e-6 d=52e-6 nr_r=2
+LLind rf_p rf_n VSS inductor w=4e-6 s=4e-6 d=50e-6 nr_r=2
 .ends
 
 * expanding   symbol:  vco_bias.sym # of pins=6
