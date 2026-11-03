@@ -7,25 +7,27 @@
 #
 # ihp-sg13cmos5l has no inductor PCell and no TopMetal2, so the coil is drawn here: a symmetric octagonal coil of two
 # turns wound in TopMetal1, its one crossing in Metal4 and Metal3 in parallel. The leads LA and LB leave the outer turn
-# at the bottom, the center tap LC leaves the inner turn between them. Rings, leads and tap match the 52 um inductor3
-# of the ihp-sg13g2 macro. LVS extracts the coil as inductor2 from LA and LB. No LVS sees the center tap.
+# at the bottom, the center tap LC leaves the inner turn between them. LVS extracts the coil as inductor2 from LA and
+# LB. No LVS sees the center tap.
 
 import os
 
 import pya
 
 # Coil geometry in um: trace width, spacing, inner diameter, two turns
-W, S, D_INNER = 4, 4, 52
+W, S, D_INNER = 4, 4, 50
 A_IN = D_INNER / 2 + W / 2  # center-line apothem of the inner turn
 A_OUT = A_IN + W + S  # center-line apothem of the outer turn
-YC = 68  # coil center, the feeds end at y = -1 like the PCell's
+# IND recognition box (the coil's keep-out) 10 um around the outer turn, which the leads cross. The inductor3 PCell of
+# ihp-sg13g2 keeps 30 um, which made the leads 31 um long, 24 pH of the differential inductance, and put the pair and
+# the varactors that far from the windings. The deck has no rule on it, and a ring 9 um from a coil costs no Q.
+MARGIN = 10
+IND_HALF = A_OUT + W / 2 + MARGIN
+YC = IND_HALF  # coil center, the IND box's bottom edge at y = 0, the feeds end at y = -1
 XG = 8  # half width of the gap at the crossing
 X_LEAD = 8  # lead and tap center lines: LA at -X_LEAD, LB at +X_LEAD, LC at 0
 Y_FEED = -1
 LAND = 4  # length of the via landing where the crossing runs under a turn
-
-# IND recognition box (the coil's keep-out), as for the PCell: 136 um square
-IND_HALF = 68
 
 # Substrate tap left of the feeds, below the keep-out
 TAP_W, TAP_L = 4, 1
@@ -35,6 +37,9 @@ GRID = 0.005
 L_TM1, L_TV1, L_M4, L_V3, L_M3, L_M1 = (126, 0), (125, 0), (50, 0), (49, 0), (30, 0), (8, 0)
 L_IND, L_IND_PIN, L_IND_TXT, L_TXT = (27, 0), (27, 2), (27, 25), (63, 0)
 L_TM1_PIN, L_TM1_TXT, L_M1_TXT = (126, 2), (126, 25), (8, 25)
+# No fill in the keep-out: a fill tile in the coil's field is a shorted turn. NoMetFiller stops the metal filler only,
+# the Activ and GatPoly fillers read their own markers.
+L_NOFILL = ((160, 0), (1, 23), (5, 23))
 
 CELL = "vco_ind"
 here = os.path.dirname(os.path.abspath(__file__))
@@ -120,6 +125,8 @@ for name, x in (("LA", -X_LEAD), ("LB", X_LEAD)):
     top.shapes(ly.layer(*L_IND_PIN)).insert(pya.DBox(x - W / 2, Y_FEED, x + W / 2, Y_FEED + 2))
     top.shapes(ly.layer(*L_IND_TXT)).insert(pya.DText(name, x, 0))
 top.shapes(ly.layer(*L_TXT)).insert(pya.DText("inductor2", 0, YC))
+for layer in L_NOFILL:
+    top.shapes(ly.layer(*layer)).insert(pya.DBox(-IND_HALF, YC - IND_HALF, IND_HALF, YC + IND_HALF))
 
 # Pins on TopMetal1 for the macro and the EM ports, on the feed ends below the IND box: inside it TopMetal1 is device
 # core and not a conductor, so a label there names no net. LC is a port only through that 1 um of tap outside the box.

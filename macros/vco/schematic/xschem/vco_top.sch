@@ -6,7 +6,7 @@ S {}
 F {}
 E {}
 T {20 GHz LC VCO, CMOS Only} 300 -1740 0 0 1 1 {}
-T {VDD 1.5 V: 6.1 mA (buffer tail 5.9 mA, bias 0.2 mA). vdd_core 0.72 V from its own pad: 4.0 mA.
+T {VDD 1.5 V: 6.3 mA (buffer tail 6.1 mA, bias 0.2 mA). vdd_core 0.78 V from its own pad: 4.8 mA.
 ibias_100u: 100 uA into the macro. di_en: 1 enables, 0 turns the buffer and bias currents off.
 vtune: 0 V to VDD. rf_out_p/rf_out_n: 50 Ohm back-terminated, AC-couple the load.} 560 -1500 0 0 0.4 0.4 {}
 N 600 -1380 680 -1380 {lab=VDD}
@@ -35,7 +35,7 @@ C {devices/lab_pin.sym} 1320 -960 3 0 {name=l17 sig_type=std_logic lab=vdd_core}
 C {vco_ind_lvs.sym} 1600 -900 0 0 {name=Lind
 w=4e-6
 s=4e-6
-d=52e-6
+d=50e-6
 nr_r=2
 spice_ignore="tcleval([expr \{$lvs_ignore ? 0 : 1\}])"
 spectre_ignore=true}

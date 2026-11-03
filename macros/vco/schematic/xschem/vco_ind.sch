@@ -7,7 +7,7 @@ F {}
 E {}
 T {Tank Coil, Extracted Device for LVS, Lumped-Element Model for Simulation} 300 -1740 0 0 1 1 {}
 T {For LVS, the coil as the deck extracts it: an inductor from LA to LB (2 turns,
-w 4 um, s 4 um, d 52 um inner) whose third terminal is the substrate under the
+w 4 um, s 4 um, d 50 um inner) whose third terminal is the substrate under the
 coil, on VSS through the tap. No LVS sees the center tap LC,
 scripts/check_coil_tap.py checks it on the layout. Both are skipped in
 every simulation netlist (spice_ignore, spectre_ignore).} 480 -1400 0 0 0.3 0.3 {}
@@ -35,7 +35,7 @@ C {title-3.sym} 0 0 0 0 {name=l1 author="Simon Dorrer" rev=1.0 lock=true}
 C {vco_ind_lvs.sym} 700 -900 0 0 {name=L1
 w=4e-6
 s=4e-6
-d=52e-6
+d=50e-6
 nr_r=2
 spice_ignore="tcleval([expr \{$lvs_ignore ? 0 : 1\}])"
 spectre_ignore=true}

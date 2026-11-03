@@ -25,7 +25,7 @@ XB, YB = -65.7, -4.5  # origin of the bias cell, its left edge ends up at -71
 YBUF = -68.6  # origin of the buffer cell, its top edge ends up at -45
 X_BB = -25.5  # x of the Metal4 risers from the bias outputs to the buffer's bias pins
 Y_VC = -75.6  # y of vdd_core's via stack from TopMetal1 down to Metal3, below the core
-Y_VSS = (-80.4, -78.4)  # VSS strap on TopMetal1
+Y_VSS = (-82.4, -78.4)  # VSS strap on TopMetal1, over the VDD strap
 Y_VDD = (-82.9, -80.9)  # VDD strap on Metal4, its bottom is the macro's bottom edge
 Y_BOTTOM = Y_VDD[0]
 X_BVSS, X_BVDD = -67.5, -70.4  # x of the bias's VSS and VDD risers down to the straps, both on Metal4
@@ -88,18 +88,18 @@ for name in ("rf_out_p", "rf_out_n"):
 # vdd_core: the core's TopMetal1 tab down to a via stack onto Metal3, which crosses both straps to the bottom edge
 c = box(cp, "vdd_core")
 xc = c.center().x
-# One row of TopVia1 (four cuts for the core current) keeps its TopMetal1 1.64 um off the strap and its Metal4 off the
-# core's VSS bar
-top.rect("TopMetal1", c.left, Y_VC - 0.65, c.right, c.bottom + 0.1)
-top.via(xc, Y_VC, "Metal3", "TopMetal1", cols=4, rows=1, tcols=4, trows=1)
-line = top.rect("Metal3", c.left, Y_BOTTOM, c.right, Y_VC + 0.5)
+# One row of vias keeps its TopMetal1 1.64 um off the strap and its Metal4 off the core's VSS bar, so the tab is 8 um
+# wide for 16 Via3 cuts: with four, at 9 Ohm each, the core current dropped 9 mV across them.
+top.rect("TopMetal1", xc - 4.0, Y_VC - 0.65, xc + 4.0, Y_VC + 1.15)  # 1.8 um, over TM1.a
+top.via(xc, Y_VC, "Metal3", "TopMetal1", cols=16, rows=1, tcols=8, trows=1)
+line = top.rect("Metal3", xc - 4.0, Y_BOTTOM, xc + 4.0, Y_VC + 0.5)
 top.pin("Metal3", "vdd_core", pya.DBox(line.left, line.bottom, line.right, line.bottom + 1.0))
 
 # VSS strap: the core's TopMetal1 pin straight down onto it, Metal4 risers from the buffer's rail (between the outputs
 # and vtune) and the bias's rail (at the left edge), each with a via stack onto TopMetal1
 vss = top.rect("TopMetal1", X_LEFT, Y_VSS[0], X_RIGHT, Y_VSS[1])
 top.pin("TopMetal1", "VSS", pya.DBox(X_LEFT, vss.bottom, X_LEFT + 2.0, vss.top))
-ys = (Y_VSS[0] + Y_VSS[1]) / 2
+ys = Y_VSS[1] - 1.0  # the Metal4 risers end above the VDD strap
 c = box(cp, "VSS")
 top.rect("TopMetal1", c.left, Y_VSS[1] - 0.1, c.right, c.bottom + 0.1)
 b = box(bp, "VSS")

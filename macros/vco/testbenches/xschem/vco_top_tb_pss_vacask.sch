@@ -92,7 +92,7 @@ control
 
   // Supplies and reference current, read by the sources.
   var vdd=1.5
-  var vcore=0.72
+  var vcore=0.78
   var ibias=100u
 
   // 4000 steps per period: at the default 1000 the shooting Newton cycles and does not converge.
@@ -106,7 +106,7 @@ control
   // from the symmetric operating point, tstab lets the oscillation build up (at 3 ns the shooting fails).
   // tper near the transient's period: from 50 ps the shooting Newton diverges. stabstep: at tper/4000
   // the stabilisation transient stops at t = 0 with the coil model (Timestep too small).
-  analysis pss pss oscillator=1 tper=46.3p tstab=6n stabstep=0.5p maxharm=20 ic=\{\\"x1:rf_p\\", 0.8, \\"x1:rf_n\\", 0.7\} store=\\"osc\\"
+  analysis pss pss oscillator=1 tper=43.9p tstab=6n stabstep=0.5p maxharm=20 ic=\{\\"x1:rf_p\\", 0.8, \\"x1:rf_n\\", 0.7\} store=\\"osc\\"
 
   // Phase noise at the output: noise around the first harmonic, linearised at the stored PSS.
   // in names the source the gain output refers to, pnoise needs one.
