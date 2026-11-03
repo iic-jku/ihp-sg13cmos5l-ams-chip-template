@@ -96,7 +96,7 @@ control
   var ibias=100u
 
   // 4000 steps per period: at the default 1000 the shooting Newton cycles and does not converge.
-  // reltol 3e-5: the buffer bias filters are slow states (1 us against a 49 ps period). At the default 1e-3
+  // reltol 3e-5: the buffer bias filters are slow states (1 us against a 44 ps period). At the default 1e-3
   // the shooting Newton lets them drift by about 70 mV from their DC values, at 1e-5 the operating point fails.
   options strictsave=1 pss_minpts=4000 reltol=3e-5
   save v(vout_p) v(vout_n) v(\\"x1:rf_p\\") v(\\"x1:rf_n\\")
