@@ -29,16 +29,17 @@ FSTART, FSTOP, FSTEP = 0, 60e9, 0.75e9
 
 # Mesh: cell size in um along the conductors, and the order of the FEM basis functions
 REFINED_CELLSIZE = 3
-ORDER = 2
+ORDER = 3
 
 # Conductor model. "volume" meshes the coil metals as solids with their bulk conductivity, so the skin and proximity
 # effects in the 4 um wide, 2 um thick traces come out of the field solution. "surface" models each metal as a
 # hollow shell with a surface impedance. It is cheaper, but it counts the side walls as extra cross-section, which
 # for traces about as thick as they are wide puts the resistance too low.
 METALS = "volume"
-# Cell size in um inside the coil metals in volume mode, near the skin depth of TopMetal1 at 20 GHz (0.68 um).
-# On the ihp-sg13g2 coil 0.5 um changed Q at 20 GHz by 1.6 % for twice the unknowns.
-METAL_CELLSIZE = 1
+# Cell size in um inside the coil metals in volume mode (skin depth of TopMetal1 at 20 GHz: 0.68 um). Second-order
+# elements at 1 um read Q 2.0 % lower at 20.25 GHz, and halving their cells moved Q by 1.6 % on the ihp-sg13g2 coil,
+# so the element order and not the cell limited the result. Third order at 1 um did not fit into 15 GB of memory.
+METAL_CELLSIZE = 2
 
 # GDS layers (layer, datatype)
 COIL_LAYERS = {"Metal3": (30, 0), "Via3": (49, 0), "Metal4": (50, 0), "TopVia1": (125, 0), "TopMetal1": (126, 0)}
