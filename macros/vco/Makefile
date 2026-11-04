@@ -35,15 +35,15 @@ EXT_MODE ?= 3
 
 # The full-RC extresist settings are below Magic's defaults (10 Ohm, 1 Ohm, 1 ps), which leave every net of the VCO
 # but VSS without resistance, the tank leads and the gate lines of the pair among them.
-# full-RC extresist threshold in mOhm (sak-pex.sh -t, kpex --magic-thresh, only used in EXT_MODE=3; default: 1000 = 1 Ohm)
+# full-RC extresist threshold in mOhm (sak-pex.sh -t, kpex --magic_thresh, only used in EXT_MODE=3; default: 1000 = 1 Ohm)
 # Override with: make <target> THRESHOLD=<mOhm>
 THRESHOLD ?= 1000
 
-# full-RC extresist minres in mOhm (sak-pex.sh -r, kpex --magic-minres, only used in EXT_MODE=3; default: 100 = 0.1 Ohm)
+# full-RC extresist minres in mOhm (sak-pex.sh -r, kpex --magic_minres, only used in EXT_MODE=3; default: 100 = 0.1 Ohm)
 # Override with: make <target> MINRES=<mOhm>
 MINRES ?= 100
 
-# full-RC extresist mindelay in ps (sak-pex.sh -y, kpex --magic-mindel, only used in EXT_MODE=3; default: 0 = gate by resistance)
+# full-RC extresist mindelay in ps (sak-pex.sh -y, kpex --magic_mindel, only used in EXT_MODE=3; default: 0 = gate by resistance)
 # Override with: make <target> MINDELAY=<ps>
 MINDELAY ?= 0
 
@@ -260,6 +260,20 @@ em-model: ## Run sim-em, copy-sparam, snp2le and the ACSP testbench of the EM st
 	$(MAKE) snp2le EM=$(EM)
 	$(MAKE) sim-xschem TB=$(EM)_tb_acsp_vacask
 .PHONY: em-model
+
+# The cap_cmomf model is a capacitance only. palace_momf.py builds three EM fixtures per cap geometry of TOP (the cap
+# with its feeds, the feeds alone, the cap replaced by solid metal), and momf_parasitics.py de-embeds the leads and the
+# feeds from their solves into the series resistance and inductance of LEADS_PARASITICS, which klayout-pex-leads reads.
+sim-em-momf: ## Run the EM simulation of every MoM cap geometry of TOP and write its parasitics table (usage: make sim-em-momf [NP=<processes>])
+	rm -rf $(EM_MODEL_DIR)/momf_*_data
+	for geo in $$(python3 $(EM_DIR)/scripts/palace_momf.py --list | python3 -c 'import json, sys; print(" ".join(json.load(sys.stdin)))'); do \
+		for kind in dut open short; do \
+			python3 $(EM_DIR)/scripts/palace_momf.py $$geo $$kind || exit 1; \
+			(cd $(EM_MODEL_DIR)/momf_$${geo}_$${kind}_data && palace -np $(NP) config.json) || exit 1; \
+		done; \
+	done
+	python3 $(EM_DIR)/scripts/momf_parasitics.py
+.PHONY: sim-em-momf
 # ================================================================================================
 
 
@@ -501,9 +515,9 @@ klayout-pex: ## Run Parasitic Extraction with KPEX of the CELL cell (usage: make
 	--gds $(LAY_DIR)/$(CELL).$(_GDS_EXT) \
 	--magic \
 	--magic_mode $$KPEX_MODE \
-	--magic-thresh $(THRESHOLD) \
-	--magic-minres $(MINRES) \
-	--magic-mindel $(MINDELAY) \
+	--magic_thresh $(THRESHOLD) \
+	--magic_minres $(MINRES) \
+	--magic_mindel $(MINDELAY) \
 	--out_dir $(NET_PEX_DIR) \
 	--out_spice $(NET_PEX_DIR)/$(CELL)_klayout_pex_$(EXT_MODE).spice
 #	--2.5D
@@ -530,21 +544,32 @@ klayout-pex: ## Run Parasitic Extraction with KPEX of the CELL cell (usage: make
 # netlist: Magic's extresist counts the coupling capacitance of a net with a resistor network again to the substrate
 # (magic#557). sak-pex.sh, which magic-pex runs, has the same error, and its C-coupled run leaves out the substrate
 # capacitance of the tank nets.
+# Magic extracts no cap_cmomf device either and reads its comb as plain metal (magic#552), so drop_subcells.py can cut
+# the comb out of every marker in LEADS_CUT, and momf_lpe.py then puts the PDK device back between the two feeds, at the
+# drawn size, with the series resistance, series inductance and substrate capacitance its model lacks, from
+# LEADS_PARASITICS. That table comes from make sim-em-momf, which needs 40 GB to 140 GB of memory and so runs on a
+# compute host. Until it exists, LEADS_CUT stays empty and the combs are extracted as Magic metal. Set it to 99/40 momf
+# (Recog.momf, port prefix) to put the devices in.
 LEADS_DROP := vco_ind vco_var
 LEADS_SKIP := vco_var_vtune vco_ind_VSS
+LEADS_CUT :=
+LEADS_PARASITICS := $(EM_DIR)/cap_cmomf_parasitics.json
 klayout-pex-leads: ## Run KPEX on TOP without the coil and the varactor array, for the post-layout testbench (usage: make klayout-pex-leads [THRESHOLD=<mOhm>] [MINRES=<mOhm>] [MINDELAY=<ps>])
 	mkdir -p $(NET_PEX_DIR)
 	python3 $(SCRIPTS_DIR)/drop_subcells.py $(LAY_DIR)/$(TOP).gds $(TOP) $(NET_PEX_DIR)/$(TOP)_leads.gds \
-		--drop $(LEADS_DROP) --skip $(LEADS_SKIP) --name $(TOP)_leads --ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json
+		--drop $(LEADS_DROP) --skip $(LEADS_SKIP) --name $(TOP)_leads --ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json \
+		$(if $(LEADS_CUT),--cut $(LEADS_CUT) --cut-json $(NET_PEX_DIR)/$(TOP)_leads_cut.json)
 	for mode in CC RC; do \
 		kpex --pdk $$PDK --cell $(TOP)_leads --gds $(NET_PEX_DIR)/$(TOP)_leads.gds --magic --magic_mode $$mode \
-		--magic-thresh $(THRESHOLD) --magic-minres $(MINRES) --magic-mindel $(MINDELAY) \
+		--magic_thresh $(THRESHOLD) --magic_minres $(MINRES) --magic_mindel $(MINDELAY) \
 		--out_dir $(NET_PEX_DIR) --out_spice $(NET_PEX_DIR)/$(TOP)_leads_$$mode.spice || exit 1; \
 	done
 	python3 $(SCRIPTS_DIR)/pex_caps.py $(NET_PEX_DIR)/$(TOP)_leads_RC.spice $(NET_PEX_DIR)/$(TOP)_leads_CC.spice \
 		--ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json -o $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice
+	$(if $(LEADS_CUT),python3 $(SCRIPTS_DIR)/momf_lpe.py $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice $(NET_PEX_DIR)/$(TOP)_leads_cut.json \
+		--parasitics $(LEADS_PARASITICS) -o $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice)
 	rm -rf $(NET_PEX_DIR)/$(TOP)_leads__$(TOP)_leads $(NET_PEX_DIR)/$(TOP)_leads.gds $(NET_PEX_DIR)/$(TOP)_leads_CC.spice $(NET_PEX_DIR)/$(TOP)_leads_RC.spice \
-		$(NET_PEX_DIR)/$(TOP)_leads_ties.json
+		$(NET_PEX_DIR)/$(TOP)_leads_ties.json $(NET_PEX_DIR)/$(TOP)_leads_cut.json
 	rm -f $(TOP)_leads.nodes $(TOP)_leads.sim
 	sak-pin-reorder.py $(XSCHEM_TB_DIR)/$(TOP)_leads.sym $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice --format spice
 	python3 $(SCRIPTS_DIR)/check_pex_ports.py $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice
