@@ -1,8 +1,8 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 03/11/2026 23:30
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 04/11/2026 13:43
 
 .SUBCKT vco_top VDD VSS di_en ibias_100u rf_out_n rf_out_p vdd_core vtune
 X$1 VSS vdd_core \$32 vtune \$33 vco_core
-X$3 VSS rf_out_n \$23 rf_out_p VDD \$32 \$27 \$33 vco_buf
+X$3 VSS \$23 rf_out_p rf_out_n VDD \$32 \$27 \$33 vco_buf
 X$4 \$27 ibias_100u \$23 di_en VDD VSS vco_bias
 L$1 \$32 \$33 VSS inductor w=3.999u s=4u d=50.004u nr_r=2
 .ENDS vco_top
@@ -30,23 +30,23 @@ M$28 VDD \$16 \$1 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
 + PD=10.68u rfmode=0
 M$29 VDD \$31 \$16 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
 + PD=2.68u rfmode=0
-M$30 VDD \$30 \$31 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
-+ PD=2.68u rfmode=0
-M$31 VDD di_en \$30 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
-+ PD=2.68u rfmode=0
-M$32 VDD \$16 \$16 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
+M$30 VDD \$16 \$16 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
 + PD=10.68u rfmode=0
+M$31 VDD \$30 \$31 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
++ PD=2.68u rfmode=0
+M$32 VDD di_en \$30 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
++ PD=2.68u rfmode=0
 R$33 \$1 \$17 VSS rppd w=0.5u l=8.5u ps=0u b=0 m=1
 R$34 ibias_100u vbn_buf VSS rhigh w=0.5u l=32u ps=0u b=0 m=1
 R$35 \$1 vbg_buf VSS rhigh w=0.5u l=32u ps=0u b=0 m=1
 .ENDS vco_bias
 
-.SUBCKT vco_buf VSS rf_out_n vbn_buf rf_out_p VDD rf_p vbg_buf rf_n
-M$1 VSS vbn_buf \$5 VSS sg13_lv_nmos L=0.5u W=150u AS=29.25p AD=29.25p
+.SUBCKT vco_buf VSS vbn_buf rf_out_p rf_out_n VDD rf_p vbg_buf rf_n
+M$1 VSS vbn_buf \$4 VSS sg13_lv_nmos L=0.5u W=150u AS=29.25p AD=29.25p
 + PS=166.7u PD=166.7u rfmode=0
-M$31 \$5 \$17 rf_out_n VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
+M$31 \$4 \$17 rf_out_n VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
 + PS=30.86u PD=30.86u rfmode=0
-M$43 \$5 \$20 rf_out_p VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
+M$43 \$4 \$20 rf_out_p VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
 + PS=30.86u PD=30.86u rfmode=0
 R$55 rf_out_n VDD VSS rppd w=10u l=1.65u ps=0u b=0 m=1
 R$56 rf_out_p VDD VSS rppd w=10u l=1.65u ps=0u b=0 m=1

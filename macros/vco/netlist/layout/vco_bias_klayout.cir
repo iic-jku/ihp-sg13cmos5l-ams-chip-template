@@ -1,4 +1,4 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 03/11/2026 23:28
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 04/11/2026 13:39
 
 .SUBCKT vco_bias VDD VSS di_en ibias_100u vbg_buf vbn_buf
 M$1 VSS vbn_buf VSS VSS sg13_lv_nmos L=10u W=80u AS=17.6p AD=17.6p PS=100.4u
