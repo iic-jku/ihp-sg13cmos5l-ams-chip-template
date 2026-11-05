@@ -558,7 +558,7 @@ The circuit, the device sizes, the testbenches and the flow are those of the VCO
 | `VSS` on Metal5 bars and a Metal5 strap under a TopMetal2 strap | Metal4 bars, a TopMetal1 return from the pair and a TopMetal1 strap | `vco_core`, `vco_top` |
 | `SVaricap` with nBuLay, `Nx=7` | `SVaricap` with ThickGateOx, the same model, `Nx=8` | `vco_var` |
 | Palace stackup `SG13G2_200um.xml` | `SG13CMOS5L_200um.xml` from the ihp-sg13g2 tree | [`palace_vco_ind.py`](verification/em/scripts/palace_vco_ind.py), `Makefile` |
-| PSS from `tper=44.3p`, default `stabstep` | `tper=43.9p`, `stabstep=0.5p` | `vco_top_tb_pss_vacask` |
+| PSS from `tper=44.3p` | `tper=43.9p` | `vco_top_tb_pss_vacask` |
 | Magic LVS of the buffer with Netgen's PDK setup | a Netgen rerun without `cap_cmomf` | [`netgen_setup.tcl`](scripts/netgen_setup.tcl), `Makefile` |
 
 Both macros are centered on their post-layout simulation, each with its own means. The coil drawn here has 380.5 pH and a Q of 11.8 at 20.25 GHz, its short leads and smaller diameter take 9 % off the 417 pH and Q 10.6 of the TopMetal2 coil of ihp-sg13g2 (still at second order there, see its README). That `inductor3` keeps its 30 um keep-out and draws no clean octagon below 51 um at this width and spacing, so ihp-sg13g2 is centered with smaller varactors instead (`Nx=7`, 12 % less tuning gain). Post-layout, this macro oscillates at 20.21 GHz with `vdd_core` at 0.78 V, the one of ihp-sg13g2 at 20.06 GHz with 0.79 V, and both start at every corner. The decoupling of `vdd_core` is a quarter smaller here, and the macro is 143 um by 176.9 um, 38.6 um shorter than the one of ihp-sg13g2.
