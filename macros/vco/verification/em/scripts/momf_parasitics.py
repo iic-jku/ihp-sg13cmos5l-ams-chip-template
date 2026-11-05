@@ -11,8 +11,9 @@
 # Open-short de-embedding removes the leads and the feeds: Zc = 1/(1/Zdut - 1/Zopen) - 1/(1/Zshort - 1/Zopen), which
 # leaves out the small resistance of the short's solid metal. rs is Re(Zc) at the higher frequency, ls and C follow from
 # Im(Zc) = w ls - 1/(w C) at the two frequencies. C is reported to compare with the model, not used. The capacitance
-# of each plate to the substrate, cs, comes from a C-coupled Magic extraction of the cap and its feeds alone, from the
-# area and fringe terms, which Magic gets right (the sidewall term between the fingers is the one it got wrong).
+# of each plate to the substrate, cs, comes from C-coupled Magic extractions of the cap with its feeds less the feeds
+# alone, whose metal the post-layout extraction keeps. These are the area and fringe terms, which Magic gets right (the
+# sidewall term between the fingers is the one it got wrong).
 
 import csv
 import glob
@@ -48,7 +49,14 @@ def s11(name):
 
 
 def plate_caps(ly, top, mk, work):
-    """Capacitance of each plate to the substrate, from a C-coupled Magic run (KPEX) of the cap and its feeds."""
+    """Capacitance of each plate to the substrate: the cap with its feeds less the feeds alone."""
+    full = extract_caps(ly, top, mk, os.path.join(work, "full"), True)
+    feeds = extract_caps(ly, top, mk, os.path.join(work, "feeds"), False)
+    return {side: full[side] - feeds[side] for side in full}
+
+
+def extract_caps(ly, top, mk, work, comb):
+    """Capacitance of each feed to the rest, from a C-coupled Magic run (KPEX), with or without the comb."""
     em = kdb.Layout()
     em.dbu = ly.dbu
     cell = em.create_cell("momf_cs")
@@ -56,7 +64,7 @@ def plate_caps(ly, top, mk, work):
     idx = [pm.COMB.index(s) for s in mk["stack"]]
     for name in mk["stack"] + [f"Via{i + 1}" for i in idx[:-1]]:
         lay = pm.METALS.get(name, pm.VIAS.get(name))
-        reg = kdb.Region(top.begin_shapes_rec(ly.find_layer(lay, 0))) & marker
+        reg = kdb.Region(top.begin_shapes_rec(ly.find_layer(lay, 0))) & marker if comb else kdb.Region()
         for metal, f in mk["feeds"]:
             if metal == name:
                 reg += f
