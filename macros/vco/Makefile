@@ -556,10 +556,14 @@ LEADS_SKIP := vco_var_vtune vco_ind_VSS
 LEADS_CUT :=
 LEADS_CUT_GEOS := w10_l18p6_m24
 LEADS_PARASITICS := $(EM_DIR)/cap_cmomf_parasitics.json
+# Ports on nets Magic leaves without a resistor network (cell:metal:x:y:name). The cut's ports do that for the buffer's
+# inputs here.
+LEADS_PROBES :=
 klayout-pex-leads: ## Run KPEX on TOP without the coil and the varactor array, for the post-layout testbench (usage: make klayout-pex-leads [THRESHOLD=<mOhm>] [MINRES=<mOhm>] [MINDELAY=<ps>])
 	mkdir -p $(NET_PEX_DIR)
 	python3 $(SCRIPTS_DIR)/drop_subcells.py $(LAY_DIR)/$(TOP).gds $(TOP) $(NET_PEX_DIR)/$(TOP)_leads.gds \
 		--drop $(LEADS_DROP) --skip $(LEADS_SKIP) --name $(TOP)_leads --ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json \
+		$(foreach p,$(LEADS_PROBES),--probe $(subst :, ,$(p))) \
 		$(if $(LEADS_CUT),--cut $(LEADS_CUT) $(if $(LEADS_CUT_GEOS),--cut-only $(LEADS_CUT_GEOS)) --cut-json $(NET_PEX_DIR)/$(TOP)_leads_cut.json)
 	for mode in CC RC; do \
 		kpex --pdk $$PDK --cell $(TOP)_leads --gds $(NET_PEX_DIR)/$(TOP)_leads.gds --magic --magic_mode $$mode \
@@ -567,7 +571,8 @@ klayout-pex-leads: ## Run KPEX on TOP without the coil and the varactor array, f
 		--out_dir $(NET_PEX_DIR) --out_spice $(NET_PEX_DIR)/$(TOP)_leads_$$mode.spice || exit 1; \
 	done
 	python3 $(SCRIPTS_DIR)/pex_caps.py $(NET_PEX_DIR)/$(TOP)_leads_RC.spice $(NET_PEX_DIR)/$(TOP)_leads_CC.spice \
-		--ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json -o $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice
+		--ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json $(if $(LEADS_PROBES),--internal $(foreach p,$(LEADS_PROBES),$(lastword $(subst :, ,$(p))))) \
+		-o $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice
 	$(if $(LEADS_CUT),python3 $(SCRIPTS_DIR)/momf_lpe.py $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice $(NET_PEX_DIR)/$(TOP)_leads_cut.json \
 		--parasitics $(LEADS_PARASITICS) -o $(NET_PEX_DIR)/$(TOP)_leads_klayout_pex_3.spice)
 	rm -rf $(NET_PEX_DIR)/$(TOP)_leads__$(TOP)_leads $(NET_PEX_DIR)/$(TOP)_leads.gds $(NET_PEX_DIR)/$(TOP)_leads_CC.spice $(NET_PEX_DIR)/$(TOP)_leads_RC.spice \
