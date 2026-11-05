@@ -549,11 +549,10 @@ klayout-pex: ## Run Parasitic Extraction with KPEX of the CELL cell (usage: make
 # drawn size, with the series resistance, series inductance and substrate capacitance its model lacks, from
 # LEADS_PARASITICS. LEADS_CUT_GEOS limits this to the buffer's coupling caps Cc1 and Cc2, which the tank sees. The combs
 # of the decoupling caps Cct1 and Cct2 stay metal, which also keeps the resistor network of vdd_core. The table comes
-# from make sim-em-momf, a compute host job. Until it exists, LEADS_CUT stays empty and every comb is extracted as
-# metal. Set it to 99/40 momf (Recog.momf, port prefix) to put the devices in.
+# from make sim-em-momf, a compute host job. LEADS_CUT is Recog.momf and the port prefix, empty extracts every comb as metal.
 LEADS_DROP := vco_ind vco_var
 LEADS_SKIP := vco_var_vtune vco_ind_VSS
-LEADS_CUT :=
+LEADS_CUT := 99/40 momf
 LEADS_CUT_GEOS := w10_l18p6_m24
 LEADS_PARASITICS := $(EM_DIR)/cap_cmomf_parasitics.json
 # Ports on nets Magic leaves without a resistor network (cell:metal:x:y:name). The cut's ports do that for the buffer's
