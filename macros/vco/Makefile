@@ -83,9 +83,9 @@ CORNERS ?= mos_tt mos_ss mos_ff
 # Override with: make sim-corners TEMPS="<C> ..."
 TEMPS ?= -40 27 85
 
-# vdd_core values of sim-corners in V (default: 0.78, the nominal core supply)
+# vdd_core values of sim-corners in V (default: 0.80, the nominal core supply)
 # Override with: make sim-corners VCORE="<V> ..."
-VCORE ?= 0.78
+VCORE ?= 0.80
 
 # vtune values of sim-corners in V (default: 0 1.5, the ends of the tuning range)
 # Override with: make sim-corners VTUNE="<V> ..."
@@ -150,7 +150,7 @@ help: ## Show this help message
 	@echo 'NP sets the number of MPI processes of Palace (default: 4).'
 	@echo 'SNP selects the Touchstone file for snp2le (default: verification/em/s-parameter/<EM>.s3p).'
 	@echo 'LE_MODEL selects the snp2le model (default: inductor-ct). ORDER sets the order of a universal fit (default: 6).'
-	@echo 'CORNERS, TEMPS, VCORE and VTUNE set the runs of sim-corners (defaults: mos_tt mos_ss mos_ff, -40 27 85 C, 0.78 V, 0 V and 1.5 V).'
+	@echo 'CORNERS, TEMPS, VCORE and VTUNE set the runs of sim-corners (defaults: mos_tt mos_ss mos_ff, -40 27 85 C, 0.80 V, 0 V and 1.5 V).'
 	@echo 'VPEAK_MAX fails a sim-corners run whose tank node passes it (default: 1.5 V for the post-layout bench, 0 = report only for the schematic bench).'
 	@echo 'OPEN_ARGS passes extra options to sak-open.py for the open target (e.g. --all).'
 	@echo 'REQUIRED_PDK defaults to $(REQUIRED_PDK). Every target except help and clean aborts if $$PDK differs.'

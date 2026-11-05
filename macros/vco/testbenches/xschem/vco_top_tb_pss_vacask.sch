@@ -92,7 +92,7 @@ control
 
   // Supplies and reference current, read by the sources.
   var vdd=1.5
-  var vcore=0.78
+  var vcore=0.80
   var ibias=100u
 
   // 4000 steps per period: at the default 1000 the shooting Newton cycles and does not converge.

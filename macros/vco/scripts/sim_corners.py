@@ -59,7 +59,7 @@ def main():
     parser.add_argument("--corners", nargs="+", default=["mos_tt", "mos_ss", "mos_ff"],
                         help="MOS corners, applied to the LV and the HV models (default: mos_tt mos_ss mos_ff)")
     parser.add_argument("--temps", nargs="+", type=float, default=[-40.0, 27.0, 85.0], help="temperatures in C")
-    parser.add_argument("--vcore", nargs="+", type=float, default=[0.78], help="vdd_core values in V (default: 0.78)")
+    parser.add_argument("--vcore", nargs="+", type=float, default=[0.80], help="vdd_core values in V (default: 0.80)")
     parser.add_argument("--vtune", nargs="+", type=float, default=[0.0, 1.5], help="vtune values in V")
     parser.add_argument("--jobs", type=int, default=4, help="ngspice runs in parallel (default: 4)")
     parser.add_argument("--threads", type=int, default=3, help="threads of each ngspice run (default: 3)")

@@ -90,7 +90,7 @@ value="
 * KPEX netlist (full RC) of the macro without the coil and the varactor array, written by make klayout-pex-leads
 .include ../../../netlist/pex/vco_top_leads_klayout_pex_3.spice
 .param VDD=1.5
-.param Vcore=0.78
+.param Vcore=0.80
 .param Vtune=0.75
 .param Ibias=100u
 .temp 27
