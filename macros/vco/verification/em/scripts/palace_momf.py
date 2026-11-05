@@ -26,7 +26,7 @@ import klayout.db as kdb
 HERE = os.path.dirname(os.path.abspath(__file__))
 MACRO = os.path.normpath(os.path.join(HERE, "..", "..", ".."))
 sys.path.insert(0, os.path.join(MACRO, "scripts"))
-from drop_subcells import COMB, METALS, VIAS, cut_combs  # noqa: E402
+from drop_subcells import COMB, METALS, VIAS, cut_combs, geometry_name  # noqa: E402
 
 TOP = "vco_top"
 MARKER = (99, 40)  # Recog.momf
@@ -56,7 +56,7 @@ def geometries(ly, top):
     for mk in cut_combs(cut, ctop, MARKER, "momf"):
         box = mk["poly"].bbox().to_dtype(ly.dbu)
         mmin, mmax = COMB.index(mk["stack"][0]) + 1, COMB.index(mk["stack"][-1]) + 1
-        name = f"w{box.height():g}_l{box.width():g}_m{mmin}{mmax}".replace(".", "p")
+        name = geometry_name(box, mmin, mmax)
         if name in found:
             continue
         reg = kdb.Region(mk["poly"])

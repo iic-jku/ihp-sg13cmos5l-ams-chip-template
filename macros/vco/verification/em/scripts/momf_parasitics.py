@@ -3,7 +3,7 @@
 # Description: Turns the EM solves of the MoM cap fixtures into the parasitics table that momf_lpe.py reads.
 # ============================================
 #
-# Usage: python3 verification/em/scripts/momf_parasitics.py, after the Palace runs of make sim-em-momf.
+# Usage: python3 verification/em/scripts/momf_parasitics.py <geometry> ..., after the Palace runs of make sim-em-momf.
 #
 # Input:  verification/em/palace_model/momf_<geometry>_<kind>_data/output/*/port-S.csv of palace_momf.py.
 # Output: verification/em/cap_cmomf_parasitics.json, one entry per cap geometry.
@@ -93,7 +93,11 @@ def main():
     top = ly.cell(pm.TOP)
     top.flatten(True)
     table = []
-    for geo, mk in pm.geometries(ly, top).items():
+    geos = pm.geometries(ly, top)
+    if not sys.argv[1:] or not set(sys.argv[1:]) <= set(geos):
+        sys.exit(f"usage: momf_parasitics.py <geometry> ..., the layout has {sorted(geos)}")
+    for geo in sys.argv[1:]:
+        mk = geos[geo]
         s = {k: s11(f"momf_{geo}_{k}") for k in pm.KINDS}
         z = {k: {f: Z0 * (1 + v) / (1 - v) for f, v in s[k].items()} for k in pm.KINDS}
         zc = {f: 1 / (1 / z["dut"][f] - 1 / z["open"][f]) - 1 / (1 / z["short"][f] - 1 / z["open"][f]) for f in z["dut"]}

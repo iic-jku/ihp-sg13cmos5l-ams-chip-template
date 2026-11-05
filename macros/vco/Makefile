@@ -261,18 +261,18 @@ em-model: ## Run sim-em, copy-sparam, snp2le and the ACSP testbench of the EM st
 	$(MAKE) sim-xschem TB=$(EM)_tb_acsp_vacask
 .PHONY: em-model
 
-# The cap_cmomf model is a capacitance only. palace_momf.py builds three EM fixtures per cap geometry of TOP (the cap
-# with its feeds, the feeds alone, the cap replaced by solid metal), and momf_parasitics.py de-embeds the leads and the
+# The cap_cmomf model is a capacitance only. palace_momf.py builds three EM fixtures per geometry of LEADS_CUT_GEOS (the
+# cap with its feeds, the feeds alone, the cap replaced by solid metal), and momf_parasitics.py de-embeds the leads and the
 # feeds from their solves into the series resistance and inductance of LEADS_PARASITICS, which klayout-pex-leads reads.
-sim-em-momf: ## Run the EM simulation of every MoM cap geometry of TOP and write its parasitics table (usage: make sim-em-momf [NP=<processes>])
-	rm -rf $(EM_MODEL_DIR)/momf_*_data
-	for geo in $$(python3 $(EM_DIR)/scripts/palace_momf.py --list | python3 -c 'import json, sys; print(" ".join(json.load(sys.stdin)))'); do \
+sim-em-momf: ## Run the EM simulation of the MoM cap geometries of LEADS_CUT_GEOS and write their parasitics table (usage: make sim-em-momf [NP=<processes>])
+	rm -rf $(EM_MODEL_DIR)/momf_*_data $(EM_DIR)/layout/momf_*.gds
+	for geo in $(LEADS_CUT_GEOS); do \
 		for kind in dut open short; do \
 			python3 $(EM_DIR)/scripts/palace_momf.py $$geo $$kind || exit 1; \
 			(cd $(EM_MODEL_DIR)/momf_$${geo}_$${kind}_data && palace -np $(NP) config.json) || exit 1; \
 		done; \
 	done
-	python3 $(EM_DIR)/scripts/momf_parasitics.py
+	python3 $(EM_DIR)/scripts/momf_parasitics.py $(LEADS_CUT_GEOS)
 .PHONY: sim-em-momf
 # ================================================================================================
 
@@ -545,20 +545,22 @@ klayout-pex: ## Run Parasitic Extraction with KPEX of the CELL cell (usage: make
 # (magic#557). sak-pex.sh, which magic-pex runs, has the same error, and its C-coupled run leaves out the substrate
 # capacitance of the tank nets.
 # Magic extracts no cap_cmomf device either and reads its comb as plain metal (magic#552), so drop_subcells.py can cut
-# the comb out of every marker in LEADS_CUT, and momf_lpe.py then puts the PDK device back between the two feeds, at the
+# the comb out of the markers in LEADS_CUT, and momf_lpe.py then puts the PDK device back between the two feeds, at the
 # drawn size, with the series resistance, series inductance and substrate capacitance its model lacks, from
-# LEADS_PARASITICS. That table comes from make sim-em-momf, which needs 40 GB to 140 GB of memory and so runs on a
-# compute host. Until it exists, LEADS_CUT stays empty and the combs are extracted as Magic metal. Set it to 99/40 momf
-# (Recog.momf, port prefix) to put the devices in.
+# LEADS_PARASITICS. LEADS_CUT_GEOS limits this to the buffer's coupling caps Cc1 and Cc2, which the tank sees. The combs
+# of the decoupling caps Cct1 and Cct2 stay metal, which also keeps the resistor network of vdd_core. The table comes
+# from make sim-em-momf, a compute host job. Until it exists, LEADS_CUT stays empty and every comb is extracted as
+# metal. Set it to 99/40 momf (Recog.momf, port prefix) to put the devices in.
 LEADS_DROP := vco_ind vco_var
 LEADS_SKIP := vco_var_vtune vco_ind_VSS
 LEADS_CUT :=
+LEADS_CUT_GEOS := w10_l18p6_m24
 LEADS_PARASITICS := $(EM_DIR)/cap_cmomf_parasitics.json
 klayout-pex-leads: ## Run KPEX on TOP without the coil and the varactor array, for the post-layout testbench (usage: make klayout-pex-leads [THRESHOLD=<mOhm>] [MINRES=<mOhm>] [MINDELAY=<ps>])
 	mkdir -p $(NET_PEX_DIR)
 	python3 $(SCRIPTS_DIR)/drop_subcells.py $(LAY_DIR)/$(TOP).gds $(TOP) $(NET_PEX_DIR)/$(TOP)_leads.gds \
 		--drop $(LEADS_DROP) --skip $(LEADS_SKIP) --name $(TOP)_leads --ties $(NET_PEX_DIR)/$(TOP)_leads_ties.json \
-		$(if $(LEADS_CUT),--cut $(LEADS_CUT) --cut-json $(NET_PEX_DIR)/$(TOP)_leads_cut.json)
+		$(if $(LEADS_CUT),--cut $(LEADS_CUT) $(if $(LEADS_CUT_GEOS),--cut-only $(LEADS_CUT_GEOS)) --cut-json $(NET_PEX_DIR)/$(TOP)_leads_cut.json)
 	for mode in CC RC; do \
 		kpex --pdk $$PDK --cell $(TOP)_leads --gds $(NET_PEX_DIR)/$(TOP)_leads.gds --magic --magic_mode $$mode \
 		--magic_thresh $(THRESHOLD) --magic_minres $(MINRES) --magic_mindel $(MINDELAY) \
