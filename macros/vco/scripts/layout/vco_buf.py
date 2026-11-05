@@ -93,10 +93,14 @@ for side, sgn in (("left", -1), ("right", 1)):
     xg = sgn * XG
     yg = cap.center().y
     top.rect("Metal4", xg - 0.5 * sgn, yg - 0.5, col.center().x, yg + 0.5)
-    top.via(xg, yg, "Metal2", "Metal4", cols=2, rows=2)
+    top.via(xg, yg, "Metal2", "Metal4", cols=2, rows=5)
+    # The tank drives the gates through the cap and this line, so its resistance is tank loss: two via rows along the pad.
     gpad = p["G"][1]
-    top.rect("Metal2", xg - 0.3, gpad.center().y, xg + 0.3, yg)
-    top.via(xg, gpad.center().y, "Metal1", "Metal2", cols=1, rows=1)
+    gy0, gy1 = gpad.bottom, gpad.top + 0.5
+    top.rect("Metal1", gpad.left, gy0, gpad.right, gy1)
+    top.rect("Metal2", gpad.left, gy0, gpad.right, gy1)
+    top.via(gpad.center().x, (gy0 + gy1) / 2, "Metal1", "Metal2", cols=12, rows=2)
+    top.rect("Metal2", xg - 0.5, gy0, xg + 0.5, yg)
     # Plate B, the input: fed from the north spine, a tab up from its collector
     colb = vl.comb_feed(top, cap, "N")
     xi = sgn * XIN
