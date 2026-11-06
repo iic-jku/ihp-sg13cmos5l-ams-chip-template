@@ -13,17 +13,17 @@ A 20 GHz LC voltage-controlled oscillator built from CMOS devices only, the RF m
 
 | Parameter | Target | Simulated (TT, 27 C) |
 | --- | --- | --- |
-| Oscillation frequency | 20 GHz | 20.21 GHz post-layout at `vtune` = 0.75 V, 22.77 GHz in the schematic |
-| Tuning range | about 2 GHz, with 20 GHz inside it at every corner | 1.94 GHz post-layout, 19.52 GHz to 21.46 GHz for `vtune` from 0 V to 1.5 V, 1.86 GHz to 2.04 GHz over the corners, 2.65 GHz in the schematic (21.78 GHz to 24.43 GHz) |
-| Tuning gain | | 0.77 GHz/V to 2.28 GHz/V, 2.03 GHz/V at 0.75 V |
-| Phase noise | not optimized, reported | -102.2 dBc/Hz at 1 MHz, see [Limitations](#limitations) |
-| Output power | -10 dBm or more per output into 50 Ohm | -9.2 dBm in the schematic, -10.2 dBm post-layout from the peak-to-peak swing, which reads about 1 dB high |
-| Supplies | `VDD` = 1.5 V, the chip core supply, and `vdd_core` = 0.78 V from its own pad | `VDD` 6.3 mA, `vdd_core` 4.8 mA, plus the 0.1 mA reference, post-layout 5.6 mA and 4.9 mA |
+| Oscillation frequency | 20 GHz | 20.11 GHz post-layout at `vtune` = 0.75 V, 22.73 GHz in the schematic |
+| Tuning range | about 2 GHz, with 20 GHz inside it at every corner | 1.90 GHz post-layout, 19.45 GHz to 21.35 GHz for `vtune` from 0 V to 1.5 V, 1.84 GHz to 2.00 GHz over the corners, 2.60 GHz in the schematic (21.77 GHz to 24.38 GHz) |
+| Tuning gain | | 0.75 GHz/V to 2.24 GHz/V, 1.97 GHz/V at 0.75 V |
+| Phase noise | not optimized, reported | -102.3 dBc/Hz at 1 MHz, see [Limitations](#limitations) |
+| Output power | -10 dBm or more per output into 50 Ohm | -8.9 dBm in the schematic, -10.2 dBm post-layout from the peak-to-peak swing, which reads about 1 dB high |
+| Supplies | `VDD` = 1.5 V, the chip core supply, and `vdd_core` = 0.80 V from its own pad | `VDD` 6.4 mA, `vdd_core` 5.0 mA, plus the 0.1 mA reference, post-layout 5.6 mA and 5.3 mA |
 | Bias | 100 uA reference current into `ibias_100u` | |
 | Power down | `di_en` low turns the buffer and bias currents off, `vdd_core` at 0 V the core | |
-| Corners | starts and stays below 1.5 V on every node at SS, TT and FF, -40 C to 85 C | yes post-layout, 19.23 GHz to 21.63 GHz, highest node 1.43 V, see [Corners](#corners) |
+| Corners | starts and stays below 1.5 V on every node at SS, TT and FF, -40 C to 85 C | yes post-layout, 19.16 GHz to 21.53 GHz, highest node 1.44 V, see [Corners](#corners) |
 
-The macro is centered on its post-layout simulation (see [Post-Layout Simulation](#post-layout-simulation)): 20 GHz at the middle of the tuning range, and `vdd_core` in the middle of the window in which every post-layout corner starts and no tank node passes 1.5 V. The schematic, without the resistance and the capacitance of the leads, oscillates 12 % higher and swings higher, so its tank peaks pass 1.5 V at FF, and they are reported but not checked. The other values are schematic-level unless they say post-layout, with the coil model fitted to the EM simulation of the coil's layout (see [EM Simulation of the Coil](#em-simulation-of-the-coil)).
+The macro is centered on its post-layout simulation (see [Post-Layout Simulation](#post-layout-simulation)): 20 GHz at the middle of the tuning range, and `vdd_core` in the middle of the window in which every post-layout corner starts and no tank node passes 1.5 V. The schematic, without the resistance and the capacitance of the leads, oscillates 13 % higher and swings higher, so its tank peaks pass 1.5 V at FF, and they are reported but not checked. The other values are schematic-level unless they say post-layout, with the coil model fitted to the EM simulation of the coil's layout (see [EM Simulation of the Coil](#em-simulation-of-the-coil)).
 
 This is a simple VCO to learn the RF flow on, not an optimized design. It goes through each step once, from the schematic over the coil's layout, EM simulation and lumped-element model to the oscillator analyses of VACASK and a post-layout simulation. [Limitations](#limitations) lists where it falls short and what a better design would change.
 
@@ -39,7 +39,7 @@ This is a simple VCO to learn the RF flow on, not an optimized design. It goes t
 | `vco_buf` | AC-coupled differential output buffer with 50 Ohm back-termination |
 | `vco_bias` | the enable logic and the two bias voltages of the buffer, each behind an RC low-pass filter |
 
-**Core.** The core is the voltage-biased cross-coupled pair of Jung and Park [[1]](#references): two NMOS (20 um / 0.13 um each) with their sources on `VSS`, and no current source at all. The center tap of the coil sits on its own supply `vdd_core`, 0.78 V from a pad, against 0.639 V in the paper. The tank's common mode is then `vdd_core`, and the pair draws whatever current its gate-source voltage `vdd_core` gives: 4.8 mA at TT, 3.6 mA to 5.7 mA over the post-layout corners. That common mode is what the varactor needs. `sg13_hv_svaricap` is an accumulation-mode MOS varactor whose capacitance changes most around 0 V gate-to-well voltage, so with the gates on the tank and the wells on `vtune`, a tune voltage from 0 V to `VDD` sweeps it across that transition. Each tank node swings from about 0.20 V to 1.33 V post-layout, from 0.11 V to 1.53 V in the schematic: the core works in the voltage-limited regime of Hajimiri and Lee [[2]](#references), where the supply and not a current sets the amplitude. `vdd_core` is therefore the amplitude knob, and 0.78 V sits in the middle of a post-layout window of 60 mV: from 0.75 V the slow corner starts, up to 0.81 V the highest node stays below the 1.5 V supply, see [Corners](#corners). `Cct1` and `Cct2` decouple `vdd_core` at the center tap, where the pair's current pulses at twice the oscillation frequency. They are six `cap_cmomf` units on Metal1 to Metal4, 3.8 pF by the model and 3.7 pF in the extraction.
+**Core.** The core is the voltage-biased cross-coupled pair of Jung and Park [[1]](#references): two NMOS (20 um / 0.13 um each) with their sources on `VSS`, and no current source at all. The center tap of the coil sits on its own supply `vdd_core`, 0.80 V from a pad, against 0.639 V in the paper. The tank's common mode is then `vdd_core`, and the pair draws whatever current its gate-source voltage `vdd_core` gives: 5.0 mA at TT, 3.7 mA to 6.2 mA over the post-layout corners. That common mode is what the varactor needs. `sg13_hv_svaricap` is an accumulation-mode MOS varactor whose capacitance changes most around 0 V gate-to-well voltage, so with the gates on the tank and the wells on `vtune`, a tune voltage from 0 V to `VDD` sweeps it across that transition. Each tank node swings from about 0.23 V to 1.33 V post-layout, from 0.11 V to 1.58 V in the schematic: the core works in the voltage-limited regime of Hajimiri and Lee [[2]](#references), where the supply and not a current sets the amplitude. `vdd_core` is therefore the amplitude knob, and 0.80 V sits in the middle of a post-layout window of 40 mV: from 0.78 V the slow corner starts, up to 0.82 V the highest node stays below the 1.5 V supply, see [Corners](#corners). `Cct1` and `Cct2` decouple `vdd_core` at the center tap, where the pair's current pulses at twice the oscillation frequency. They are six `cap_cmomf` units on Metal1 to Metal4, 3.8 pF by the model and 3.7 pF in the extraction.
 
 The first version of this macro, in the ihp-sg13g2 template, fed the center tap from a PMOS current source and set the tank's common mode by the pair's gate-source voltage at that current. The bias noise of the source then moved the varactor's operating point, and the phase noise was -85.4 dBc/Hz at 1 MHz, 92 % of it from the bias chain. The voltage-biased core removes that path. What it gives up is a defined current: the core current follows the process and the temperature, and noise on `vdd_core` reaches the frequency, see [Limitations](#limitations).
 
@@ -47,7 +47,7 @@ The first version of this macro, in the ihp-sg13g2 template, fed the center tap 
 
 **Varactor.** One `sg13_hv_svaricap` with `Nx=8` measures 31 fF to 21 fF differential (63 fF to 41 fF per tank node) for a gate-to-well voltage from +0.75 V to -0.75 V, with a differential Q of 23 to 30 at 20 GHz. The model is that of ihp-sg13g2. The layout differs: this PDK's `SVaricap` PCell draws ThickGateOx where the ihp-sg13g2 one draws nBuLay, which this process does not have. The well resistance of the model is about 200 Ohm per varactor. It only carries common-mode current and does not load the differential tank, but its thermal noise reaches the frequency through the tuning gain like noise on `vtune` does.
 
-**Buffer.** A differential pair (24 um / 0.13 um each, 6 mA tail in 30 fingers of 5 um) is AC-coupled to the tank through `cap_cmomf` capacitors (Metal2 to Metal4, 10 um by 18.6 um, 170 fF by the model and 153 fF in the extraction) and biased at `vbg_buf` (about 1.04 V) through 24 kOhm resistors. Each output has a 50 Ohm `rppd` resistor to `VDD`, so the buffer is back-terminated for a 50 Ohm measurement setup, and the load has to be AC-coupled. The pair is as wide as it is for the output power: in the ihp-sg13g2 macro, 16 um would raise the frequency by 270 MHz and cost 1 dB.
+**Buffer.** A differential pair (24 um / 0.13 um each, 6 mA tail in 30 fingers of 5 um) is AC-coupled to the tank through `cap_cmomf` capacitors (Metal2 to Metal4, 10 um by 18.6 um, 170 fF by the model and 157 fF by EM) and biased at `vbg_buf` (about 1.04 V) through 24 kOhm resistors. Each output has a 50 Ohm `rppd` resistor to `VDD`, so the buffer is back-terminated for a 50 Ohm measurement setup, and the load has to be AC-coupled. The pair is as wide as it is for the output power: in the ihp-sg13g2 macro, 16 um would raise the frequency by 270 MHz and cost 1 dB.
 
 **Bias and enable.** The 100 uA reference current enters the diode-connected NMOS `MN0`, and `MBt` in the buffer mirrors it 60:1. `MN1` copies it into the diode-connected PMOS `MP1`, and `MP2` mirrors that into `Rg` and the diode `MN3`, which sets `vbg_buf` to a gate-source voltage plus 0.45 V. Both bias voltages pass an RC low-pass filter at about 170 kHz: `Rn` (95 kOhm) with `MCn1`/`MCn2` (9.4 pF) on `vbn_buf`, `Rf` (95 kOhm) with `MCg1`/`MCg2` (10 pF) on `vbg_buf`. They are there because the buffer's bias moves the frequency: the buffer's input capacitance depends on its currents and loads the tank through the coupling capacitors, by -38 MHz per mA of tail current in the ihp-sg13g2 macro. With the filters of the first version there (48 kOhm, 1.35 pF), that path set the phase noise once the core was quiet: -96.6 dBc/Hz at 1 MHz, with 77 % from `Rn` and `MN0`. The filter capacitors are NMOS gates (source, drain and bulk on `VSS`), 12 fF/um2 at these voltages against 1.29 fF/um2 for the densest `cap_cmomf` (Metal1 to Metal4), so 10 pF takes 800 um2. Their gate leakage drops 13 mV across `Rf`. `di_en` passes two inverters. Low, it pulls the NMOS gate lines to `VSS` and the PMOS gate line to `VDD`, so the buffer and bias currents are off. The core has no enable, as in the paper: with its own supply, it is off when `vdd_core` is at 0 V.
 
@@ -57,7 +57,7 @@ The first version of this macro, in the ihp-sg13g2 template, fed the center tap 
 | Pin | Direction | Function |
 | --- | --- | --- |
 | `VDD` | inout | supply of the buffer and the bias, 1.5 V |
-| `vdd_core` | inout | supply of the core at the coil's center tap, 0.78 V from its own pad |
+| `vdd_core` | inout | supply of the core at the coil's center tap, 0.80 V from its own pad |
 | `VSS` | inout | ground |
 | `ibias_100u` | input | reference current, 100 uA into the macro |
 | `di_en` | input | enable of the buffer and the bias, active high |
@@ -73,50 +73,50 @@ All results are from the testbenches in [`testbenches/xschem/`](testbenches/xsch
 
 | Testbench | Simulator | Analyses | Result |
 | --- | --- | --- | --- |
-| `vco_top_tb_tran` | ngspice | start-up transient, 2 ns | 22.72 GHz, tank 0.11 V to 1.53 V, 260 mVpp per output (-7.7 dBm), `VDD` 6.3 mA, `vdd_core` 4.8 mA |
-| `vco_top_tb_pss_vacask` | VACASK | oscillator PSS, PNOISE, PAC | 22.77 GHz, -9.2 dBm per output at the fundamental, -102.2 dBc/Hz at 1 MHz, K_VCO 2.07 GHz/V at 10 MHz (PAC) |
-| `vco_top_tb_tune_vacask` | VACASK | one 1.5 ns transient per tuning voltage | 21.78 GHz to 24.43 GHz for `vtune` from 0 V to 1.5 V |
-| `vco_top_tb_tran_lpe` | ngspice | start-up transient of the post-layout netlist | 20.21 GHz, tank 0.20 V to 1.33 V, 4.9 mA, see [Post-Layout Simulation](#post-layout-simulation) |
+| `vco_top_tb_tran` | ngspice | start-up transient, 2 ns | 22.69 GHz, tank 0.11 V to 1.58 V, 265 mVpp per output (-7.5 dBm), `VDD` 6.4 mA, `vdd_core` 5.0 mA |
+| `vco_top_tb_pss_vacask` | VACASK | oscillator PSS, PNOISE, PAC | 22.73 GHz, -8.9 dBm per output at the fundamental, -102.3 dBc/Hz at 1 MHz, K_VCO 2.01 GHz/V at 10 MHz (PAC) |
+| `vco_top_tb_tune_vacask` | VACASK | one 1.5 ns transient per tuning voltage | 21.77 GHz to 24.38 GHz for `vtune` from 0 V to 1.5 V |
+| `vco_top_tb_tran_lpe` | ngspice | start-up transient of the post-layout netlist | 20.11 GHz, tank 0.23 V to 1.33 V, 5.3 mA, see [Post-Layout Simulation](#post-layout-simulation) |
 | `vco_ind_tb_acsp_vacask` | VACASK | ACSP, S-parameters of the coil model from 0 Hz to 60 GHz | 386.5 pH and Q 11.7 at 20.25 GHz, against 380.5 pH and Q 11.8 from EM |
 
 The ngspice transient and the VACASK PSS agree on the oscillation frequency within 0.2 % (the VACASK tuning transient within 0.1 %), and the tuning gain from PAC agrees with the slope of the tuning curve within about 2 %.
 
-The phase noise at 1 MHz offset comes 50 % from the core (pair 29 %, varactors 12 %, coil 9 %) and 39 % from the buffer's tail bias (`Rn` 32 %, `MN0` 7 %), the rest from the buffer's devices. Below 1 MHz the tail bias takes over, with 78 % at 300 kHz: its noise passes the 170 kHz low-pass of the bias filters, so its share grows by 40 dB to 48 dB per decade towards lower offsets, against 20 dB for the core. With 3.7 mW in the core that is a figure of merit of -183.6 dBc/Hz.
+The phase noise at 1 MHz offset comes 49 % from the core (pair 30 %, varactors 11 %, coil 8 %) and 39 % from the buffer's tail bias (`Rn` 32 %, `MN0` 7 %), the rest from the buffer's devices. Below 1 MHz the tail bias takes over, with 78 % at 300 kHz: its noise passes the 170 kHz low-pass of the bias filters, so its share grows by 40 dB to 48 dB per decade towards lower offsets, against 20 dB for the core. With 4.0 mW in the core that is a figure of merit of -183.3 dBc/Hz.
 
 
 ### Corners
 
-`make sim-corners` runs the start-up transient at the MOS corners SS, TT and FF (the LV and the HV models alike) and at -40 C, 27 C and 85 C, at both ends of the tuning range, `vdd_core` at 0.78 V. Every run oscillates. Post-layout, from `make sim-corners TB=vco_top_tb_tran_lpe` and [`vco_top_tb_tran_lpe_corners.csv`](testbenches/xschem/plot_simulations/figures/vco_top_tb_tran_lpe_corners.csv):
+`make sim-corners` runs the start-up transient at the MOS corners SS, TT and FF (the LV and the HV models alike) and at -40 C, 27 C and 85 C, at both ends of the tuning range, `vdd_core` at 0.80 V. Every run oscillates. Post-layout, from `make sim-corners TB=vco_top_tb_tran_lpe` and [`vco_top_tb_tran_lpe_corners.csv`](testbenches/xschem/plot_simulations/figures/vco_top_tb_tran_lpe_corners.csv):
 
 | Corner | Temperature | Frequency, `vtune` 0 V to 1.5 V | Tank nodes | Lowest output | Core current |
 | --- | --- | --- | --- | --- | --- |
-| TT | -40 C | 19.45 GHz to 21.43 GHz | 0.14 V to 1.39 V | -10.0 dBm | 4.8 mA to 5.0 mA |
-| TT | 27 C | 19.52 GHz to 21.46 GHz | 0.16 V to 1.38 V | -10.6 dBm | 4.8 mA to 4.9 mA |
-| TT | 85 C | 19.58 GHz to 21.48 GHz | 0.19 V to 1.35 V | -11.3 dBm | 4.7 mA to 4.8 mA |
-| SS | -40 C | 19.64 GHz to 21.57 GHz | 0.17 V to 1.35 V | -11.2 dBm | 3.9 mA to 4.2 mA |
-| SS | 27 C | 19.71 GHz to 21.60 GHz | 0.20 V to 1.32 V | -12.0 dBm | 3.8 mA to 4.1 mA |
-| SS | 85 C | 19.77 GHz to 21.63 GHz | 0.24 V to 1.29 V | -13.2 dBm | 3.6 mA to 4.0 mA |
-| FF | -40 C | 19.23 GHz to 21.27 GHz | 0.13 V to 1.43 V | -9.5 dBm | 5.3 mA to 5.7 mA |
-| FF | 27 C | 19.30 GHz to 21.30 GHz | 0.15 V to 1.41 V | -10.1 dBm | 5.3 mA to 5.6 mA |
-| FF | 85 C | 19.36 GHz to 21.33 GHz | 0.18 V to 1.38 V | -10.8 dBm | 5.2 mA to 5.5 mA |
+| TT | -40 C | 19.37 GHz to 21.32 GHz | 0.17 V to 1.40 V | -9.9 dBm | 5.3 mA to 5.4 mA |
+| TT | 27 C | 19.45 GHz to 21.35 GHz | 0.19 V to 1.38 V | -10.5 dBm | 5.2 mA to 5.3 mA |
+| TT | 85 C | 19.50 GHz to 21.38 GHz | 0.22 V to 1.35 V | -11.3 dBm | 5.1 mA |
+| SS | -40 C | 19.56 GHz to 21.47 GHz | 0.20 V to 1.35 V | -11.3 dBm | 4.1 mA to 4.6 mA |
+| SS | 27 C | 19.63 GHz to 21.50 GHz | 0.24 V to 1.32 V | -12.3 dBm | 4.0 mA to 4.5 mA |
+| SS | 85 C | 19.69 GHz to 21.53 GHz | 0.28 V to 1.28 V | -13.7 dBm | 3.7 mA to 4.2 mA |
+| FF | -40 C | 19.16 GHz to 21.16 GHz | 0.15 V to 1.44 V | -9.4 dBm | 5.9 mA to 6.2 mA |
+| FF | 27 C | 19.24 GHz to 21.20 GHz | 0.18 V to 1.42 V | -10.0 dBm | 5.8 mA to 6.1 mA |
+| FF | 85 C | 19.29 GHz to 21.23 GHz | 0.20 V to 1.39 V | -10.7 dBm | 5.7 mA to 5.9 mA |
 
-The output columns are read from the peak-to-peak swing (see [Post-Layout Simulation](#post-layout-simulation)). The post-layout range covers 20 GHz at every corner, and no tank node passes 1.43 V. Schematic, from [`vco_top_tb_tran_corners.csv`](testbenches/xschem/plot_simulations/figures/vco_top_tb_tran_corners.csv):
+The output columns are read from the peak-to-peak swing (see [Post-Layout Simulation](#post-layout-simulation)). The post-layout range covers 20 GHz at every corner, and no tank node passes 1.44 V. Schematic, from [`vco_top_tb_tran_corners.csv`](testbenches/xschem/plot_simulations/figures/vco_top_tb_tran_corners.csv):
 
 | Corner | Temperature | Frequency, `vtune` 0 V to 1.5 V | Tank nodes | Lowest output | Core current |
 | --- | --- | --- | --- | --- | --- |
-| TT | -40 C | 21.66 GHz to 24.35 GHz | 0.08 V to 1.58 V | -7.4 dBm | 4.5 mA to 5.0 mA |
-| TT | 27 C | 21.76 GHz to 24.40 GHz | 0.09 V to 1.56 V | -7.9 dBm | 4.5 mA to 4.9 mA |
-| TT | 85 C | 21.82 GHz to 24.42 GHz | 0.10 V to 1.54 V | -8.4 dBm | 4.5 mA to 4.8 mA |
-| SS | -40 C | 21.92 GHz to 24.54 GHz | 0.08 V to 1.55 V | -7.8 dBm | 4.1 mA to 4.5 mA |
-| SS | 27 C | 22.01 GHz to 24.58 GHz | 0.10 V to 1.53 V | -8.3 dBm | 4.1 mA to 4.4 mA |
-| SS | 85 C | 22.07 GHz to 24.60 GHz | 0.11 V to 1.50 V | -9.0 dBm | 4.0 mA to 4.3 mA |
-| FF | -40 C | 21.39 GHz to 24.15 GHz | 0.07 V to 1.61 V | -7.3 dBm | 4.9 mA to 5.5 mA |
-| FF | 27 C | 21.48 GHz to 24.20 GHz | 0.09 V to 1.59 V | -7.7 dBm | 4.9 mA to 5.4 mA |
-| FF | 85 C | 21.54 GHz to 24.22 GHz | 0.10 V to 1.56 V | -8.2 dBm | 4.8 mA to 5.3 mA |
+| TT | -40 C | 21.66 GHz to 24.30 GHz | 0.07 V to 1.63 V | -7.2 dBm | 4.8 mA to 5.3 mA |
+| TT | 27 C | 21.75 GHz to 24.34 GHz | 0.09 V to 1.62 V | -7.7 dBm | 4.8 mA to 5.2 mA |
+| TT | 85 C | 21.81 GHz to 24.37 GHz | 0.10 V to 1.59 V | -8.2 dBm | 4.7 mA to 5.1 mA |
+| SS | -40 C | 21.91 GHz to 24.48 GHz | 0.08 V to 1.61 V | -7.6 dBm | 4.4 mA to 4.8 mA |
+| SS | 27 C | 22.00 GHz to 24.52 GHz | 0.09 V to 1.58 V | -8.1 dBm | 4.3 mA to 4.7 mA |
+| SS | 85 C | 22.06 GHz to 24.55 GHz | 0.11 V to 1.55 V | -8.7 dBm | 4.2 mA to 4.5 mA |
+| FF | -40 C | 21.38 GHz to 24.10 GHz | 0.07 V to 1.66 V | -7.1 dBm | 5.2 mA to 5.8 mA |
+| FF | 27 C | 21.47 GHz to 24.14 GHz | 0.08 V to 1.63 V | -7.6 dBm | 5.2 mA to 5.7 mA |
+| FF | 85 C | 21.53 GHz to 24.17 GHz | 0.10 V to 1.61 V | -8.0 dBm | 5.1 mA to 5.6 mA |
 
-Without the leads, the schematic's tank swings higher, up to 1.61 V at FF and -40 C. The macro is centered on the post-layout corners, so `sim-corners` fails on a tank node above 1.5 V only on the post-layout testbench (`VPEAK_MAX`).
+Without the leads, the schematic's tank swings higher, up to 1.66 V at FF and -40 C. The macro is centered on the post-layout corners, so `sim-corners` fails on a tank node above 1.5 V only on the post-layout testbench (`VPEAK_MAX`).
 
-Post-layout, `vdd_core` has 30 mV of room either way, which `VCORE` shows. At 0.75 V the slow corner at `vtune` 0 V still starts (the tank swings 0.46 V to 1.02 V at -40 C), at 0.74 V it no longer does at any temperature. At 0.81 V the highest tank node is 1.498 V (FF, -40 C, `vtune` 1.5 V), at 0.82 V it passes 1.5 V at -40 C and 27 C. The frequency pushes by -1.4 GHz/V of `vdd_core` at `vtune` = 0.75 V post-layout, by -1.7 GHz/V in the schematic.
+Post-layout, `vdd_core` has 20 mV of room either way, which `VCORE` shows. At 0.78 V the slow corner at `vtune` 0 V still starts (the tank swings 0.49 V to 1.05 V at 85 C), at 0.77 V it no longer does at 85 C. At 0.82 V the highest tank node is 1.487 V (FF, -40 C, `vtune` 1.5 V), at 0.83 V it passes 1.5 V at -40 C. The frequency pushes by -1.3 GHz/V of `vdd_core` at `vtune` = 0.75 V post-layout, by -1.6 GHz/V in the schematic.
 
 
 ## Directory Structure
@@ -213,15 +213,22 @@ Post-layout, `vdd_core` has 30 mV of room either way, which `VCORE` shows. At 0.
 │  ├─ 📁 drc/
 │  ├─ 📁 em/
 │  │  ├─ 📁 layout/
+│  │  │  ├─ momf_w10_l18p6_m24_dut.gds
+│  │  │  ├─ momf_w10_l18p6_m24_open.gds
+│  │  │  ├─ momf_w10_l18p6_m24_short.gds
 │  │  │  └─ vco_ind.gds
 │  │  ├─ 📁 palace_model/
+│  │  │  ├─ 📁 momf_w10_l18p6_m24_dut_data/
+│  │  │  ├─ 📁 momf_w10_l18p6_m24_open_data/
+│  │  │  ├─ 📁 momf_w10_l18p6_m24_short_data/
 │  │  │  └─ 📁 vco_ind_data/
 │  │  ├─ 📁 s-parameter/
 │  │  │  └─ vco_ind.s3p
-│  │  └─ 📁 scripts/
-│  │     ├─ momf_parasitics.py
-│  │     ├─ palace_momf.py
-│  │     └─ palace_vco_ind.py
+│  │  ├─ 📁 scripts/
+│  │  │  ├─ momf_parasitics.py
+│  │  │  ├─ palace_momf.py
+│  │  │  └─ palace_vco_ind.py
+│  │  └─ cap_cmomf_parasitics.json
 │  └─ 📁 lvs/
 ├─ Makefile
 └─ README.md
@@ -280,7 +287,7 @@ Both simulators write their results as text tables to `testbenches/xschem/plot_s
 
 Things that are specific to these testbenches:
 
-- **Two supplies**: `VDD` at 1.5 V and `vdd_core` at 0.78 V, each from its own source (`Vcore` reads `.param Vcore` in ngspice and `var vcore` in VACASK).
+- **Two supplies**: `VDD` at 1.5 V and `vdd_core` at 0.80 V, each from its own source (`Vcore` reads `.param Vcore` in ngspice and `var vcore` in VACASK).
 - **The coil model is included by every testbench**, `netlist/spice/vco_ind_le.spice` for ngspice and `netlist/spectre/vco_ind_le.inc` for VACASK, which also declares the `inductor` and `mutual` devices it needs. The ACSP testbench of the coil declares `capacitor` as well, because Xschem declares a device only when a symbol of the schematic uses it.
 - **ACSP is VACASK's S-parameter analysis.** Each port is a voltage source and its series resistor, which sets the port impedance, and `ports` lists the pairs in port order.
 - **The VACASK testbenches read a patched copy of the HV corner file** from `testbenches/xschem/models/`. The PDK's VACASK model of `sg13_hv_svaricap` (`sg13g2_svaricaphv_mod.lib`, which this PDK shares with ihp-sg13g2) keeps an ngspice voltage term `v(2,4)` in its well resistance, which VACASK cannot evaluate. All coefficients of that term are 0, so the copy replaces it by 0 and the model is unchanged. VACASK looks for an include next to the file that names it first, so the copied corner file picks up the patched model next to it and everything else from the PDK.
@@ -316,7 +323,7 @@ Runs `vco_top_tb_tran`, `vco_top_tb_pss_vacask`, `vco_top_tb_tune_vacask` and `v
 ```sh
 make sim-corners                                    # SS, TT, FF at -40 C, 27 C, 85 C, vtune 0 V and 1.5 V
 make sim-corners TB=vco_top_tb_tran_lpe             # the same with the post-layout netlist
-make sim-corners TB=vco_top_tb_tran_lpe VCORE="0.75 0.81"   # the edges of the vdd_core window
+make sim-corners TB=vco_top_tb_tran_lpe VCORE="0.78 0.82"   # the edges of the vdd_core window
 make sim-corners CORNERS=mos_ss TEMPS=-40 VTUNE=0   # one case
 ```
 
@@ -357,7 +364,8 @@ What the scripts had to learn:
 - **The buffer's tail is drawn as one device with 30 fingers.** KLayout LVS does not combine parallel devices (`m`) with a multi-finger device, so the schematic says `w=150u ng=30`.
 - **Two `ptap1` taps that abut put their contact rows 0.1 um apart**, which fails `Cnt.b`. The capacitor rows' taps keep 0.3 um between them, and one Metal1 band covers both.
 - **The pair's ground path is part of the circuit.** On Metal4 alone, the path from the pair's source bar around `Cct1` and `Cct2` to the `VSS` pin was 16 Ohm in the post-layout netlist, which put the sources 64 mV above `VSS` at 4 mA. A TopMetal1 return down the free channel beside the column, along under `Cct1` and down `Cct2`'s outer collector, and a TopMetal1 strap of 4 um along the macro's bottom edge brought it to 1.7 Ohm from the pin to the sources.
-- **At 20 GHz the leads are part of the tank.** The coil's own series resistance is 2.05 Ohm per side, and with every resistance extracted (see [Parasitic Extraction (PEX)](#parasitic-extraction-pex)) the first layout had 41 Ohm and 23 Ohm in the pair's gate lines, one via of 9 Ohm per level, 3.5 Ohm from the coil's feed to the varactors over 1 um of Metal3, and 3.8 Ohm in the supply path of `vdd_core` through four Via3 cuts. That VCO did not start at the slow corner. Via rows along the gate pads, the tank lines at 2.5 um and doubled on Metal4, 6 x 6 via stacks at the feeds and 16 cuts under `vdd_core` brought these to 4.4 Ohm, 1.4 Ohm and 1.7 Ohm, the pair's drains to 1.6 Ohm.
+- **At 20 GHz the leads are part of the tank.** The coil's own series resistance is 2.05 Ohm per side, and with every resistance extracted (see [Parasitic Extraction (PEX)](#parasitic-extraction-pex)) the first layout had 41 Ohm and 23 Ohm in the pair's gate lines, one via of 9 Ohm per level, 3.5 Ohm from the coil's feed to the varactors over 1 um of Metal3, and 3.8 Ohm in the supply path of `vdd_core` through four Via3 cuts. That VCO did not start at the slow corner. Via rows along the gate pads, the tank lines at 2.5 um and doubled on Metal4, 6 x 6 via stacks at the feeds and 16 cuts under `vdd_core` brought these to 4.5 Ohm, 1.4 Ohm and 1.7 Ohm, the pair's drains to 1.6 Ohm.
+- **The buffer's gate lines are part of the tank too.** The tank drives the pair's gates through the coupling caps and these lines, so their resistance is tank loss. One Via1 cut and a 2 x 2 via stack gave 16.5 Ohm from the cap to the 12 gates, and the worst tank swing over the corners fell to 0.47 V at `vdd_core` = 0.78 V. Metal1 and Metal2 over the gate pad with two via rows along it and a 2 x 5 via stack bring it to 4.5 Ohm.
 
 Four details of `cap_cmomf`, the only capacitor of this PDK besides the MOS gate:
 
@@ -422,9 +430,11 @@ make sim-em-momf            # EM fixtures, Palace models and solves of the caps 
 make sim-em-momf NP=32      # more MPI processes, on a compute host
 ```
 
-The `cap_cmomf` model is a capacitance only. The target simulates the geometries in `LEADS_CUT_GEOS`: the buffer's coupling caps, 10 um by 18.6 um on Metal2 to Metal4, which the tank sees. The decoupling caps `Cct1` and `Cct2` need no EM, since no spec depends on their parasitics. [`palace_momf.py`](verification/em/scripts/palace_momf.py) cuts the first cap of a geometry out of `layout/vco_top.gds`, with the two feeds that drive its plates, and joins the feeds with two Metal4 leads at an in-plane port. Three fixtures per geometry de-embed the leads and the feeds (open-short): the cap as drawn (`dut`), the feeds alone (`open`), and the comb replaced by solid metal on every level of its stack (`short`). The models use third-order elements, volume metals and 0.3 um cells along the conductors, about the finger pitch, and solve 10 GHz and 20 GHz. [`momf_parasitics.py`](verification/em/scripts/momf_parasitics.py) takes the series resistance from the real part of the de-embedded impedance at 20 GHz, the series inductance and the capacitance from its imaginary part at both frequencies, and the capacitance of each plate to the substrate from a C-coupled Magic extraction of the cap and its feeds alone, from the area and fringe terms, which magic#557 does not touch. It writes `verification/em/cap_cmomf_parasitics.json`, which `klayout-pex-leads` reads (see [Parasitic Extraction (PEX)](#parasitic-extraction-pex)).
+The `cap_cmomf` model is a capacitance only. The target simulates the geometries in `LEADS_CUT_GEOS`: the buffer's coupling caps, 10 um by 18.6 um on Metal2 to Metal4, which the tank sees. The decoupling caps `Cct1` and `Cct2` need no EM, since no spec depends on their parasitics. [`palace_momf.py`](verification/em/scripts/palace_momf.py) cuts the first cap of a geometry out of `layout/vco_top.gds`, with the two feeds that drive its plates, and joins the feeds with two Metal4 leads at an in-plane port. Three fixtures per geometry de-embed the leads and the feeds (open-short): the cap as drawn (`dut`), the feeds alone (`open`), and the comb replaced by solid metal on every level of its stack (`short`). The models use third-order elements, volume metals and 0.3 um cells along the conductors, about the finger pitch, and solve 10 GHz and 20 GHz. [`momf_parasitics.py`](verification/em/scripts/momf_parasitics.py) takes the series resistance from the real part of the de-embedded impedance at 20 GHz, the series inductance and the capacitance from its imaginary part at both frequencies, and the capacitance of each plate to the substrate from two C-coupled Magic extractions, the cap with its feeds less the feeds alone, whose metal the post-layout extraction keeps. These are the area and fringe terms, which magic#557 does not touch. It writes `verification/em/cap_cmomf_parasitics.json`, which `klayout-pex-leads` reads (see [Parasitic Extraction (PEX)](#parasitic-extraction-pex)).
 
-The combs make the meshes large: 288 thousand tetrahedra for the buffer's cap, about 40 GB of memory at third order by the scaling from a unit of `Cct2`, whose 978 thousand and 18 million unknowns took 139 GB within minutes. So the target runs on a compute host. Each fixture and its mesh build in a few minutes.
+The committed table gives 0.90 Ohm at 20 GHz (0.95 Ohm at 10 GHz), 4.9 pH, and 4.6 fF and 5.1 fF from the plates to the substrate, whose mean goes on both plates. The capacitance by EM is 156.8 fF, against 170.2 fF by the model and 152.6 fF in Magic's extraction of the comb. The netlist keeps the model's capacitance: with the EM value instead, the frequency rises by about 30 MHz and the tank swing by about 5 mV.
+
+The combs make the meshes large: 288 thousand tetrahedra for the buffer's cap, which took 9 minutes and 53 GB of memory with `NP=32`, the two other fixtures about a minute each. So the target runs on a compute host. Each fixture and its mesh build in a few minutes.
 
 
 ### Layout, Verification and Build
@@ -464,32 +474,33 @@ make klayout-pex-leads THRESHOLD=10000 MINRES=1000 MINDELAY=1   # Magic's defaul
 
 - [`drop_subcells.py`](scripts/drop_subcells.py) writes `vco_top` without the coil and the varactor array, with a port where each of their pins lands on the metal that remains: `vco_ind_LA`, `vco_ind_LB` and `vco_ind_LC` at the coil's feeds, `vco_var_rf_p` and `vco_var_rf_n` at the middle of the array's buses, `vco_var_VSS` at its substrate tap. Magic keeps such a label as a port of its own, joined to the net's other ports by the extracted resistance, so the coil model and the array attach where they really connect, and the extraction keeps everything between them and the macro's pins. The array's `vtune`, which carries no current, and the coil's substrate tap, for which its model has no terminal, get no port (`LEADS_SKIP`).
 - **A net without a resistor network keeps one of its ports.** Magic builds no network on a net without a device that carries current, at any threshold, and then keeps one of its ports and leaves the others unconnected. Here that would be `vdd_core` if the combs of `Cct1` and `Cct2` were cut out (see below). `drop_subcells.py` records which pins share a net in the layout (`--ties`), and [`pex_caps.py`](scripts/pex_caps.py) joins such a port to its net through 1 mOhm. [`check_pex_ports.py`](scripts/check_pex_ports.py) fails on any port that is still unconnected.
-- **The capacitances come from a C-coupled run of the same layout.** Magic's `extresist` counts the coupling capacitance of a net that gets a resistor network a second time, as capacitance to the substrate on the network's nodes (magic#557). In this macro, that is the 153 fF coupling caps of the buffer on the tank nets: the full-RC run has 4.78 pF in all, the C-coupled run of the same layout 4.43 pF, and the 0.35 pF more sit mostly between the tank nodes and `VSS`, where the C-coupled run has 17 fF and 23 fF. `klayout-pex-leads` runs KPEX twice, and [`pex_caps.py`](scripts/pex_caps.py) keeps the resistors and devices of the full-RC netlist and scales its capacitors per net pair to the C-coupled totals. A full-RC and a C-coupled run of the core alone, without the buffer's coupling caps, agree within 0.2 %.
+- **A net that only drives gates gets its network from a port.** Without one, Magic reads such a net as one node at 0 Ohm. The ports of the cut (see below) do that for the buffer's inputs here, 4.5 Ohm from each coupling cap to the 12 gates. For a net without a cut, `LEADS_PROBES` puts a port on it (`drop_subcells.py --probe`), and `pex_caps.py --internal` takes the port off the subcircuit again, as in the ihp-sg13g2 macro.
+- **The capacitances come from a C-coupled run of the same layout.** Magic's `extresist` counts the coupling capacitance of a net that gets a resistor network a second time, as capacitance to the substrate on the network's nodes (magic#557). With the buffer's combs read as metal, that is their 153 fF on the tank nets: the full-RC run has 4.78 pF in all, the C-coupled run of the same layout 4.43 pF, and the 0.35 pF more sit mostly between the tank nodes and `VSS`, where the C-coupled run has 17 fF and 23 fF. With those combs cut out (see below), the two runs have 4.16 pF and 4.11 pF. `klayout-pex-leads` runs KPEX twice, and [`pex_caps.py`](scripts/pex_caps.py) keeps the resistors and devices of the full-RC netlist and scales its capacitors per net pair to the C-coupled totals. A full-RC and a C-coupled run of the core alone, without the buffer's coupling caps, agree within 0.2 %.
 - **The extraction runs in KPEX, not in `sak-pex.sh`.** `sak-pex.sh` hits the same double count in full RC, and its C-coupled run leaves out the substrate capacitance of the tank nets altogether (0 fF from `rf_p` to `VSS` where KPEX finds 17 fF), so it cannot serve as the reference either. The cell netlists of `magic-pex` (bias and buffer) are verification outputs that no testbench reads.
-- **The buffer's coupling caps can go back in as PDK devices.** Magic extracts no `cap_cmomf` device and reads its comb as plain metal (magic#552), so the capacitance of the combs in the netlist is Magic's estimate of the metal, not the PDK model: 152.6 fF for each coupling cap of the buffer against 170.2 fF by the model, and 3.69 pF for `Cct1` and `Cct2` against 3.79 pF. The tank sees the coupling caps, so with `LEADS_CUT` set to `99/40 momf`, `drop_subcells.py` cuts their combs (`LEADS_CUT_GEOS`) out of the `Recog.momf` markers and leaves a port on each of the two feeds, and [`momf_lpe.py`](scripts/momf_lpe.py) puts the PDK `cap_cmomf` back between them at the drawn size, with the series resistance and inductance of the comb and the capacitance of each plate to `VSS` from the table of [EM Simulation of the MoM Caps](#em-simulation-of-the-mom-caps) (`LEADS_PARASITICS`). The ports become internal nodes, so the pins of `vco_top_leads.sym` stay as they are. That table needs an EM run on a compute host, so `LEADS_CUT` is empty until it exists. The combs of `Cct1` and `Cct2` stay metal: 3 % off the model does not matter for decoupling, and cut out they would leave `vdd_core` without a device in the extraction, so without a resistor network, its routing from the pin to the center tap one node as in the ihp-sg13g2 macro.
+- **The buffer's coupling caps go back in as PDK devices.** Magic extracts no `cap_cmomf` device and reads its comb as plain metal (magic#552), so the capacitance of a comb in the netlist is Magic's estimate of the metal, not the PDK model: 152.6 fF for each coupling cap of the buffer against 170.2 fF by the model, and 3.69 pF for `Cct1` and `Cct2` against 3.79 pF. The tank sees the coupling caps, so with `LEADS_CUT` at `99/40 momf`, `drop_subcells.py` cuts their combs (`LEADS_CUT_GEOS`) out of the `Recog.momf` markers and leaves a port on each of the two feeds, and [`momf_lpe.py`](scripts/momf_lpe.py) puts the PDK `cap_cmomf` back between them at the drawn size, with the series resistance and inductance of the comb and the capacitance of each plate to `VSS` from the table of [EM Simulation of the MoM Caps](#em-simulation-of-the-mom-caps) (`LEADS_PARASITICS`). The ports become internal nodes, so the pins of `vco_top_leads.sym` stay as they are. An empty `LEADS_CUT` extracts every comb as metal. The combs of `Cct1` and `Cct2` stay metal: 3 % off the model does not matter for decoupling, and cut out they would leave `vdd_core` without a device in the extraction, so without a resistor network, its routing from the pin to the center tap one node as in the ihp-sg13g2 macro.
 - The pins of the netlist are reordered to [`vco_top_leads.sym`](testbenches/xschem/vco_top_leads.sym), the symbol [`vco_top_lpe`](testbenches/xschem/vco_top_lpe.sch) places, see [Post-Layout Simulation](#post-layout-simulation).
 
 
 ### Post-Layout Simulation
 
-`vco_top_tb_tran_lpe` is `vco_top_tb_tran` around [`vco_top_lpe`](testbenches/xschem/vco_top_lpe.sch): the extraction of the whole macro without the coil and the varactor array (`make klayout-pex-leads`, see [Parasitic Extraction (PEX)](#parasitic-extraction-pex)), the coil's EM model at the coil's feeds, and the array's schematic at the middle of its buses. What the extraction misses is the routing inside the varactor array. And Magic puts the coupling capacitance of a net on one node of its resistor network, here the coupling caps of the buffer at the coil's feeds, so the resistance of the lines down to the buffer is not in series with them.
+`vco_top_tb_tran_lpe` is `vco_top_tb_tran` around [`vco_top_lpe`](testbenches/xschem/vco_top_lpe.sch): the extraction of the whole macro without the coil and the varactor array (`make klayout-pex-leads`, see [Parasitic Extraction (PEX)](#parasitic-extraction-pex)), the coil's EM model at the coil's feeds, and the array's schematic at the middle of its buses. What the extraction misses is the routing inside the varactor array.
 
 | TT, 27 C, `vtune` = 0.75 V | Schematic | Post-layout |
 | --- | --- | --- |
-| Frequency | 22.72 GHz | 20.21 GHz |
-| Tuning range, `vtune` 0 V to 1.5 V | 21.76 GHz to 24.40 GHz | 19.52 GHz to 21.46 GHz |
-| Tank nodes | 0.11 V to 1.53 V | 0.20 V to 1.33 V |
-| Output, from the peak-to-peak swing | -7.7 dBm | -10.2 dBm |
-| `vdd_core` current | 4.79 mA | 4.89 mA |
-| `VDD` current | 6.31 mA | 5.62 mA |
+| Frequency | 22.69 GHz | 20.11 GHz |
+| Tuning range, `vtune` 0 V to 1.5 V | 21.75 GHz to 24.34 GHz | 19.45 GHz to 21.35 GHz |
+| Tank nodes | 0.11 V to 1.58 V | 0.23 V to 1.33 V |
+| Output, from the peak-to-peak swing | -7.5 dBm | -10.2 dBm |
+| `vdd_core` current | 5.05 mA | 5.28 mA |
+| `VDD` current | 6.37 mA | 5.65 mA |
 
 Both columns are the same ngspice transient, so the output here is read from the peak-to-peak swing, which counts the harmonics and reads about 1 dB above the fundamental of the PSS.
 
-- **The frequency falls by 11 %**, through the capacitance of the buffer's inputs, which the tank sees through the coupling capacitors, and of the leads: 17 fF from `rf_p` and 23 fF from `rf_n` to `VSS`. The 5.5 fF that `rf_n` has more come from the `VSS` return beside its line, 2 % of the capacitance of a tank node.
-- **The swing is smaller** because the resistance of the leads adds to the coil's own 2.05 Ohm per side: from the coil's feed 1.4 Ohm to the varactors, 1.6 Ohm to the pair's drains and 4.4 Ohm to its gates, 1.7 Ohm from the `VSS` pin to the pair's sources and 1.7 Ohm from the `vdd_core` pin to the center tap. The varactors carry the largest share of the tank current, most at `vtune` 0 V, so the slow corner there is the one that starts last.
+- **The frequency falls by 11 %**, through the capacitance of the buffer's inputs, which the tank sees through the coupling capacitors, and of the leads: 18 fF from `rf_p` and 23 fF from `rf_n` to `VSS`, 4.9 fF of each on the plate of the coupling cap. The 5 fF that `rf_n` has more come from the `VSS` return beside its line, 2 % of the capacitance of a tank node.
+- **The swing is smaller** because the resistance of the leads adds to the coil's own 2.05 Ohm per side: from the coil's feed 1.4 Ohm to the varactors, 1.6 Ohm to the pair's drains, 4.5 Ohm to its gates and 4.6 Ohm to the coupling caps, behind which 4.5 Ohm lead to the buffer's gates, 1.7 Ohm from the `VSS` pin to the pair's sources and 1.7 Ohm from the `vdd_core` pin to the center tap. The varactors carry the largest share of the tank current, most at `vtune` 0 V, so the slow corner there is the one that starts last.
 - **The macro is centered on this simulation.** The coil's diameter and the length of its leads put the post-layout frequency at 20 GHz in the middle of the tuning range, and `vdd_core` sits in the middle of the post-layout window, see [Corners](#corners).
 
-The first post-layout simulation of this macro extracted the leads at Magic's default thresholds, which left every net but `VSS` without resistance: it showed 19.82 GHz and the tank at 0.12 V to 1.31 V with a coil of 415 pH and `vdd_core` at 0.72 V. With every resistance in, that layout did not start at the slow corner. The leads were redrawn (see [What the scripts had to learn](#generate-the-layouts-with-klayout-python-scripts)), the coil got 10 um of keep-out instead of 30 um and an inner diameter of 50 um instead of 52 um, 380 pH, and `vdd_core` moved to the middle of its post-layout window, 0.78 V.
+The first post-layout simulation of this macro extracted the leads at Magic's default thresholds, which left every net but `VSS` without resistance: it showed 19.82 GHz and the tank at 0.12 V to 1.31 V with a coil of 415 pH and `vdd_core` at 0.72 V. With every resistance in, that layout did not start at the slow corner. The leads were redrawn (see [What the scripts had to learn](#generate-the-layouts-with-klayout-python-scripts)), the coil got 10 um of keep-out instead of 30 um and an inner diameter of 50 um instead of 52 um, 380 pH, and `vdd_core` moved to the middle of its post-layout window. With the buffer's gate lines strapped and the coupling caps as devices, that window is 0.78 V to 0.82 V, so `vdd_core` is 0.80 V.
 
 
 ### Verify, Build and Simulate All
@@ -513,12 +524,12 @@ Runs `klayout-script-all`, `klayout-verify-all`, `magic-verify-all`, `build-top`
 
 This VCO is kept simple on purpose. These are the places where it falls short, and what a better design would change:
 
-- **Phase noise** is -102.2 dBc/Hz at 1 MHz. Published 130 nm CMOS LC VCOs from 20 GHz to 27 GHz measure -102 dBc/Hz to -113 dBc/Hz [[1]](#references)[[3]](#references)[[4]](#references)[[5]](#references), Jung and Park -113 dBc/Hz at 26.9 GHz with a resonator Q of 19 [[1]](#references). The tank sets the limit here: the coil's Q is 11.8, against the microstrip resonator of the paper, and the paper's own comparison shows a symmetric spiral as good as its microstrip only up to 22.4 GHz. Wider traces and fewer turns raise the coil's Q, and in this process the only thick metal is the 2 um TopMetal1. After the tank, the buffer's tail bias is the largest contributor (39 %), and below 1 MHz the largest of all, which a larger filter capacitor or a bias of the buffer that does not change its input capacitance would remove. The phase noise is simulated on the schematic only, see the last point.
-- **`vdd_core` is a noise input.** The tank's common mode is `vdd_core`, which is also the varactor's operating point, so noise on `vdd_core` moves the frequency by -1.4 GHz/V at `vtune` = 0.75 V post-layout, close to the tuning gain. The pad supply has to be as quiet as `vtune`. The paper measured with a laboratory supply. An on-chip regulator would bring its own noise into the same path.
-- **The core current is not defined.** With no current source, it follows the process and the temperature (3.6 mA to 5.7 mA at 0.78 V over the post-layout corners), and `vdd_core` has only 30 mV of room either way between no start at SS and an overstressed tank at FF, see [Corners](#corners). A per-die trim of `vdd_core` is the way a voltage-biased oscillator is usually set up.
-- **The `cap_cmomf` model is a capacitance only**: an area density, no series resistance of its fingers and no substrate capacitance. The schematic sees neither. The post-layout simulation sees both through Magic's extraction of the combs, which also sets their capacitance, 10 % below the model on the buffer's caps, until the EM of the buffer's caps has run and `LEADS_CUT` puts the PDK device in there, see [Parasitic Extraction (PEX)](#parasitic-extraction-pex). KLayout LVS checks the caps' connections but not their size, which `check-mom` does.
+- **Phase noise** is -102.3 dBc/Hz at 1 MHz. Published 130 nm CMOS LC VCOs from 20 GHz to 27 GHz measure -102 dBc/Hz to -113 dBc/Hz [[1]](#references)[[3]](#references)[[4]](#references)[[5]](#references), Jung and Park -113 dBc/Hz at 26.9 GHz with a resonator Q of 19 [[1]](#references). The tank sets the limit here: the coil's Q is 11.8, against the microstrip resonator of the paper, and the paper's own comparison shows a symmetric spiral as good as its microstrip only up to 22.4 GHz. Wider traces and fewer turns raise the coil's Q, and in this process the only thick metal is the 2 um TopMetal1. After the tank, the buffer's tail bias is the largest contributor (39 %), and below 1 MHz the largest of all, which a larger filter capacitor or a bias of the buffer that does not change its input capacitance would remove. The phase noise is simulated on the schematic only, see the last point.
+- **`vdd_core` is a noise input.** The tank's common mode is `vdd_core`, which is also the varactor's operating point, so noise on `vdd_core` moves the frequency by -1.3 GHz/V at `vtune` = 0.75 V post-layout, close to the tuning gain. The pad supply has to be as quiet as `vtune`. The paper measured with a laboratory supply. An on-chip regulator would bring its own noise into the same path.
+- **The core current is not defined.** With no current source, it follows the process and the temperature (3.7 mA to 6.2 mA at 0.80 V over the post-layout corners), and `vdd_core` has only 20 mV of room either way between no start at SS and an overstressed tank at FF, see [Corners](#corners). A per-die trim of `vdd_core` is the way a voltage-biased oscillator is usually set up.
+- **The `cap_cmomf` model is a capacitance only**: an area density, no series resistance of its fingers and no substrate capacitance, and on the buffer's caps 8.5 % above the EM result. The schematic sees neither. The post-layout simulation adds the EM parasitics to the model on the buffer's caps and reads the decoupling caps as metal, see [Parasitic Extraction (PEX)](#parasitic-extraction-pex). KLayout LVS checks the caps' connections but not their size, which `check-mom` does.
 - **The oscillator PSS is fragile.** It needs `pss_minpts=4000`, `reltol=3e-5` and a period guess at the transient's (see the testbench notes), it converges at the nominal tuning voltage but not at every one, which is why the tuning curve uses transients, and a slow state can settle wrong without an error, which the plot script's check against the transient catches.
-- **PNOISE and PAC need care at low offsets.** With `tran_fbr=0.02` (see the testbench notes) the tuning gain from PAC is flat within 2 % from 100 MHz down to 180 kHz (2.07 GHz/V), and the phase noise follows its sources: 20 dB per decade above 3 MHz, steeper below, where the filtered bias noise takes over. Below about 100 kHz the tuning gain falls again (0.56 GHz/V at 10 kHz) and the phase noise flattens, a limit that moves down with a finer time step of the period. So read the phase noise from about 100 kHz up, and check it against a transient-noise simulation. With `oscillator=1`, `pnoise` computes the noise as for a driven circuit, so it is the total noise, phase and amplitude, which close to the carrier is the phase noise.
+- **PNOISE and PAC need care at low offsets.** With `tran_fbr=0.02` (see the testbench notes) the tuning gain from PAC is flat within 2 % from 100 MHz down to 180 kHz (2.01 GHz/V), and the phase noise follows its sources: 20 dB per decade above 3 MHz, steeper below, where the filtered bias noise takes over. Below about 100 kHz the tuning gain falls again (0.49 GHz/V at 10 kHz) and the phase noise flattens, a limit that moves down with a finer time step of the period. So read the phase noise from about 100 kHz up, and check it against a transient-noise simulation. With `oscillator=1`, `pnoise` computes the noise as for a driven circuit, so it is the total noise, phase and amplitude, which close to the carrier is the phase noise.
 - **The post-layout simulation is a transient.** VACASK does not read the SPICE netlists of the extraction without a translation, so the post-layout phase noise is not simulated, and the varactor array's own routing is not extracted.
 
 
@@ -534,9 +545,9 @@ The macro is built in steps, each one reviewed before the next:
 - [x] Layout of every cell as a KLayout Python script, DRC and LVS clean with KLayout, the cells Magic can compare clean with Magic, PEX of the bias and the buffer, the `cap_cmomf` sizes checked against the schematics
 - [x] Core after Jung and Park [[1]](#references): voltage-biased pair on its own supply `vdd_core`, buffer bias filters, compact layout
 - [x] Post-layout simulation of the whole macro: KPEX with every resistance above 1 Ohm, ports where the coil and the varactor array connect, the capacitances from a C-coupled run (magic#557), the EM model of the coil
-- [x] Tank leads redrawn for the extracted resistance, and the macro centered on the post-layout simulation: coil keep-out and diameter, `vdd_core` at 0.78 V
+- [x] Tank leads redrawn for the extracted resistance, and the macro centered on the post-layout simulation: coil keep-out and diameter, `vdd_core` at 0.80 V
 - [x] Corners (SS, TT, FF, -40 C to 85 C, both ends of the tuning range, the `vdd_core` trim range)
-- [ ] The buffer's coupling caps as PDK devices with their EM parasitics in the post-layout netlist: the tooling is in place (`drop_subcells.py --cut`, `momf_lpe.py`, `make sim-em-momf`), the EM runs on a compute host
+- [x] The buffer's coupling caps as PDK devices with their EM parasitics in the post-layout netlist (`drop_subcells.py --cut`, `momf_lpe.py`, `make sim-em-momf` on a compute host)
 - [x] Port from ihp-sg13g2, see [Porting from ihp-sg13g2](#porting-from-ihp-sg13g2)
 - [ ] Enable and power-up transient
 - [ ] More RF analyses: transient noise as the cross-check of PNOISE, the post-layout phase noise, HB, HBAC and HBNOISE on the buffer, ACSP of the buffer
@@ -553,7 +564,7 @@ The circuit, the device sizes, the testbenches and the flow are those of the VCO
 | --- | --- | --- |
 | `inductor3` PCell, windings in TopMetal2 (3 um), underpass in TopMetal1, 52 um inner diameter, keep-out 30 um | an octagon drawn by a script, windings in TopMetal1 (2 um), crossing on Metal4 and Metal3, 50 um inner diameter, keep-out 10 um | [`vco_ind.py`](scripts/layout/vco_ind.py) |
 | `inductor3` device in `vco_core` for LVS, its center tap a pin | `inductor` device beside the core in `vco_top`, the center tap checked on the GDS | [`vco_ind_lvs.sym`](schematic/xschem/vco_ind_lvs.sym), [`check_coil_tap.py`](scripts/check_coil_tap.py) |
-| MIM coupling caps of 150 fF | `cap_cmomf` on Metal2 to Metal4, 10 um by 18.6 um, 153 fF extracted | `vco_buf` |
+| MIM coupling caps of 150 fF | `cap_cmomf` on Metal2 to Metal4, 10 um by 18.6 um, 170 fF by the model, 157 fF by EM | `vco_buf` |
 | `Cct1` and `Cct2`, 4.9 pF of MIM | six `cap_cmomf` units on Metal1 to Metal4, 3.8 pF | `vco_core` |
 | `VSS` on Metal5 bars and a Metal5 strap under a TopMetal2 strap | Metal4 bars, a TopMetal1 return from the pair and a TopMetal1 strap | `vco_core`, `vco_top` |
 | `SVaricap` with nBuLay, `Nx=7` | `SVaricap` with ThickGateOx, the same model, `Nx=8` | `vco_var` |
@@ -561,7 +572,7 @@ The circuit, the device sizes, the testbenches and the flow are those of the VCO
 | PSS from `tper=44.3p` | `tper=43.9p` | `vco_top_tb_pss_vacask` |
 | Magic LVS of the buffer with Netgen's PDK setup | a Netgen rerun without `cap_cmomf` | [`netgen_setup.tcl`](scripts/netgen_setup.tcl), `Makefile` |
 
-Both macros are centered on their post-layout simulation, each with its own means. The coil drawn here has 380.5 pH and a Q of 11.8 at 20.25 GHz, its short leads and smaller diameter take 9 % off the 417 pH and Q 10.6 of the TopMetal2 coil of ihp-sg13g2 (still at second order there, see its README). That `inductor3` keeps its 30 um keep-out and draws no clean octagon below 51 um at this width and spacing, so ihp-sg13g2 is centered with smaller varactors instead (`Nx=7`, 12 % less tuning gain). Post-layout, this macro oscillates at 20.21 GHz with `vdd_core` at 0.78 V, the one of ihp-sg13g2 at 20.06 GHz with 0.79 V, and both start at every corner. The decoupling of `vdd_core` is a quarter smaller here, and the macro is 143 um by 176.9 um, 38.6 um shorter than the one of ihp-sg13g2.
+Both macros are centered on their post-layout simulation, each with its own means. The coil drawn here has 380.5 pH and a Q of 11.8 at 20.25 GHz, its short leads and smaller diameter take 9 % off the 418 pH and Q 10.9 of the TopMetal2 coil of ihp-sg13g2. That `inductor3` keeps its 30 um keep-out and draws no clean octagon below 51 um at this width and spacing, so ihp-sg13g2 is centered with smaller varactors instead (`Nx=7`, 12 % less tuning gain). Post-layout, this macro oscillates at 20.11 GHz with `vdd_core` at 0.80 V, the one of ihp-sg13g2 at 20.01 GHz with 0.79 V, and both start at every corner. The decoupling of `vdd_core` is a quarter smaller here, and the macro is 143 um by 176.9 um, 38.6 um shorter than the one of ihp-sg13g2.
 
 
 ## Start a New RF Macro from This One
