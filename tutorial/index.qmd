@@ -1369,7 +1369,7 @@ The [Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/
 | Step | Tools | Make target | Output |
 | :--- | :--- | :--- | :--- |
 | Layout generation | KLayout Python | `klayout-script`, `klayout-script-all` | `layout/` |
-| DRC | KLayout, Magic | `klayout-drc`, `magic-drc` | `verification/drc/` |
+| DRC | KLayout, Magic | `klayout-drc`, `klayout-drc-regular`, `magic-drc` | `verification/drc/` |
 | LVS | Xschem, KLayout, Magic, Netgen | `klayout-lvs`, `magic-lvs` | `verification/lvs/`, `netlist/schematic/`, `netlist/layout/` |
 | Layout checks | Python | `check-mom`, `check-coil-tap` | the log |
 | PEX | KPEX, Magic | `klayout-pex-leads`, `klayout-pex`, `magic-pex` | `netlist/pex/` |
@@ -1466,7 +1466,7 @@ Some of the traps the agent ran into are worth knowing for any KLayout script:
 
 ## DRC, LVS and PEX {#sec-rf-verify}
 
-The verification targets are those of the inverter, see @sec-analog: `klayout-drc`, `magic-drc`, `klayout-lvs`, `magic-lvs`, `klayout-pex`, `magic-pex` and the `*-verify` targets, all with `CELL=<cellname>`. What differs is which check can run on which cell:
+The verification targets are those of the inverter, see @sec-analog: `klayout-drc`, `magic-drc`, `gdscheck-drc`, `klayout-lvs`, `magic-lvs`, `klayout-pex`, `magic-pex` and the `*-verify` targets, all with `CELL=<cellname>`. What differs is which check can run on which cell:
 
 | Cell | KLayout | Magic |
 | :--- | :--- | :--- |
@@ -1484,6 +1484,10 @@ The gaps have three reasons:
 - **Magic extracts the varactor as two two-terminal halves** and extracts no device for the coil or for `cap_cmomf`, so Netgen cannot compare a cell that holds the varactor or the coil, and compares the buffer without its coupling caps.
 - **KPEX cannot read Magic's extraction of the varactor**, which Magic writes as a Verilog-A device. Every cell above the array inherits it.
 - **An RC extraction of a coil is not its RF model.** It misses the inductance and the coupling, and Magic's view of the coil's metal shorts `rf_p`, `rf_n` and `vdd_core`. The model of the coil is its EM simulation, see @sec-rf-em.
+
+The KLayout `macro` level of `klayout-drc` leaves out the density rules, and with them rules a macro has to meet on its own, such as the minimum metal areas `Mn.d` and `pSD.b`. So `klayout-verify-all` also runs `klayout-drc-regular` on `TOP`, which fails on any rule but the global densities that only the chip's fill can meet.
+
+`magic-drc` does not pass: `vco_var`, `vco_core` and `vco_top` report `LU.d` on `sg13_hv_svaricap`. A bare PCell, with none of this macro's wiring, reports the same rule and KLayout passes it, so it belongs to the PDK's cell or Magic's rule deck and gets fixed upstream. Until then `magic-verify-all` and `make all` stop there, so run the targets after it by hand.
 
 Two checks close gaps of the LVS deck. `check-mom` compares the size and the metal stack of every `cap_cmomf` with its schematic, since the deck compares neither. `check-coil-tap` proves on the GDS that the coil's center tap lands on its electrical center and that `vdd_core` reaches the coil through it, since no LVS sees the tap: inside the `IND` box the deck treats the metal as the device.
 

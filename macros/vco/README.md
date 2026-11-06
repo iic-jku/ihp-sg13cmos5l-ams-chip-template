@@ -3,7 +3,7 @@
 A 20 GHz LC voltage-controlled oscillator built from CMOS devices only, the RF macro of this template. It is the starting point for RF blocks: next to the analog flow of the [inverter](../inverter/README.md) it carries the RF layer, the EM simulation of the passives with AWS Palace, their lumped-element models from snp2le, and the periodic steady-state, small-signal and noise analyses of VACASK. The core follows a published design, the 27 GHz cross-coupled VCO of Jung and Park [[1]](#references), scaled to 20 GHz and to the devices of this PDK. It is the VCO of the ihp-sg13g2 template, ported to a process without TopMetal2, Metal5, MIM capacitors and an inductor PCell, see [Porting from ihp-sg13g2](#porting-from-ihp-sg13g2).
 
 > [!NOTE]
-> This macro is under construction on the branch `add-rf-macro`. The schematic, its simulations over corners, the layout of every cell (KLayout Python scripts, DRC and LVS clean), the EM model of the coil and a post-layout simulation are in place. The chip integration follows, see [Status](#status). The chip top-level does not build it yet.
+> This macro is under construction on the branch `add-rf-macro`. The schematic, its simulations over corners, the layout of every cell (KLayout Python scripts, KLayout DRC clean but for the density rules the chip's fill resolves, LVS matching), the EM model of the coil and a post-layout simulation are in place. The chip integration follows, see [Status](#status). The chip top-level does not build it yet.
 
 > [!IMPORTANT]
 > The VACASK testbenches need the IIC-OSIC-TOOLS container with tag `2026.10` or later: the oscillator PSS (`oscillator=1`), `pac` and `pnoise` arrived in VACASK after the `2026.09` image.
@@ -439,7 +439,7 @@ The combs make the meshes large: 288 thousand tetrahedra for the buffer's cap, w
 
 ### Layout, Verification and Build
 
-The verification and build targets are those of the [inverter](../inverter/README.md): `klayout-drc`, `magic-drc`, `klayout-lvs`, `magic-lvs`, their `*-lvs-netlist` exporters, `symbol-pex`, `klayout-pex`, `magic-pex`, `klayout-verify`, `magic-verify`, `check-boundary`, `lef`, `lib`, `verilog`, `copy-gds`, `render-gds` and `build-top`, plus `check-mom`, `check-coil-tap` and `klayout-pex-leads`. As in the inverter, `klayout-verify` runs DRC and LVS and `magic-verify` DRC, LVS and PEX. What runs on which cell:
+The verification and build targets are those of the [inverter](../inverter/README.md): `klayout-drc`, `magic-drc`, `gdscheck-drc`, `klayout-lvs`, `magic-lvs`, their `*-lvs-netlist` exporters, `symbol-pex`, `klayout-pex`, `magic-pex`, `klayout-verify`, `magic-verify`, `check-boundary`, `lef`, `lib`, `verilog`, `copy-gds`, `render-gds` and `build-top`, plus `check-mom`, `check-coil-tap`, `klayout-pex-leads` and `klayout-drc-regular`. As in the inverter, `klayout-verify` runs DRC and LVS and `magic-verify` DRC, LVS and PEX. What runs on which cell:
 
 | Cell | KLayout | Magic |
 | --- | --- | --- |
@@ -455,6 +455,10 @@ The verification and build targets are those of the [inverter](../inverter/READM
 - **Magic extracts `sg13_hv_svaricap` as two two-terminal halves** and extracts no device for the coil or for `cap_cmomf`, so Netgen cannot compare a cell that holds the varactor or the coil, and compares the buffer without its coupling caps.
 - **KPEX cannot read Magic's extraction of the varactor.** Magic writes it as a `veriloga` device, and KPEX's parser of the `.ext` file stops on `'veriloga' is not a valid DeviceType`. Every cell above the array inherits it.
 - **A parasitic extraction of a cell that contains the coil is not its RF model.** RC extraction misses the coil's inductance and its coupling, and Magic's view of the coil's metal shorts `rf_p`, `rf_n` and `vdd_core`. The coil's model is its EM simulation.
+
+The KLayout `macro` level of `klayout-drc` leaves out the density rules, and with them rules a macro has to meet on its own, such as the minimum metal areas `Mn.d` and `pSD.b`. So `klayout-verify-all` also runs `klayout-drc-regular` on `TOP`, which fails on any rule but the global densities that only the chip's fill can meet.
+
+`magic-drc` does not pass: `vco_var`, `vco_core` and `vco_top` report `LU.d` on `sg13_hv_svaricap`. A bare PCell, with none of this macro's wiring, reports the same rule and KLayout passes it, so it belongs to the PDK's cell or Magic's rule deck and gets fixed upstream. Until then `magic-verify-all` and `make all` stop there, so run the targets after it by hand. `gdscheck-drc` needs a container whose `sak-drc.sh` has `-g` and has not run on this macro yet.
 
 `make build-top` checks the PR boundary and writes the LEF, the Liberty stub, the Verilog stub (from the Magic PEX netlist of `vco_top`), the GDS in `final/` and the renders.
 
@@ -542,7 +546,7 @@ The macro is built in steps, each one reviewed before the next:
 - [x] Testbenches: start-up transient (ngspice), oscillator PSS with PNOISE and PAC, and the tuning curve (VACASK)
 - [x] Layout of the coil, drawn by a KLayout Python script in TopMetal1, DRC and LVS clean, its center tap checked on the GDS
 - [x] EM simulation of the drawn coil with Palace (gds2palace, volume metals) and its snp2le model, checked with ACSP
-- [x] Layout of every cell as a KLayout Python script, DRC and LVS clean with KLayout, the cells Magic can compare clean with Magic, PEX of the bias and the buffer, the `cap_cmomf` sizes checked against the schematics
+- [x] Layout of every cell as a KLayout Python script, KLayout DRC clean at `regular` level but for density, LVS clean with KLayout, the cells Magic can compare clean with Magic, PEX of the bias and the buffer, the `cap_cmomf` sizes checked against the schematics
 - [x] Core after Jung and Park [[1]](#references): voltage-biased pair on its own supply `vdd_core`, buffer bias filters, compact layout
 - [x] Post-layout simulation of the whole macro: KPEX with every resistance above 1 Ohm, ports where the coil and the varactor array connect, the capacitances from a C-coupled run (magic#557), the EM model of the coil
 - [x] Tank leads redrawn for the extracted resistance, and the macro centered on the post-layout simulation: coil keep-out and diameter, `vdd_core` at 0.80 V
