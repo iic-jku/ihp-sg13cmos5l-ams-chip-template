@@ -251,7 +251,7 @@ text {font-family: Sans-Serif;}
 <path class="l7" d="M323.295 345.112L330.814 345.112"/>
 <path class="l7" d="M390.969 345.112L398.488 345.112"/>
 <path class="l7" d="M375.93 360.151L375.93 367.671"/>
-<text fill="#222222"  xml:space="preserve" font-size="15.6403" transform="translate(714.302, 667.608)" >2026-11-04  14:56:18</text>
+<text fill="#222222"  xml:space="preserve" font-size="15.6403" transform="translate(714.302, 667.608)" >2026-11-06  07:22:21</text>
 <text fill="#222222"  xml:space="preserve" font-size="15.6403" transform="translate(477.442, 637.531)" >Simon Dorrer</text>
 <text fill="#222222"  xml:space="preserve" font-size="15.6403" transform="translate(477.442, 667.608)" >Page  of </text>
 <text fill="#222222"  xml:space="preserve" font-size="15.6403" transform="translate(605.271, 667.608)" >Rev. 1.0</text>
@@ -397,11 +397,11 @@ text {font-family: Sans-Serif;}
 <circle class="l1" cx="451.124" cy="570.694" r="1.39109"/>
 <text fill="#222222"  xml:space="preserve" font-size="19.5504" transform="translate(142.829, 39.5308)" >VCO Core, Voltage-Biased NMOS Cross-Coupled Pair</text>
 <text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 139.895)" >After Jung and Park, Electronics Letters 44(10), 2008: no current source,</text>
-<text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 146.623)" >the center tap of the coil sits on its own supply vdd_core (0.78 V, own pad).</text>
+<text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 146.623)" >the center tap of the coil sits on its own supply vdd_core (0.80 V, own pad).</text>
 <text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 153.35)" >The tank common mode is vdd_core, so vtune from 0 V to VDD sweeps the</text>
 <text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 160.077)" >accumulation-mode varactors across their C-V transition at 0 V gate-to-well.</text>
 <text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 166.804)" >Each tank node swings from about 0.11 V to 1.53 V, 0.20 V to 1.33 V post-layout.</text>
-<text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 173.532)" >The pair draws 4.8 mA at Vgs = vdd_core. Cct1 and Cct2, six cap_cmomf units</text>
+<text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 173.532)" >The pair draws 5.0 mA at Vgs = vdd_core. Cct1 and Cct2, six cap_cmomf units</text>
 <text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 180.259)" >(3.8 pF by the model, 3.7 pF in the extraction), decouple vdd_core</text>
 <text fill="#222222"  xml:space="preserve" font-size="5.86512" transform="translate(571.434, 186.986)" >at the center tap.</text>
 <text fill="#222222"  xml:space="preserve" font-size="4.8876" transform="translate(293.217, 236.76)" >The tank coil sits beside the core in vco_top: the LVS deck extracts it in the top cell of a run.</text>
