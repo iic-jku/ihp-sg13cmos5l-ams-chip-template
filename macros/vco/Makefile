@@ -537,9 +537,9 @@ magic-lvs-netlist: ## Export SPICE schematic netlist from Xschem for Magic + Net
 	' $(XSCHEM_SCH_DIR)/$(CELL).sch
 .PHONY: magic-lvs-netlist
 
-# Magic extracts no device for cap_cmomf, so for the buffer, Netgen reruns on the kept extraction with
+# Magic extracts no device for cap_cmomf, so for the buffer and the bias, Netgen reruns on the kept extraction with
 # scripts/netgen_setup.tcl, which leaves the MoM caps out. KLayout LVS and check-mom cover them.
-MOM_CELLS := vco_buf
+MOM_CELLS := vco_buf vco_bias
 magic-lvs: ## Run Magic + Netgen LVS of the CELL cell (usage: make magic-lvs [CELL=<cellname>])
 	mkdir -p $(LVS_RPT_DIR)
 	mkdir -p $(NET_LAY_DIR)
@@ -681,6 +681,7 @@ klayout-verify: ## Verify CELL cell with KLayout (usage: make klayout-verify [CE
 
 klayout-verify-all: ## Verify every cell with KLayout (DRC, LVS), the cap_cmomf sizes and the coil's center tap, PEX of TOP's leads
 	$(MAKE) klayout-verify CELL=vco_bias
+	$(MAKE) check-mom CELL=vco_bias
 	$(MAKE) klayout-verify CELL=vco_buf
 	$(MAKE) check-mom CELL=vco_buf
 	$(MAKE) klayout-verify CELL=vco_var

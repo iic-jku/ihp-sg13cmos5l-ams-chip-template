@@ -1329,7 +1329,7 @@ The core follows a published design, the 27 GHz cross-coupled VCO of Jung and Pa
 | `vco_ind` | the center-tapped tank coil: the inductor that the LVS deck extracts (`vco_ind_lvs.sym`) for LVS, the lumped-element model `vco_ind_le` for simulation |
 | `vco_var` | the varactor array: three `sg13_hv_svaricap`, gates on the tank, wells on `vtune` |
 | `vco_buf` | AC-coupled differential output buffer with 50 $\Omega$ back-termination |
-| `vco_bias` | the enable logic and the two bias voltages of the buffer, each behind an RC low-pass filter |
+| `vco_bias` | the enable logic, the two bias voltages of the buffer, each behind an RC low-pass filter, and the RF decoupling of `vbg_buf` |
 
 : Cells of the `vco` macro. {#tbl-vco-cells tbl-colwidths="[15,85]"}
 
@@ -1470,7 +1470,7 @@ The verification targets are those of the inverter, see @sec-analog: `klayout-dr
 
 | Cell | KLayout | Magic |
 | :--- | :--- | :--- |
-| `vco_bias` | DRC, LVS | DRC, LVS, PEX |
+| `vco_bias` | DRC, LVS, `check-mom` | DRC, LVS without the `cap_cmomf`, PEX |
 | `vco_buf` | DRC, LVS, `check-mom` | DRC, LVS without the `cap_cmomf`, PEX |
 | `vco_var` | DRC, LVS | DRC |
 | `vco_ind` | DRC, LVS, `check-coil-tap` | DRC |
