@@ -1,4 +1,4 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 04/11/2026 13:42
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 06/11/2026 09:38
 
 .SUBCKT vco_core VSS rf_n rf_p vdd_core vtune
 X$1 VSS rf_p vtune rf_n vco_var
