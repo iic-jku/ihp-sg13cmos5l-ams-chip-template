@@ -218,7 +218,9 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 ├─ 📁 scripts/
 │  ├─ add_logo_fill.sh
 │  ├─ add_rectangle.py
-│  └─ check_pex_ports.py
+│  ├─ check_pex_ports.py
+│  ├─ test_tie_pex_substrate.py
+│  └─ tie_pex_substrate.py
 ├─ 📁 testbenches/
 │  ├─ 📁 cocotb/
 │  │  ├─ chip_top_tb.gtkw
@@ -944,16 +946,21 @@ python3 scripts/check_pex_ports.py netlist/pex/chip_top_magic_pex_1.spice
 python3 scripts/check_pex_ports.py -v netlist/pex/*.spice     # -v also prints the size of each subcircuit
 ```
 
-**KLayout PEX** currently uses `kpex` with the Magic extraction engine (the 2.5D engine is work in progress):
-
-> [!WARNING]
-> `kpex` does not support the `ihp-sg13cmos5l` PDK yet, so the `klayout-pex` target currently fails. Use `magic-pex` for parasitic extraction until kpex gains CMOS5L support. In the `klayout-verify` target, the `klayout-pex` target is currently commented out.
+**KLayout PEX** uses the 2.5D engine of `kpex` (`kpex extract --2.5D`), which needs kpex 0.7.0 or later:
 
 ```sh
 make klayout-pex
 make klayout-pex CELL=chip_top
 make klayout-pex CELL=chip_top EXT_MODE=3
 ```
+
+On top of the extraction the target does three things:
+
+- It passes the CDL netlist of `klayout-lvs-netlist` as schematic, so that kpex checks its own LVS netlist against the device classes and totals of the schematic. A cell without a schematic gets a dummy one. kpex does not read the `$[rhigh]` lines of the CDL netlist, so a cell with resistors only stops `EXT_MODE=3` with `kpex reads no devices from the schematic`.
+- It reduces the full-RC netlist with TICER (`--reduce ticer`), which leaves far fewer elements and a faster simulation, and ngspice with `klu` can lose the operating point of an unreduced netlist (resistors below 1 mOhm).
+- It ties the substrate port `sub!` of the 2.5D netlist to `PEX_SUB_NET` (default `VSS`, [`scripts/tie_pex_substrate.py`](scripts/tie_pex_substrate.py)), as Magic ties the substrate to `VSS`, so the netlist keeps the pins of `<CELL>_pex.sym`.
+
+The chip top-level has not been extracted with the 2.5D engine yet. `counter_top` alone had not finished `EXT_MODE=2` after 8 min, when the run was stopped, so plan a server for `chip_top`.
 
 **Magic PEX** uses `sak-pex.sh`, which extracts the parasitics with Magic (C-decoupled, C-coupled, or full-RC):
 
@@ -1108,7 +1115,7 @@ The following tools and flows are checked:
 | PNG to GDS logo generation, KLayout DRC, Magic DRC | `sg13cmos5l_ip__jku all` (single logo) |
 | Xschem + ngspice (analog simulation) | inverter `sim-xschem` (`inverter_tb_dc_vout`) |
 | CACE (+ ngspice) | inverter CACE, single parameter set (`ac_params`) |
-| KLayout DRC (`sak-drc.sh`) + KLayout LVS (`sak-lvs.sh`) | inverter `klayout-verify CELL=inverter_top` |
+| KLayout DRC (`sak-drc.sh`) + KLayout LVS (`sak-lvs.sh`) + KLayout PEX (`kpex`) | inverter `klayout-verify CELL=inverter_top` |
 | Magic DRC (`sak-drc.sh`) + Magic extract + Netgen LVS (`sak-lvs.sh`) + Magic PEX (`sak-pex.sh`) | inverter `magic-verify CELL=inverter_top` |
 | Magic LEF export + LIB + Verilog stub + `sak-render.py` render | inverter `build-top` |
 | Verilator lint | counter `lint-verilog-all` |
