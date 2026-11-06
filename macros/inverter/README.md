@@ -443,7 +443,7 @@ make gdscheck-drc-all
 ```
 
 > [!NOTE]
-> KLayout is the sign-off DRC, Magic and gdscheck give a second and a third opinion. `inverter` and `inverter_top` pass all three at `macro`, and `make all` does not run gdscheck.
+> KLayout is the sign-off DRC, Magic and gdscheck give a second and a third opinion. `inverter` and `inverter_top` pass all three at `macro`. `make all` runs KLayout and gdscheck and leaves the Magic DRC out.
 
 
 ### Export Schematic Netlist for LVS
@@ -604,7 +604,7 @@ make klayout-verify-all
 
 ### Verify with Magic
 
-**Verify a single cell** by running DRC, LVS, and PEX in sequence:
+**Verify a single cell** by running LVS and PEX in sequence. The Magic DRC stays out of this target for now (see [Design Rule Check (DRC)](#design-rule-check-drc)), `make magic-drc` runs it:
 
 ```sh
 make magic-verify
@@ -620,7 +620,7 @@ make magic-verify-all
 
 ### Verify, Build and Simulate All
 
-Runs the full flow in sequence: KLayout verification, Magic verification, top-level build deliverables, and simulations (`klayout-verify-all`, `magic-verify-all`, `build-top`, `sim-all`):
+Runs the full flow in sequence: KLayout verification, gdscheck DRC, Magic verification, top-level build deliverables, and simulations (`klayout-verify-all`, `gdscheck-drc-all`, `magic-verify-all`, `build-top`, `sim-all`):
 
 ```sh
 make all
