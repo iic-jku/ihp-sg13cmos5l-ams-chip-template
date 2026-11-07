@@ -229,9 +229,16 @@ def feed(gds, net):
     pts = []
     for li in ly.layer_indexes():
         info = ly.get_info(li)
-        for s in top.shapes(li).each():
-            if s.is_text() and s.text_string == net and (info.layer, 0) in by_layer:
-                pts.append((by_layer[(info.layer, 0)], db.Point(s.text.x, s.text.y)))
+        if (info.layer, 0) not in by_layer:
+            continue
+        # Also in the subcells: an internal net has its labels on the pins of the cells it joins
+        it = top.begin_shapes_rec(li)
+        while not it.at_end():
+            s = it.shape()
+            if s.is_text() and s.text_string == net:
+                t = s.text.transformed(it.trans())
+                pts.append((by_layer[(info.layer, 0)], db.Point(t.x, t.y)))
+            it.next()
     if not pts:
         raise Abort("no %s label on a stack metal in %s" % (net, top.name))
     if ind.count() != 1 or "LA" not in labels:
