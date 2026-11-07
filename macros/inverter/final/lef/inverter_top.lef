@@ -8,6 +8,7 @@ MACRO inverter_top
   ORIGIN 0.000 0.000 ;
   SIZE 54.180 BY 81.920 ;
   PIN vin1
+    DIRECTION INPUT ;
     ANTENNAGATEAREA 140.000000 ;
     PORT
       LAYER Metal2 ;
@@ -15,6 +16,7 @@ MACRO inverter_top
     END
   END vin1
   PIN vin2
+    DIRECTION INPUT ;
     ANTENNAGATEAREA 140.000000 ;
     PORT
       LAYER Metal2 ;
@@ -22,6 +24,7 @@ MACRO inverter_top
     END
   END vin2
   PIN vin3
+    DIRECTION INPUT ;
     ANTENNAGATEAREA 140.000000 ;
     PORT
       LAYER Metal2 ;
@@ -29,6 +32,7 @@ MACRO inverter_top
     END
   END vin3
   PIN vin4
+    DIRECTION INPUT ;
     ANTENNAGATEAREA 140.000000 ;
     PORT
       LAYER Metal2 ;
@@ -74,6 +78,7 @@ MACRO inverter_top
     END
   END VSS
   PIN vout1
+    DIRECTION OUTPUT ;
     ANTENNADIFFAREA 26.599998 ;
     PORT
       LAYER Metal3 ;
@@ -81,6 +86,7 @@ MACRO inverter_top
     END
   END vout1
   PIN vout2
+    DIRECTION OUTPUT ;
     ANTENNADIFFAREA 26.599998 ;
     PORT
       LAYER Metal3 ;
@@ -88,6 +94,7 @@ MACRO inverter_top
     END
   END vout2
   PIN vout3
+    DIRECTION OUTPUT ;
     ANTENNADIFFAREA 26.599998 ;
     PORT
       LAYER Metal3 ;
@@ -95,6 +102,7 @@ MACRO inverter_top
     END
   END vout3
   PIN vout4
+    DIRECTION OUTPUT ;
     ANTENNADIFFAREA 26.599998 ;
     PORT
       LAYER Metal3 ;
