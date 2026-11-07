@@ -1,6 +1,6 @@
 103. Printing statistics.
 
-=== counter_top ===
+=== counter_lv_eth_top ===
 
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
@@ -11,14 +11,14 @@
        11        - public wire bits
         4        - ports
        11        - port bits
-       38   391.91 cells
+       38  180.634 cells
         5        -   $_AND_
        16        -   $_MUX_
         1        -   $_NAND_
         1        -   $_NOT_
         1        -   $_XNOR_
         6        -   $_XOR_
-        8   391.91   sg13cmos5l_dfrbpq_1
+        8  180.634   DFFQX1
 
    Area for cell type $_AND_ is unknown!
    Area for cell type $_MUX_ is unknown!
@@ -27,6 +27,6 @@
    Area for cell type $_XNOR_ is unknown!
    Area for cell type $_XOR_ is unknown!
 
-   Chip area for module '\counter_top': 391.910400
-     of which used for sequential elements: 391.910400 (100.00%)
+   Chip area for module '\counter_lv_eth_top': 180.633600
+     of which used for sequential elements: 180.633600 (100.00%)
 

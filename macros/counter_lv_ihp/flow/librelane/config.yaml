@@ -18,10 +18,10 @@ INSERT_ECO_BUFFERS:
   # buffer: sg13cmos5l_buf_4
   # === END OF ECO_BUFFERS ===
     
-DESIGN_NAME: counter_top
+DESIGN_NAME: counter_lv_ihp_top
 VERILOG_FILES: ["dir::../../rtl/constants.sv",
-"dir::../../rtl/counter.sv",
-"dir::../../rtl/counter_top.sv"]
+"dir::../../rtl/counter_lv_ihp.sv",
+"dir::../../rtl/counter_lv_ihp_top.sv"]
 
 # Enable plugin for better SystemVerilog support
 # USE_SLANG: True
@@ -93,6 +93,9 @@ STA_CORNERS:
   - nom_typ_1p50V_25C
 
 DEFAULT_CORNER: nom_typ_1p50V_25C
+
+# The macro has no pads. The PAD_LIBS of the PDK name three corners and can stop the run: STA-1112 on a corner they miss, a gzip note in stat.json on a corner they match
+PAD_LIBS: {}
 
 # Fix setup violations
 # PL_RESIZER_SETUP_SLACK_MARGIN: 0.60

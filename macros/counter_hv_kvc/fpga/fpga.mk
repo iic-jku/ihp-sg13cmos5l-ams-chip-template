@@ -73,8 +73,8 @@ lint-verilog: ## Lint Verilog source files with Verilator (usage: make lint-veri
 	verilator --lint-only -I"$(SRC_DIR)" $(_LINT_SRCS)
 .PHONY: lint-verilog
 
-lint-verilog-all: ## Lint all Verilog source files (counter, counter_top)
-	$(MAKE) lint-verilog CELL=counter
+lint-verilog-all: ## Lint all Verilog source files (counter_hv_kvc, counter_hv_kvc_top)
+	$(MAKE) lint-verilog CELL=counter_hv_kvc
 	$(MAKE) lint-verilog
 .PHONY: lint-verilog-all
 # ================================================================================================

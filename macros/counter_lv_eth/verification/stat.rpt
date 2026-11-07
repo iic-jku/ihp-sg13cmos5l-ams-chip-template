@@ -1,32 +1,33 @@
 111. Printing statistics.
 
-=== counter_top ===
+=== counter_lv_eth_top ===
 
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
         |        | 
-       41        - wires
-       48        - wire bits
+       31        - wires
+       38        - wire bits
         4        - public wires
        11        - public wire bits
         4        - ports
        11        - port bits
-       45  745.718 cells
-        4   36.288   sg13cmos5l_a21oi_1
-        3   27.216   sg13cmos5l_and2_1
-        1   14.515   sg13cmos5l_buf_4
-        8   391.91   sg13cmos5l_dfrbpq_1
-        2   10.886   sg13cmos5l_inv_1
-        2   14.515   sg13cmos5l_nand2_1
-        2   18.144   sg13cmos5l_nand3_1
-        2   21.773   sg13cmos5l_nand4_1
-        1    7.258   sg13cmos5l_nor2_1
-        4   36.288   sg13cmos5l_o21ai_1
-        4   50.803   sg13cmos5l_or3_1
-        8   58.061   sg13cmos5l_tiehi
-        3   43.546   sg13cmos5l_xnor2_1
-        1   14.515   sg13cmos5l_xor2_1
+       35  396.547 cells
+        4   28.224   AND2X1
+        1    8.467   AOI21BX1
+        2   19.757   AOI21BX2
+        8  180.634   DFFQX1
+        1    4.234   INVX1
+        2    11.29   NAND2X1
+        2   14.112   NAND3X1
+        2   19.757   NAND4X2
+        1    7.056   NOR3X1
+        2   16.934   OA21X2
+        3   21.168   OAI21X1
+        1    8.467   OR3BX1
+        2   16.934   OR3X1
+        3   29.635   XNOR2X1
+        1    9.878   XOR2X1
 
-   Chip area for module '\counter_top': 745.718400
-     of which used for sequential elements: 391.910400 (52.55%)
+   Chip area for module '\counter_lv_eth_top': 396.547200
+     of which used for sequential elements: 180.633600 (45.55%)
 
