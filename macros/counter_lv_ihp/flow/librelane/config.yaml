@@ -94,7 +94,7 @@ STA_CORNERS:
 
 DEFAULT_CORNER: nom_typ_1p50V_25C
 
-# The macro has no pads, and the PAD_LIBS of the PDK name only three corners, which stops repair_design on a corner without them
+# The macro has no pads. The PAD_LIBS of the PDK name three corners and can stop the run: STA-1112 on a corner they miss, a gzip note in stat.json on a corner they match
 PAD_LIBS: {}
 
 # Fix setup violations
