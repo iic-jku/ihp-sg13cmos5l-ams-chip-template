@@ -320,7 +320,7 @@ render-gds: ## Render images from the final GDS (with logo and filler) using sak
 
 
 # Build Targets
-build-bondpad: ## Build the bondpad in ip/sg13cmos5l_ip__bondpad_70x70/
+build-bondpad: ## Build the bondpad and the RF pad in ip/sg13cmos5l_ip__bondpad_70x70/
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__bondpad_70x70 all
 .PHONY: build-bondpad
 

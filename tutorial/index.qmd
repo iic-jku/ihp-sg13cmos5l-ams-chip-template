@@ -252,7 +252,7 @@ The [top-level Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-temp
 | `make sim-view-cocotb` | Open the latest cocotb waveform in GTKWave (or Surfer with `WAVEFORM_VIEWER=surfer`).              |
 | `make librelane` / `librelane-nodrc` | Run the LibreLane flow for the top-level (with / without DRC steps).                  |
 | `make copy-reports` / `copy-gds` / `copy-netlist` / `copy-render` | Copy the latest LibreLane artifacts back into the source tree. |
-| `make build-bondpad` / `build-logos` | Build the bondpad and the logos under `ip/`.                                     |
+| `make build-bondpad` / `build-logos` | Build the bondpad, the RF pad and the logos under `ip/`.                         |
 | `make build-counter` / `build-inverter` / `build-macros` | Build the digital and analog macros individually or together. |
 | `make build-top`    | Run LibreLane on the top-level, copy back all artifacts, add logos and fill structures, and render the final GDS. |
 | `make build-all`    | Init submodules, build bondpad, build logos, build macros, and build top-level.                           |
@@ -1489,7 +1489,7 @@ The three IP cells covered in this section are:
 - [`sg13cmos5l_ip__jku`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku/), the [Johannes Kepler University Linz](https://www.jku.at/) logo, generated from a PNG image,
 - [`sg13cmos5l_ip__jku_names`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku_names/), a companion text block with the names of the institute, generated the same way as the JKU logo.
 
-All three IPs follow the same folder structure (`script/`, `final/`, `verification/`) and the same Makefile conventions as the digital and analog macros (`make help`, `make all`, `make clean`, `make klayout-drc`, `make magic-drc`, `make gdscheck-drc`). The logo folders `sg13cmos5l_ip__jku` and `sg13cmos5l_ip__jku_names` have an additional `logo/` folder that contains the source PNG image.
+All three IPs follow the same folder structure (`script/`, `final/`, `verification/`) and the same Makefile conventions as the digital and analog macros (`make help`, `make all`, `make clean`, `make klayout-drc`, `make magic-drc`, `make gdscheck-drc`). The logo folders `sg13cmos5l_ip__jku` and `sg13cmos5l_ip__jku_names` have an additional `logo/` folder that contains the source PNG image. The bondpad folder also builds an RF pad, which the chip does not use by default, see @sec-rf-pad.
 
 ## Directory Structure
 
@@ -1497,11 +1497,12 @@ The IP design files are located in [`ip/`](https://github.com/iic-jku/ihp-sg13cm
 
 | Folder                                                                                                                                                                                  | Content                                                                                          |
 | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [`sg13cmos5l_ip__bondpad_70x70/script/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__bondpad_70x70/script/) | KLayout Python script ([`bondpad.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__bondpad_70x70/script/bondpad.py)) that instantiates the `SG13_dev::bondpad` PCell and writes the GDS and LEF. |
+| [`sg13cmos5l_ip__bondpad_70x70/script/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__bondpad_70x70/script/) | KLayout Python script ([`bondpad.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__bondpad_70x70/script/bondpad.py)) that instantiates the `SG13_dev::bondpad` PCell and writes the GDS and LEF, or draws the RF pad. |
+| [`sg13cmos5l_ip__bondpad_70x70/schematic/xschem/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__bondpad_70x70/schematic/xschem/) and `netlist/` | Schematic and symbol of the RF pad, and the netlists of its LVS. |
 | [`sg13cmos5l_ip__jku/logo/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku/logo/) and [`sg13cmos5l_ip__jku_names/logo/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku_names/logo/) | Source PNG images (`jku_logo.png`, `jku_names.png`) for the two logos. |
 | [`sg13cmos5l_ip__jku/script/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku/script/) and [`sg13cmos5l_ip__jku_names/script/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku_names/script/) | PNG-to-GDS converter ([`img2lay.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__jku/script/img2lay.py)) shared by both logos. |
 | `final/gds/`, `final/lef/`, `final/lib/`, `final/vh/` | Build deliverables for top-level integration: GDS, LEF, Liberty, and Verilog blackbox stubs. |
-| `verification/drc/` | DRC reports produced by `make klayout-drc`, `make magic-drc` and `make gdscheck-drc`. |
+| `verification/drc/`, `verification/lvs/` | DRC reports produced by `make klayout-drc`, `make magic-drc` and `make gdscheck-drc`, and the LVS report of the RF pad. |
 
 ::: {.callout-tip}
 Read the [bondpad README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__bondpad_70x70/README.md), the [JKU logo README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__jku/README.md), and the [JKU names README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__jku_names/README.md) first to get familiar with the Makefile targets and parameters. Most of the commands below are also documented there.
@@ -1529,14 +1530,17 @@ The available Makefile targets for the bondpad are summarised below.
 | Target        | What it does                                                                                                                                                                                            |
 | ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `bondpad`     | Generate GDS and LEF via [`bondpad.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__bondpad_70x70/script/bondpad.py) (`make bondpad [DIAMETER=<um>] [SHAPE=<square\|octagon\|circle>] [BOTTOM_METAL=<1-4>]`). |
-| `verilog`     | Generate a Verilog blackbox stub.                                                                                                                                                                       |
+| `rfpad`       | Generate GDS, LEF and Liberty of the RF pad, see @sec-rf-pad.                                                                                                                                           |
+| `verilog`     | Generate the Verilog blackbox stubs of the bondpad and the RF pad.                                                                                                                                      |
 | `klayout-drc` | Run KLayout DRC (`make klayout-drc [CELL=<cellname>] [DRC_LEVEL=<precheck\|macro\|regular>] [DRC_JOBS=<n>]`).                                                                                                                                                 |
 | `magic-drc`   | Run Magic DRC (`make magic-drc [CELL=<cellname>]`), not part of `make all`.                                                                                                                                                     |
 | `gdscheck-drc` | Run gdscheck DRC (`make gdscheck-drc [CELL=<cellname>] [DRC_LEVEL=<precheck\|macro\|regular>] [GDSCHECK_SUITE=<suite>\|GDSCHECK_DECKS=<decks>] [DRC_JOBS=<n>]`). |
+| `rfpad-klayout-drc` | Run KLayout DRC of the RF pad, which passes only with exactly its 7 waived markers. |
+| `rfpad-lvs`   | Run KLayout LVS of the RF pad against its schematic.                                                                                                                                                    |
 | `open`        | Browse this folder with `sak-open.py` and open each file in its tool (needs the VNC/X11 desktop).                                                                                                        |
-| `clean`       | Remove the `final/` and `verification/drc/` output directories.                                                                                                                                         |
+| `clean`       | Remove the `final/`, `verification/` and `netlist/` output directories.                                                                                                                                 |
 
-To execute the `clean`, `bondpad`, `verilog`, `klayout-drc`, and `gdscheck-drc` targets in sequence, run:
+To execute the `clean`, `bondpad`, `rfpad`, `verilog`, `klayout-drc` and `gdscheck-drc` targets in sequence, followed by `rfpad-klayout-drc`, `gdscheck-drc` of the RF pad and `rfpad-lvs`, run:
 
 ```sh
 cd ip/sg13cmos5l_ip__bondpad_70x70
@@ -1558,6 +1562,32 @@ The `bondpad` target accepts the geometry and metal-stack variables as command-l
 ```sh
 make bondpad DIAMETER=80 SHAPE=octagon BOTTOM_METAL=2
 ```
+
+## RF Pad Generation {#sec-rf-pad}
+
+A signal in the GHz range cannot carry the capacitance of `sg13cmos5l_IOPadAnalog`: the devices of that cell read 146 fF at the pad (ngspice, 20 GHz) and its bondpad another 78 fF (Magic), before counting the cell's metal. The same script therefore also draws `sg13cmos5l_ip__rfpad_70x70`, one cell of 80 µm × 250 µm that takes the slot of an analog pad plus its bondpad and loads the node with about 197 fF in total, metal and ESD included. With `-rd pad_type=rf` the script draws this fixed cell, so `DIAMETER`, `SHAPE` and `BOTTOM_METAL` do not apply:
+
+```sh
+cd ip/sg13cmos5l_ip__bondpad_70x70
+make rfpad
+make verilog
+ke final/gds/sg13cmos5l_ip__rfpad_70x70.gds
+```
+
+![`sg13cmos5l_ip__rfpad_70x70` with the die edge at the bottom: the octagonal pad over its Metal1 shield, the RF line in its corridor through the IO rails, the ESD diode pair under the core rails, and the supply clamp on both sides of the line.](fig/bondpad_logo/rfpad_layout.png){#fig-rfpad-layout width=30%}
+
+The capacitance comes down through four layout decisions:
+
+- **A Metal1 shield under the plate.** Metal below TopMetal1 is only a ring in the `bondpad` PCell, so the plate looks straight down into the substrate, a return path with a Q of about 1 at 2.44 GHz. A solid Metal1 plate on `vss` turns it into a 61 fF capacitor with a Q of about 160 (Palace).
+- **A corridor through the rails.** The TopMetal1 and Metal4 rails are cut around the RF line, 5 µm clear on either side, and `iovss` and `iovdd` cross it on Metal3 and Metal2. Cutting Metal4, the layer right under the line, is worth 18.4 fF, the 5 µm gap against the `TM1.b` minimum of 1.64 µm another 3.0 fF (Magic).
+- **A teardrop exit.** TopMetal1 allows only 0°, 45° and 90°, and `Pad.fR` asks for 7 µm of unchanged metal past the pad, so the line holds 14.92 µm for 7 µm and then tapers at 45° onto 4.92 µm. Past the ESD tap it narrows to 1.64 µm, because it no longer carries the strike.
+- **Small ESD devices on the core rails.** `diodevss_2kv` and `diodevdd_2kv` add 52 fF. They connect to `vss` and `vdd`, so an RC-triggered clamp between `vdd` and `vss` sits in the same cell, under the IO bands.
+
+Two kinds of faults are invisible to the usual checks: LVS compares devices, and the rails carry none, while DRC reads two touching shapes as one polygon. A pad shorted to a rail or a floating shield therefore passes both. `bondpad.py` checks the geometry and probes the connectivity before it writes any view, and stops if a check fails. Try it: set `TM1_RAIL_GAP` in the script to `4.0` and run `make rfpad`.
+
+KLayout reports 7 `Pad.fR_M1` markers on the cell, because the shield's 3 µm collar crosses `dfpad` and the 80 µm cell has no room for the 7 µm the recommended rule asks for. The collar is what keeps the rim field of the pad off the substrate, so `make rfpad-klayout-drc` waives exactly those 7 markers and fails on any other count. gdscheck is clean and `make rfpad-lvs` matches the schematic.
+
+The chip does not use this pad by default. Its height needs a change in the pad ring step, because the rail bands of the cell abut its neighbours only when its outer edge sits where the outer edges of the bondpads are. The [bondpad README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__bondpad_70x70/README.md#using-the-rf-pad-on-a-chip) lists what a chip needs in its `config.yaml`, together with the capacitance budget and what the ESD diodes draw when a circuit on a higher supply lifts the pad above `vdd`.
 
 ## Logo Generation
 

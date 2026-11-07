@@ -125,6 +125,8 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  ├─ 📁 sg13cmos5l_io_custom/
 │  ├─ 📁 sg13cmos5l_ip__bondpad_70x70/
 │  │  ├─ 📁 final/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 schematic/
 │  │  ├─ 📁 script/
 │  │  ├─ 📁 verification/
 │  │  ├─ Makefile
@@ -271,6 +273,7 @@ Xschem reads exactly one `xschemrc` at start-up, and that file decides which sym
 | --- | --- |
 | [`schematic/xschem/xschemrc`](schematic/xschem/xschemrc) | chip top-level schematics |
 | [`testbenches/xschem/xschemrc`](testbenches/xschem/xschemrc) | chip top-level testbenches |
+| [`ip/sg13cmos5l_ip__bondpad_70x70/schematic/xschem/xschemrc`](ip/sg13cmos5l_ip__bondpad_70x70/schematic/xschem/xschemrc) | RF pad schematic |
 | [`macros/inverter/schematic/xschem/xschemrc`](macros/inverter/schematic/xschem/xschemrc) | inverter schematics |
 | [`macros/inverter/testbenches/xschem/xschemrc`](macros/inverter/testbenches/xschem/xschemrc) | inverter testbenches |
 | [`macros/inverter/verification/cace/templates/xschemrc`](macros/inverter/verification/cace/templates/xschemrc) | CACE testbench templates |
@@ -635,7 +638,7 @@ This only works if the latest run completed without errors. This command is also
 
 ### Build Bondpad
 
-To build the bondpad in the `ip` folder, run the following command:
+To build the bondpad and the [RF pad](ip/sg13cmos5l_ip__bondpad_70x70/README.md#rf-pad) in the `ip` folder, run the following command:
 
 ```sh
 make build-bondpad
