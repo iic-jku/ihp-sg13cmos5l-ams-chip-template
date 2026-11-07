@@ -460,7 +460,7 @@ lec: ## Prove the gate-level netlist equivalent to the RTL with EQY (usage: make
 		'read_verilog $(abspath $(LEC_NETLIST))' \
 		'hierarchy -check -top $(TOP)' \
 		'flatten -noscopeinfo' \
-		'select -assert-none t:sg13g2_hv_*' \
+		'select -assert-none t:* t:$$* %d' \
 		'clk2fflogic' \
 		'' \
 		'[strategy sby]' \
