@@ -43,6 +43,9 @@ if {![llength [info commands append_xschem_library_path_unique]]} {
 append_xschem_library_path_unique [file dirname [info script]]
 append_xschem_library_path_unique [file join [file dirname [info script]] ../../testbenches/xschem]
 
+# The inverter cell comes from the inverter macro
+append_xschem_library_path_unique [file join [file dirname [info script]] ../../../inverter/schematic/xschem]
+
 # Pin the netlist directory to the simulations folder of the loaded schematic
 if {![llength [info commands pin_netlist_dir]]} {
   proc pin_netlist_dir {dir} {

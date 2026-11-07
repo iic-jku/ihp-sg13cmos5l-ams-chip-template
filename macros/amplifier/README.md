@@ -1,6 +1,6 @@
 ﻿# ihp-sg13cmos5l Amplifier
 
-This is the **self-biased single-ended inverter amplifier** of the [HeiChips 2026 Analog Workshop](https://heichips.github.io/heichips26-analog-workshop/), the reference solution of exercise 1: the `inverter` unit cell with an `rhigh` feedback resistor from `vout` back to `vin`. The exercise is described on the [workshop website](https://heichips.github.io/heichips26-analog-workshop/#sec-exercise1).
+This is the **self-biased single-ended inverter amplifier**: the `inverter` unit cell with an `rhigh` feedback resistor from `vout` back to `vin`. The unit cell comes from the [`inverter` macro](../inverter/), which `xschemrc` and `layout/<TOP>.klay.klib` point at, so this macro needs `macros/inverter/` beside it.
 
 <p align="center">
   <a href="render/img/amplifier_white.png">
@@ -52,9 +52,6 @@ The top cell `amplifier` is 35.38 µm × 18.24 µm and holds one `inverter` inst
 │     ├─ amplifier.sch
 │     ├─ amplifier.sym
 │     ├─ amplifier_pex.sym
-│     ├─ inverter.sch
-│     ├─ inverter.sym
-│     ├─ inverter_pex.sym
 │     └─ xschemrc
 ├─ 📁 scripts/
 │  ├─ check_boundary.py
