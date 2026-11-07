@@ -8,7 +8,6 @@
 # ============================================
 
 # Imports
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 import ngspice2python as ng
@@ -53,7 +52,7 @@ def main():
 
     if not missing(ngspice_file):
         # ngspice writes the complex ac vectors interleaved, so every second entry
-        # is taken (same convention as in plot_inverter.py).
+        # is taken (same convention as in the inverter macro).
         frequency = ng.loadngspicecol(str(ngspice_file), "frequency")[0::2]
         mag_dB = ng.loadngspicecol(str(ngspice_file), "v(Aol_dB)")[0::2]
         phase_deg = ng.loadngspicecol(str(ngspice_file), "v(Aol_arg)")[0::2]
@@ -271,10 +270,7 @@ def main():
     # ------------------------------------------------------------------
     # 10. Open the plot windows (blocks until they are closed)
     # ------------------------------------------------------------------
-    # Only open the interactive window when requested (sim-view-xschem sets
-    # SHOW_PLOTS=1); batch/headless runs just save the figures and exit.
-    if os.environ.get("SHOW_PLOTS"):
-        plt.show()
+    plt.show()
     # =========================================================================
 
 # Main Execution

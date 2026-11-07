@@ -1,15 +1,16 @@
 ﻿# ihp-sg13cmos5l Amplifier
 
-This is the **self-biased single-ended inverter amplifier** of the [HeiChips 2026 Analog Workshop](../README.md), the reference solution of exercise 1: the `inverter` unit cell with an `rhigh` feedback resistor from `vout` back to `vin`, with its complete flow (schematic → simulation → layout → DRC/LVS/PEX). The exercise is described on the [workshop website](https://heichips.github.io/heichips26-analog-workshop/#sec-exercise1).
+This is the **self-biased single-ended inverter amplifier** of the [HeiChips 2026 Analog Workshop](https://heichips.github.io/heichips26-analog-workshop/), the reference solution of exercise 1: the `inverter` unit cell with an `rhigh` feedback resistor from `vout` back to `vin`. The exercise is described on the [workshop website](https://heichips.github.io/heichips26-analog-workshop/#sec-exercise1).
 
 <p align="center">
-  <a href="final/render/amplifier_white.png">
-    <img src="final/render/amplifier_white.png" alt="Render of the ihp-sg13cmos5l amplifier layout" width=70%>
+  <a href="render/img/amplifier_white.png">
+    <img src="render/img/amplifier_white.png" alt="Render of the ihp-sg13cmos5l amplifier layout (35um x 18um)" width=70%>
   </a>
   <br>
-  <em>Render of the ihp-sg13cmos5l amplifier layout.</em>
+  <em>Render of the ihp-sg13cmos5l amplifier layout (35um x 18um).</em>
 </p>
 
+The top cell `amplifier` is 35.38 µm × 18.24 µm and holds one `inverter` instance and the `rhigh` feedback resistor (0.5 µm × 25 µm). It has no power ring of its own: `VDD` and `VSS` are the Metal2 and Metal3 rails of the unit cell, `vin` is a Metal2 pin and `vout` a Metal3 pin. The PR boundary starts at (-1.10 µm, -2.96 µm), because `vin` runs left of the unit cell and `rhigh` below it, so the LEF carries `ORIGIN 1.100 2.960`.
 
 
 ## Directory Structure
@@ -26,80 +27,60 @@ This is the **self-biased single-ended inverter amplifier** of the [HeiChips 202
 │  │  └─ amplifier.lef
 │  ├─ 📁 lib/
 │  │  └─ amplifier.lib
-│  ├─ 📁 render/
-│  │  ├─ amplifier_black.png
-│  │  └─ amplifier_white.png
 │  └─ 📁 vh/
 │     └─ amplifier.vh
 ├─ 📁 layout/
-│  ├─ *.gds
-│  ├─ *.klay.gds
-│  ├─ inverter.gds
-│  └─ amplifier.gds
+│  ├─ amplifier.gds
+│  ├─ amplifier.klay.gds
+│  ├─ amplifier.klay.klib
+│  └─ inverter.gds
 ├─ 📁 netlist/
 │  ├─ 📁 layout/
-│  │  ├─ *.cir
-│  │  ├─ *.ext.spc
 │  │  ├─ amplifier_klayout.cir
 │  │  └─ amplifier_magic.ext.spc
 │  ├─ 📁 pex/
-│  │  ├─ *.spice
-│  │  ├─ amplifier_klayout_pex_*.spice
 │  │  └─ amplifier_magic_pex_*.spice
 │  └─ 📁 schematic/
-│     ├─ *.cdl
-│     ├─ *.spice
 │     ├─ amplifier_klayout.cdl
 │     └─ amplifier_magic.spice
+├─ 📁 render/
+│  ├─ 📁 blender/
+│  └─ 📁 img/
+│     ├─ amplifier_black.png
+│     └─ amplifier_white.png
 ├─ 📁 schematic/
 │  └─ 📁 xschem/
-│     ├─ *.sch
-│     ├─ *.sym
-│     ├─ inverter.sch
-│     ├─ inverter.sym
-│     ├─ inverter_pex.sym
 │     ├─ amplifier.sch
 │     ├─ amplifier.sym
 │     ├─ amplifier_pex.sym
+│     ├─ inverter.sch
+│     ├─ inverter.sym
+│     ├─ inverter_pex.sym
 │     └─ xschemrc
 ├─ 📁 scripts/
-│  ├─ 📁 sizing/
-│  │  ├─ 📁 data/
-│  │  ├─ 📁 figures/
-│  │  ├─ lookup_commands.ipynb
-│  │  └─ sizing_inverter.ipynb
-│  ├─ check_pex_ports.py
-│  ├─ lay2img.py
-│  ├─ sak-drc.sh
-│  ├─ sak-lvs.sh
-│  ├─ sak-pex.sh
-│  ├─ sak-pin-reorder.py
-│  └─ .sak-scripts-version
+│  ├─ check_boundary.py
+│  └─ check_pex_ports.py
 ├─ 📁 testbenches/
 │  └─ 📁 xschem/
 │     ├─ 📁 plot_simulations/
 │     │  ├─ 📁 data/
 │     │  ├─ 📁 figures/
 │     │  ├─ ngspice2python.py
-│     │  ├─ plot_inverter.py
 │     │  └─ plot_amplifier.py
-│     ├─ *_tb_*.sch
-│     ├─ inverter_tb_ac_ol.sch
-│     ├─ inverter_tb_tran.sch
-│     ├─ inverter_tb_dc_vout.sch
 │     ├─ amplifier_tb_ac_ol.sch
-│     ├─ amplifier_tb_tran.sch
 │     ├─ amplifier_tb_dc_vout.sch
+│     ├─ amplifier_tb_tran.sch
 │     └─ xschemrc
 ├─ 📁 verification/
+│  ├─ 📁 cace/
+│  │  ├─ 📁 results/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 templates/
+│  │  └─ amplifier.yaml
 │  ├─ 📁 drc/
-│  │  ├─ 📁 *.klayout.drc/
-│  │  ├─ 📁 *.magic.drc/
-│  │  ├─ 📁 amplifier.klayout.drc/
-│  │  └─ 📁 amplifier.magic.drc/
+│  │  ├─ 📁 amplifier.gdscheck.drc/
+│  │  └─ 📁 amplifier.klayout.drc/
 │  └─ 📁 lvs/
-│     ├─ 📁 *.klayout.lvs/
-│     ├─ 📁 *.magic.lvs/
 │     ├─ 📁 amplifier.klayout.lvs/
 │     └─ 📁 amplifier.magic.lvs/
 ├─ Makefile
@@ -107,18 +88,6 @@ This is the **self-biased single-ended inverter amplifier** of the [HeiChips 202
 ```
 
 </details>
-
-
-## Vendored Verification Scripts (`sak-*`)
-
-The DRC/LVS/PEX targets use the `sak-*` Swiss-Army-Knife scripts from [IIC-OSIC-TOOLS](https://github.com/iic-jku/IIC-OSIC-TOOLS). Because this template runs in the **nix-shell** (not the IIC-OSIC-TOOLS container, where they are pre-installed), the scripts are vendored in `scripts/`:
-
-- `sak-drc.sh` — DRC with Magic or KLayout
-- `sak-lvs.sh` — LVS with Magic + Netgen or KLayout
-- `sak-pex.sh` — parasitic extraction with Magic
-- `sak-pin-reorder.py` — reorders extracted `.subckt` pins to match an Xschem symbol
-
-`scripts/.sak-scripts-version` records the IIC-OSIC-TOOLS commit they were taken from. The scripts require the `PDKPATH` (`$PDK_ROOT/$PDK`) and `STD_CELL_LIBRARY` environment variables, which the Makefile exports automatically.
 
 
 ## Makefile Targets
@@ -137,8 +106,74 @@ The `sim-xschem` target accepts an optional `TB=<testbenchname>` parameter (defa
 All targets that operate on a specific cell accept an optional `CELL=<cellname>` parameter. The default is the top-level cell (`amplifier`).
 
 ```sh
-make <target> [CELL=<cellname>] [EXT_MODE=<1|2|3>] [THRESHOLD=<mOhm>] [MINRES=<mOhm>] [MINDELAY=<ps>] [DRC_LEVEL=<precheck|macro|regular>] [EV_PRECISION=<digits>]
+make <target> [CELL=<cellname>] [EXT_MODE=<1|2|3>] [THRESHOLD=<mOhm>] [MINRES=<mOhm>] [MINDELAY=<ps>] [DRC_LEVEL=<precheck|macro|regular>] [GDSCHECK_SUITE=<suite>|GDSCHECK_DECKS=<decks>] [DRC_JOBS=<n>] [EV_PRECISION=<digits>]
 ```
+
+
+### PDK Guard
+
+Every target except `help` and `clean` needs the `ihp-sg13cmos5l` PDK. The container starts with `ihp-sg13g2` selected, so the wrong PDK is the default state here, and it silently mixes technologies: DRC and LVS run against the wrong rule deck, Magic reads the wrong `magicrc`, and the results look valid. The Makefile therefore compares `$PDK` against `REQUIRED_PDK` once when it is parsed, before any target runs:
+
+```sh
+$ make klayout-drc
+Makefile:21: *** PDK is "ihp-sg13g2", but this macro needs "ihp-sg13cmos5l". Run `sak-pdk ihp-sg13cmos5l` in this shell and retry, or pass REQUIRED_PDK= to skip this check.  Stop.
+```
+
+The check is a parse-time conditional at the top of the Makefile, not a prerequisite of each target, so it costs nothing and cannot be forgotten when a target is added. `help` and `clean` are exempt, so the usage text and the cleanup still work under any PDK. `open` is not exempt: it launches Xschem, KLayout and Magic, which all read the selected PDK.
+
+Switch the PDK with `sak-pdk ihp-sg13cmos5l`, which also sets `PDKPATH`, `KLAYOUT_PATH`, `SPICE_USERINIT_DIR` and `STD_CELL_LIBRARY`. To run a single target against another PDK anyway, pass an empty `REQUIRED_PDK`:
+
+```sh
+make <target> REQUIRED_PDK=          # skip the check
+make <target> REQUIRED_PDK=<pdk>     # require a different PDK
+```
+
+
+### Open the Design Files
+
+Opens a file browser for this folder with `sak-open.py` from the [IIC-OSIC-TOOLS](https://github.com/iic-jku/IIC-OSIC-TOOLS), one button per design file, grouped by directory:
+
+```sh
+make open
+```
+
+Clicking a button launches the matching tool in the file's own directory, so Xschem finds its `simulations/` folder and KLayout its run outputs where they belong:
+
+| File type | Tool |
+| --- | --- |
+| `.sch`, `.sym` | Xschem |
+| `.gds`, `.gds.gz`, `.oas`, `.oas.gz` | KLayout in edit mode |
+| `.mag` | Magic |
+| `.vcd`, `.fst`, `.gtkw` | GTKWave |
+| `.raw` | gaw (ngspice rawfile) |
+| `.png`, `.pdf` | the desktop's handler (`xdg-open`) |
+| `.sv`, `.svh`, `.v`, `.vh`, `.vhd`, `.vhdl`, `.spice`, `.cir`, `.sp`, `.cdl`, `.sdc`, `.lef`, `.lib`, `.tcl`, `.mk`, `.yaml`, `.json`, `.py`, `.qmd`, `.tex`, `.md` and `Makefile` | gvim |
+
+Only these types get a button. Files with any other extension (`.sh`, `.svg`, `.pcf`, `.save`, `.rpt`, `.txt`, `.csv` and so on) are not listed.
+
+Schematics and symbols that belong to one design unit share a single tabbed Xschem instance instead of one process per click. The unit is the nearest ancestor holding a `Makefile`, so this macro gets its own instance and every tab writes its netlists to the folder this macro's `xschemrc` pins, see [Xschem Configuration](../../README.md#xschem-configuration).
+
+The tree is rescanned every 15 s, so files a running flow produces appear on their own and are highlighted for a minute. Generated directories are skipped by default: `runs/`, `sim_build/`, `obj_dir/`, `simulations/`, `__pycache__/`, `_freeze/` and `.git/`. The Xschem `simulations/` folder is one of them, so the `.raw` files show up only with `--all`. Pass extra options with `OPEN_ARGS`:
+
+```sh
+make open OPEN_ARGS=--all              # include the build outputs
+make open OPEN_ARGS="--prune backups"  # skip one more directory name
+```
+
+At most 400 buttons are drawn at once, because each one is an X window, and what is left out is stated at the end of the list. That cap is easy to hit with `--all`: it pulls in roughly 19000 files at the top level and 5700 in the counter, against about 70 in this macro. Use `--all` from the folder you actually care about, or narrow it with `--prune`, rather than at the top level.
+
+> [!NOTE]
+> This target needs a display. Run it inside the container's VNC/noVNC desktop or over X11 forwarding. In a shell-only container it stops with `cannot open a window`. The `.png` and `.pdf` buttons hand the file to the desktop's registered handler, so those two need the full VNC/noVNC session and do not work over a bare X forward.
+
+
+### Layout Sources and the Exported Tapeout GDS
+
+`layout/<TOP>.klay.gds` is the source of truth. It is the KLayout editing source, which pulls the `inverter` cell in as a library through `layout/<TOP>.klay.klib`. `layout/<TOP>.gds` is exported from it with `File > Export Layout For Tapeout`, which resolves every PCell and library reference into a static cell, and it is what every build and sign-off target reads.
+
+> [!IMPORTANT]
+> Re-export after every layout change and never hand-edit `layout/<TOP>.gds`. Keeping the two in step by editing both is how they drift apart, and the drift is invisible because the sign-off targets only look at the exported file.
+
+The export re-evaluates the PCells against the **installed** PDK, so device geometry can change even though nobody touched the editing source, see the [`inverter` macro](../inverter/README.md#layout-sources-and-the-exported-tapeout-gds). The `inverter` instance of this layout carries the tighter `NWell` revision (`31/0`, x from 0.11 µm to 33.27 µm), while `layout/inverter.gds`, the `inverter` macro and the `ringosc` macro carry the wider one (x from 0 µm to 33.38 µm), so a chip that places them together holds two different cells named `inverter`. Re-run DRC, LVS and PEX after every export.
 
 
 ### Layout File Extension Usage
@@ -152,8 +187,10 @@ The Makefile defines a `_GDS_EXT` variable that auto-selects the layout file ext
   - `magic-lvs`
   - `magic-drc`
   - `magic-pex`
+  - `gdscheck-drc`
 
 - Build targets always use `layout/<name>.gds`:
+  - `check-boundary`
   - `lef`
   - `copy-gds`
   - `render-gds`
@@ -163,14 +200,14 @@ The Makefile defines a `_GDS_EXT` variable that auto-selects the layout file ext
 
 Runs a single Xschem testbench in batch mode (no display): saves the schematic, exports the netlist to `testbenches/xschem/simulations/`, and runs the simulator.
 
-The target netlists the testbench with `xschem netlist` and then invokes `ngspice -b` directly instead of using `xschem simulate`. `xschem simulate` would spawn an interactive ngspice in a terminal detached from `make`: the target would return immediately, the result would never be checked, and the process would leak. Running the simulator directly makes `make` block until the run finishes and see its exit status.
+The target netlists the testbench with `xschem netlist` and then invokes `ngspice -b` directly instead of using `xschem simulate`. `xschem simulate` would spawn an interactive ngspice in a terminal detached from `make`: the target would return immediately, the result would never be checked, and the process (with its X server) would leak. Running the simulator directly makes `make` block until the run finishes and see its exit status.
 
 Because the run is headless, the `plot` commands in a testbench's `.control` block are a no-op and no plot windows appear. Every testbench instead exports its results with `wrdata` to `testbenches/xschem/plot_simulations/data/`, from where they are plotted with `sim-view-xschem`.
 
 The testbench is selected with the `TB` variable, given without the `.sch` extension (default: `<CELL>_tb_tran`):
 
 ```sh
-make sim-xschem                     # run the default testbench (default: <CELL>_tb_tran)
+make sim-xschem                     # run the default testbench (amplifier_tb_tran)
 make sim-xschem TB=<testbenchname>  # run another testbench
 ```
 
@@ -184,7 +221,7 @@ make sim-xschem TB=amplifier_tb_dc_vout
 
 All available testbench schematics are located in `testbenches/xschem/`. Generated netlists are written to `testbenches/xschem/simulations/`.
 
-Every testbench pulls in a FET `.save` file through its `SAVE` code block (for example `.include amplifier_tb_tran.save`). That file lists the operating-point parameters of every transistor (`ids`, `gm`, `gds`, `vth` and so on), which the `annotate_fet_params` symbols and the `Annotate OP` launcher read back from the raw file. The include uses the bare file name, so it resolves inside `testbenches/xschem/simulations/`, where ngspice runs. Both `sim-xschem` and the schematic's `Simulate` launcher write the file on every run, so it always matches the devices currently in the schematic and a fresh clone needs no manual export. Xschem's **IHP > Create FET .save file** menu entry writes the same file by hand.
+Every testbench pulls in a FET `.save` file through its `SAVE` code block (for example `.include amplifier_tb_ac_ol.save`). That file lists the operating-point parameters of every transistor (`ids`, `gm`, `gds`, `vth` and so on), which the `annotate_fet_params` symbols and the `Annotate OP` launcher read back from the raw file. The include uses the bare file name, so it resolves inside `testbenches/xschem/simulations/`, where ngspice runs. Both `sim-xschem` and the schematic's `Simulate` launcher write the file on every run, so it always matches the devices currently in the schematic and a fresh clone needs no manual export. Xschem's **IHP > Create FET .save file** menu entry writes the same file by hand.
 
 
 ### Plot Xschem Simulation Results
@@ -192,11 +229,11 @@ Every testbench pulls in a FET `.save` file through its `SAVE` code block (for e
 Plots simulation results using the Python script selected by `SCRIPT`, given without the `.py` extension (default: `plot_<CELL>`):
 
 ```sh
-make sim-view-xschem                      # run the default plotting script (default: plot_<CELL>)
+make sim-view-xschem                      # run the default plotting script (plot_amplifier)
 make sim-view-xschem SCRIPT=<scriptname>  # run another plotting script
 ```
 
-The target runs `SHOW_PLOTS=1 python3 testbenches/xschem/plot_simulations/<SCRIPT>.py`. Every script writes its figures to `testbenches/xschem/plot_simulations/figures/`. The interactive plot windows only open when `SHOW_PLOTS` is set (the target sets it). Running a script directly without it is fully headless and just writes the figures.
+The target runs `SHOW_PLOTS=1 python3 testbenches/xschem/plot_simulations/<SCRIPT>.py`. Every script writes its figures to `testbenches/xschem/plot_simulations/figures/`. Run through `sim-view-xschem`, the script additionally opens the plot windows when a display is available (e.g. the container's X/VNC session). Headless, only the figures are written.
 
 Examples:
 
@@ -205,12 +242,46 @@ make sim-view-xschem SCRIPT=plot_amplifier
 ```
 
 
+### CACE Simulations
+
+Runs [CACE](https://github.com/fossi-foundation/cace) characterization for the amplifier macro using `verification/cace/amplifier.yaml`, on the schematic of the macro.
+
+The bench `verification/cace/templates/amplifier_tb_ac.sch` drives `vin` through a 1 µF capacitor, so the feedback `rhigh` sets the DC point and the bench has no `vcm` condition, unlike the one of the `inverter` macro. `Av_dB` is `v(vout)/v(vin)` at 10 Hz and `fcu` its upper -3 dB cut-off with the 10 pF load. The ratio does not depend on what drives `vin`. With this ideal source no signal returns through the feedback, so `Av_dB` is the gain of the inverter loaded by `rhigh`. The closed-loop gain of an application follows from it and the source impedance.
+
+The `sim-cace` target runs these parameter sets in sequence:
+- `ac_mm_params`: 200 mismatch iterations at 1.5 V
+- `ac_mc_params`: 200 Monte Carlo iterations at 1.5 V
+- `ac_params`: the five MOS corners at 1.35 V, 1.5 V and 1.65 V
+
+| Parameter | Limit | Mismatch | Monte Carlo | Corners and supply |
+| --- | --- | --- | --- | --- |
+| `Av_dB` | ≥ 30 dB | 32.66 dB to 32.74 dB | 31.54 dB to 33.24 dB | 31.84 dB to 33.32 dB |
+| `fcu` | ≥ 1.5 MHz | 2.48 MHz to 2.52 MHz | 2.15 MHz to 3.21 MHz | 1.70 MHz to 3.50 MHz |
+
+The limits sit about 1.5 dB and 10 % below the lowest value of the three sets. The typical point is 32.65 dB and 2.50 MHz.
+
+For each run, selected result plots are copied to `verification/cace/results/amplifier/`, and temporary `_runs` folders are cleaned between runs. At the end, `_runs`, `_docs`, and `netlist` under `verification/cace/` are removed.
+
+Run with:
+
+```sh
+make sim-cace
+```
+
+Result plots are saved to:
+- `verification/cace/results/amplifier/`
+  - `Av_dB_mm.png`, `fcu_mm.png`
+  - `Av_dB_mc.png`, `fcu_mc.png`
+  - `Av_dB_vs_vdd.png`, `fcu_vs_vdd.png`
+
+
 ### Simulate All
 
 Runs all simulation steps in sequence:
 - `make sim-xschem TB=amplifier_tb_ac_ol`
 - `make sim-xschem TB=amplifier_tb_tran`
 - `make sim-xschem TB=amplifier_tb_dc_vout`
+- `make sim-cace`
 
 Invoke with:
 
@@ -226,11 +297,22 @@ make sim-all
 
 ### Build Top Cell
 
-Builds the top-level cell deliverables in sequence: LEF export, LIB generation, Verilog stub generation, GDS copy, and layout image rendering:
+Builds the top-level cell deliverables in sequence: PR boundary check, LEF export, LIB generation, Verilog stub generation, GDS copy, and layout image rendering:
 
 ```sh
 make build-top
 ```
+
+
+### PR Boundary Check
+
+Checks that the top cell of `layout/<TOP>.gds` draws the PR boundary box on layer 189 (`prBoundary`). `build-top` runs it first:
+
+```sh
+make check-boundary
+```
+
+The chip flow derives the bounding box of every macro from this layer: Magic maps all datatypes of layer 189 to its boundary, and LibreLane's `Magic.StreamOut` runs `get_bbox.tcl` on every macro it places. A layout without the box fails the whole chip build with `Failed to extract PR boundary from GDSII view of macro '<TOP>'`, two flows away from the layout that caused it. Treat the box as part of the layout: never delete it as clutter, keep it in the KLayout editing source (`<TOP>.klay.gds`) so every re-export carries it, and hide it at render time with `sak-render.py -x` if it spoils a chip shot. The check runs [`scripts/check_boundary.py`](scripts/check_boundary.py), which also warns when the drawn geometry extends beyond the boundary box.
 
 
 ### Export LEF
@@ -240,6 +322,8 @@ Exports a LEF file (`final/lef/<TOP>.lef`) from the top-level layout GDS in `lay
 ```sh
 make lef
 ```
+
+`-hide` writes one `PORT` per labelled pin rectangle (`<Metal>.pin`, datatype 2) and turns the rest of the macro into obstruction. Draw the pin rectangles of the power ring so that they do not overlap on one layer: rectangles that merge into an L shape are dropped from the LEF without a warning, and the chip flow then cannot connect the ring (`PDN-0232`, the macro grid contains no shapes). This macro has no power ring: the pins `VDD` and `VSS` are the rails of the unit cell on Metal2 and Metal3, `vin` is on Metal2 and `vout` on Metal3. Check that `final/lef/<TOP>.lef` still lists them as `PORT` after a layout change.
 
 
 ### Liberty Timing Library
@@ -253,7 +337,7 @@ make lib
 
 ### Verilog Stub
 
-Generates a Verilog stub (`final/vh/<TOP>.vh`) for top-level integration by parsing pins from an extracted PEX netlist in `netlist/pex/`.
+Generates a Verilog stub (`final/vh/<TOP>.vh`) for top-level integration into the LibreLane flow by parsing pins from an extracted PEX netlist in `netlist/pex/`.
 
 The `verilog` target:
 - requires one of the following PEX files (run `make magic-pex` or `make klayout-pex` first):
@@ -265,9 +349,8 @@ The `verilog` target:
   - `netlist/pex/<TOP>_klayout_pex_3.spice`
 - auto-selects the first existing file from the list above
 - reads the `.subckt <TOP>_pex` pin list (including continuation lines)
-- emits recognized supply pins (`VDD`, `VSS`, `VPWR`, `VDPWR`, `VAPWR`, `VGND`, `VNB`, `VPB`) as `inout` under `` `ifdef USE_POWER_PINS ``
+- emits recognized supply pins (`VDD`, `VSS`, `VPWR`, `VGND`, `VNB`, `VPB`) as `inout` under `` `ifdef USE_POWER_PINS ``
 - classifies signal pins by prefix: `di_*` as `input`, `do_*` as `output`, others as `inout`
-- collapses indexed pins (`name[i]`) into vector ports (e.g. `inout [7:0] ui_in`)
 
 ```sh
 make verilog
@@ -285,7 +368,7 @@ make copy-gds
 
 ### Render Layout Image
 
-Renders the top-level layout GDS with `scripts/lay2img.py` and saves the two images `amplifier_black.png` and `amplifier_white.png` in `final/render/`:
+Renders the top-level layout GDS with `sak-render.py` from the [IIC-OSIC-TOOLS](https://github.com/iic-jku/IIC-OSIC-TOOLS) and saves the two images `amplifier_black.png` and `amplifier_white.png` (2048 px wide, 4x oversampling) in `render/img/`:
 
 ```sh
 make render-gds
@@ -294,27 +377,32 @@ make render-gds
 
 ### Design Rule Check (DRC)
 
-Runs DRC on the layout in `layout/`. Both flows use the vendored `scripts/sak-drc.sh`.
+Runs DRC on the layout in `layout/`. All three flows use `sak-drc.sh`.
 
-- `klayout-drc` and `magic-drc` use `layout/<CELL>.$(_GDS_EXT)` (`.gds` if present, otherwise `.klay.gds`)
+- `klayout-drc`, `magic-drc` and `gdscheck-drc` use `layout/<CELL>.$(_GDS_EXT)` (`.gds` if present, otherwise `.klay.gds`)
 
-Reports are written into per-cell run folders: `verification/drc/<CELL>.magic.drc/` (Magic) and `verification/drc/<CELL>.klayout.drc/` (KLayout, `.lyrdb`). The run folders are wiped at the start of each run, so they always reflect the latest run only.
+Reports are written into per-cell run folders: `verification/drc/<CELL>.magic.drc/` (Magic), `verification/drc/<CELL>.klayout.drc/` (KLayout, `.lyrdb`) and `verification/drc/<CELL>.gdscheck.drc/` (gdscheck, `.lyrdb`). The run folders are wiped at the start of each run, so they always reflect the latest run only.
 
-The `DRC_LEVEL` parameter selects the KLayout DRC level (`sak-drc.sh -l`). It is ignored by `magic-drc`, since Magic has no selectable rule decks and always runs the full rule set compiled into the PDK's Magic tech file:
+The `DRC_LEVEL` parameter selects the KLayout DRC level and the gdscheck suite (`sak-drc.sh -l`). It is ignored by `magic-drc`, since Magic has no selectable rule decks and always runs the full rule set compiled into the PDK's Magic tech file:
 
-- `precheck` = core FEOL + BEOL manufacturing rules only (fast iteration)
-- `macro` = block-in-isolation sign-off: `precheck` plus off-grid, zero-area, and pin/label checks (default)
-- `regular` = full-chip sign-off: all checks, including density and antenna
+- `precheck` = the foundry precheck rule set and the pin checks (fast iteration)
+- `macro` = block-in-isolation sign-off: the full FEOL and BEOL rules with off-grid, angle, recommended and pin checks, without chip-level density, the extra rules and antenna (default)
+- `regular` = full-chip sign-off: all checks, including density, the extra rules and antenna
+
+For the IHP Open-PDK, `sak-drc.sh` passes `--precheck_drc --no_density --no_offgrid --no_angle --disable_extra_rules --no_recommended` for `precheck`, `--no_density --disable_extra_rules` for `macro` and `--antenna` for `regular` to the PDK's `run_drc.py`, which adds the pin checks at every level:
 
 | Check | `precheck` | `macro` _(default)_ | `regular` |
 | --- | :---: | :---: | :---: |
-| FEOL + BEOL core rules | ✓ | ✓ | ✓ |
+| Foundry precheck rule set | ✓ | ✓ | ✓ |
+| Pin / label | ✓ | ✓ | ✓ |
+| Full FEOL + BEOL rules | – | ✓ | ✓ |
 | Off-grid / angle | – | ✓ | ✓ |
-| Zero-area / geometry | – | ✓ | ✓ |
-| Pin / label | – | ✓ | ✓ |
-| Recommended / extra rules | – | – | ✓ |
-| Density (chip-level fill) | – | – | ✓ |
+| Recommended rules | – | ✓ | ✓ |
+| Extra rules | – | – | ✓ |
+| Density (full-chip fill) | – | – | ✓ |
 | Antenna | – | – | ✓ |
+
+The `DRC_JOBS` parameter (`sak-drc.sh -j`) sets how many jobs one run uses at most, by default 4 (or the CPU count if lower) for KLayout and every CPU the container may use for gdscheck. At `regular`, KLayout runs the four rule sets as parallel processes and writes the reports of the extra rules, the density and the antenna checks into the subfolders `maximal/`, `density/` and `antenna/` of the run folder. The [top-level README](../../README.md#design-rule-check-drc) describes what more jobs change.
 
 **KLayout DRC** runs a KLayout DRC at the selected `DRC_LEVEL`:
 
@@ -324,12 +412,30 @@ make klayout-drc CELL=amplifier
 make klayout-drc CELL=amplifier DRC_LEVEL=regular
 ```
 
-**Magic DRC** runs a Magic DRC with all subcells flattened (`sak-drc.sh -f "*"`):
+**Magic DRC** runs Magic's full DRC on the layout (`sak-drc.sh -m`), hierarchically and without flattening any cell:
 
 ```sh
 make magic-drc
 make magic-drc CELL=amplifier
 ```
+
+**gdscheck DRC** runs the standalone [gdscheck](https://github.com/aesc-silicon/gdscheck) engine (`sak-drc.sh -g`) at the selected `DRC_LEVEL`, `GDSCHECK_SUITE` or `GDSCHECK_DECKS`. The levels map onto its built-in suites: `precheck` runs `precheck` (which includes the density rules, so a single macro fails it), `macro` runs `core` (all geometric rules without density and antenna) and `regular` runs `main` (all rules). The `GDSCHECK_SUITE` parameter (`sak-drc.sh -s`) replaces this mapping and also reaches `density`, `antenna` and `recommended`. The `GDSCHECK_DECKS` parameter (`sak-drc.sh -D`) runs single rule decks instead, comma-separated, and `gdscheck list-decks --process ihp-sg13cmos5l` lists them. The layer decks include their fill and density rules, so a deck run can fail on a rule that `macro` does not check: the `inverter` macro fails `GDSCHECK_DECKS=activ,gatpoly` on `AFil.g1`.
+
+```sh
+make gdscheck-drc
+make gdscheck-drc CELL=amplifier
+make gdscheck-drc CELL=amplifier GDSCHECK_SUITE=recommended
+make gdscheck-drc CELL=amplifier GDSCHECK_DECKS=cont,via1
+```
+
+**gdscheck DRC of all main subcells** runs it for `amplifier`:
+
+```sh
+make gdscheck-drc-all
+```
+
+> [!NOTE]
+> KLayout is the sign-off DRC, Magic and gdscheck give a second and a third opinion. `amplifier` passes all three at `macro`. `make all` runs KLayout and gdscheck and leaves the Magic DRC out.
 
 
 ### Export Schematic Netlist for LVS
@@ -363,7 +469,7 @@ Exports the schematic netlist from Xschem, then runs LVS. Compares the layout in
 
 - `klayout-lvs` and `magic-lvs` use `layout/<CELL>.$(_GDS_EXT)` (`.gds` if present, otherwise `.klay.gds`)
 
-Both flows use the vendored `scripts/sak-lvs.sh` and write their reports into per-cell run folders: `verification/lvs/<CELL>.magic.lvs/` (Magic + Netgen) and `verification/lvs/<CELL>.klayout.lvs/` (KLayout, `.lvsdb`). The run folders are wiped at the start of each run, so they always reflect the latest run only. The extracted layout netlist is moved to `netlist/layout/`.
+Both flows use `sak-lvs.sh` and write their reports into per-cell run folders: `verification/lvs/<CELL>.magic.lvs/` (Magic + Netgen) and `verification/lvs/<CELL>.klayout.lvs/` (KLayout, `.lvsdb`). The run folders are wiped at the start of each run, so they always reflect the latest run only. The extracted layout netlist is moved to `netlist/layout/`.
 
 **KLayout LVS** uses `sak-lvs.sh` (KLayout mode `-k`), which wraps `run_lvs.py` from the IHP Open-PDK:
 
@@ -372,12 +478,36 @@ make klayout-lvs
 make klayout-lvs CELL=amplifier
 ```
 
-**Magic + Netgen LVS** uses `sak-lvs.sh` (Magic + Netgen mode, the default), which extracts the layout netlist with Magic and compares it against the schematic netlist with Netgen:
+**Magic + Netgen LVS** uses `sak-lvs.sh` (Magic + Netgen mode `-m`, the default), which extracts the layout netlist with Magic and compares it against the schematic netlist with Netgen, using the Netgen setup from the IHP Open-PDK:
 
 ```sh
 make magic-lvs
 make magic-lvs CELL=amplifier
 ```
+
+
+### Build Xschem PEX Symbol
+
+Builds the Xschem symbol the PEX flow needs, `schematic/xschem/<CELL>_pex.sym`, from the regular cell symbol `schematic/xschem/<CELL>.sym`:
+
+```sh
+make symbol-pex                  # build amplifier_pex.sym from amplifier.sym
+make symbol-pex CELL=<cellname>  # build the PEX symbol of another cell
+```
+
+The generated symbol is a verbatim copy of `<CELL>.sym` with a single change: `type=subcircuit` becomes `type=primitive`. Everything else (pin boxes and their order, `format`, `spectre_format`, `template`, graphics) is inherited, which is exactly what the PEX flow needs:
+
+- **`type=primitive`** stops Xschem from descending into a schematic of the same name. There is no `<CELL>_pex.sch`, so the instance line is emitted as it stands and the subcircuit comes from the `.include`d PEX netlist instead.
+- **`format="@name @pinlist @symname"`** makes the instance reference `@symname`, which resolves to `<CELL>_pex`, exactly the `.subckt` name the PEX flow writes.
+- **The pin order** is what `sak-pin-reorder.py` reorders the extracted netlist to, so it has to be the one of the cell symbol.
+
+`symbol-pex` runs automatically at the start of `klayout-pex` and `magic-pex`, so the symbol is rebuilt from the current `<CELL>.sym` before every extraction and cannot go stale when a pin is added, removed or renamed. Calling it by hand is only needed to refresh the symbol without re-running an extraction. Anything added to the generated file by hand is lost at the next extraction, so make the change in `<CELL>.sym` instead.
+
+If `<CELL>.sym` does not exist, the target prints a note and does nothing, which leaves the PEX targets running without a pin reorder just as before. It fails only when `<CELL>.sym` declares neither `type=subcircuit` nor `type=primitive`.
+
+> [!NOTE]
+> Every symbol in this project also carries `spectre_format="@name ( @pinlist ) @symname"`. Xschem writes that line itself whenever a symbol is built from a schematic's pin list (key `a`, `make_sym.awk`), and it is read **only** by the Spectre netlister, which is also the one that drives VACASK (`xschem.tcl` configures `vacask "$N"` as the default simulator for `netlist_type spectre`). The SPICE netlister used for ngspice ignores it, so it has no effect on any target in this Makefile.
+> Do not strip it: without it, instances of the symbol are **silently dropped** from a Spectre/VACASK netlist and the `subckt` line of the symbol itself comes out with an empty port list, with no warning at all.
 
 
 ### Parasitic Extraction (PEX)
@@ -400,7 +530,7 @@ The `EXT_MODE` parameter selects the extraction mode:
 
 The `.subckt` name in the extracted SPICE file is `<CELL>_pex`: `magic-pex` sets it directly via the `sak-pex.sh` option `-n <CELL>_pex`, while for `klayout-pex` it is automatically renamed from `<CELL>` (kpex).
 
-If a matching Xschem symbol (`schematic/xschem/<CELL>_pex.sym`) exists, the `.subckt` pin order in the extracted SPICE file is automatically reordered with the vendored `scripts/sak-pin-reorder.py` to match the symbol's pin positions. This ensures the PEX netlist can be used directly with the corresponding Xschem symbol for simulation regardless of the selected `EXT_MODE`.
+Both targets start by running `symbol-pex` (see above), so `schematic/xschem/<CELL>_pex.sym` always reflects the current cell symbol. The `.subckt` pin order in the extracted SPICE file is then reordered with `sak-pin-reorder.py` (installed in the IIC-OSIC-TOOLS container) to match that symbol's pin positions. This ensures the PEX netlist can be used directly with the corresponding Xschem symbol for simulation regardless of the selected `EXT_MODE`.
 
 Both targets finish by running [`scripts/check_pex_ports.py`](scripts/check_pex_ports.py) on the netlist they just wrote. It verifies that every pin of the `.subckt` really reaches the circuit, and fails the target otherwise. Two cases are caught:
 
@@ -417,7 +547,7 @@ python3 scripts/check_pex_ports.py -v netlist/pex/*.spice     # -v also prints t
 **KLayout PEX** uses `kpex` with the Magic extraction engine currently (2.5D engine is work in progress):
 
 > [!WARNING]
-> `kpex` does not support the `ihp-sg13cmos5l` PDK yet, so the `klayout-pex` target currently fails (kpex is also not part of the nix shell). Use `magic-pex` for parasitic extraction until kpex gains CMOS5L support. In the `klayout-verify` target, the `klayout-pex` target is currently commented out.
+> `kpex` does not support the `ihp-sg13cmos5l` PDK yet, so the `klayout-pex` target currently fails. Use `magic-pex` for parasitic extraction until kpex gains CMOS5L support. In the `klayout-verify` target, the `klayout-pex` target is currently commented out.
 
 ```sh
 make klayout-pex
@@ -425,7 +555,7 @@ make klayout-pex CELL=amplifier
 make klayout-pex CELL=amplifier EXT_MODE=3
 ```
 
-**Magic PEX** uses the vendored `scripts/sak-pex.sh`, which extracts the parasitics with Magic (C-decoupled, C-coupled, or full-RC):
+**Magic PEX** uses `sak-pex.sh`, which extracts the parasitics with Magic (C-decoupled, C-coupled, or full-RC):
 
 ```sh
 make magic-pex
@@ -450,14 +580,14 @@ make magic-pex CELL=amplifier EXT_MODE=3 THRESHOLD=5000 MINRES=500 MINDELAY=2
 
 ### Verify with KLayout
 
-**Verify a single cell** by running DRC and LVS in sequence:
+**Verify a single cell** by running DRC, LVS, and PEX in sequence:
 
 ```sh
 make klayout-verify
 make klayout-verify CELL=amplifier
 ```
 
-**Verify all cells**
+**Verify all cells** (`amplifier`):
 
 ```sh
 make klayout-verify-all
@@ -466,14 +596,14 @@ make klayout-verify-all
 
 ### Verify with Magic
 
-**Verify a single cell** by running DRC, LVS, and PEX in sequence:
+**Verify a single cell** by running LVS and PEX in sequence. The Magic DRC stays out of this target for now (see [Design Rule Check (DRC)](#design-rule-check-drc)), `make magic-drc` runs it:
 
 ```sh
 make magic-verify
 make magic-verify CELL=amplifier
 ```
 
-**Verify all cells**
+**Verify all cells** (`amplifier`):
 
 ```sh
 make magic-verify-all
@@ -482,55 +612,40 @@ make magic-verify-all
 
 ### Verify, Build and Simulate All
 
-Runs the full flow in sequence: KLayout verification, Magic verification, top-level build deliverables, and simulations (`klayout-verify-all`, `magic-verify-all`, `build-top`, `sim-all`):
+Runs the full flow in sequence: KLayout verification, gdscheck DRC, Magic verification, top-level build deliverables, and simulations (`klayout-verify-all`, `gdscheck-drc-all`, `magic-verify-all`, `build-top`, `sim-all`):
 
 ```sh
 make all
 ```
 
-Verification runs first because DRC/LVS/PEX produce the fresh, pin-reordered PEX netlists from the current layout. The build follows, since the Verilog stub reads its pins from a PEX netlist. The simulations run **last**, so the `amplifier` testbench includes the PEX netlist produced by this run, not by a previous one.
+Verification runs first because DRC/LVS/PEX produce the fresh, pin-reordered PEX netlists from the current layout. The build follows, since the Verilog stub reads its pins from a PEX netlist. The simulations run **last**, so the testbenches include the PEX netlist produced by this run, not by a previous one.
 
 
 ### Clean
 
-`make clean` deletes all generated files and folders. The sources (schematics, symbols, testbenches, the layout, and the scripts) stay untouched. Deleted are:
+`make clean` deletes all generated files and folders. The sources stay untouched: the schematics, symbols and testbenches, the layout in `layout/`, the scripts, the CACE configuration and templates, and `render/blender/`. Deleted are:
 
-- `final/` (GDS, LEF, LIB, Verilog stub, and layout render deliverables)
-- `netlist/` (schematic, layout, and PEX netlists)
+- `final/` (GDS, LEF, Liberty and Verilog stub deliverables)
+- `netlist/` (schematic, layout and PEX netlists)
+- `render/img/` (the layout renders)
 - `verification/drc/` and `verification/lvs/` (DRC and LVS reports)
-- `testbenches/xschem/simulations/`, the `plot_simulations/__pycache__/`, and the content of `plot_simulations/data/` and `plot_simulations/figures/`
+- `schematic/xschem/simulations/`, `testbenches/xschem/simulations/` and the `plot_simulations/` outputs (`data/`, `figures/`, `__pycache__/`)
+- the CACE outputs under `verification/cace/` (`_runs/`, `_docs/`, `netlist/`, `results/`, `templates/simulations/`)
 
-Every Makefile target recreates its output folders, so a clean rebuild is simply:
+Every target recreates the folders it writes to, so a clean rebuild is:
 
 ```sh
 make clean
 make all
 ```
 
+> [!WARNING]
+> Most of these outputs are committed in this repository, so `make clean` leaves a large deletion set in `git status`. Run `git restore .` to get them back if you did not mean to remove them.
+
 > [!NOTE]
-> The Xschem testbenches `.include` the PEX netlist `netlist/pex/amplifier_magic_pex_3.spice`. Directly after `make clean`, run `make magic-pex` (or the full `make all`) once before `make sim-xschem` / `make sim-all`, otherwise the include fails.
+> All three Xschem testbenches `.include` a Magic PEX netlist from `netlist/pex/`, and `make verilog` reads its pin list from one as well. Directly after `make clean`, run `make magic-pex` (or the full `make all`) once before `make sim-xschem`, `make sim-all` or `make build-top`, otherwise the include fails.
 
-## Start a New Macro from This Template
 
-The macro is a good starting point for a new analog cell (the workshop exercises use it this way):
+## Start a New Analog Macro from This Template
 
-1. Copy this macro folder.
-2. Execute `make clean` in the new folder.
-3. Rename `TOP` in the `Makefile`. All targets derive their file paths from `TOP` (and `CELL`, which defaults to `TOP`), so the design files must carry the same name.
-4. Rename the Xschem schematic, symbol, and testbench files.
-5. Rename the KLayout layout file **and the top cell inside the GDS** (open it in KLayout, rename the cell, save). The verification targets require matching file and top-cell names.
-
-For a new macro named `amp`, this looks as follows:
-
-```sh
-cp -r amplifier amp
-cd amp
-make clean
-# set TOP = amp in the Makefile, then:
-for f in schematic/xschem/amplifier* testbenches/xschem/amplifier*; do
-    mv "$f" "$(echo "$f" | sed 's/amplifier/amp/')"
-done
-mv layout/amplifier.gds layout/amp.gds
-```
-
-Finally, update the remaining `amplifier` references inside the renamed files with search-and-replace in a text editor, for example the `amplifier.sym` instances and the `.include` of the PEX netlist in the testbenches (Xschem files are plain text).
+The [`inverter`](../inverter/) macro is the usual starting point for a new analog macro. To start from this one instead, `make macro FROM=amplifier NAME=<name>` in [`macros/`](../) copies and renames it, including the cells inside the GDS files and the `.klib` library map. The `inverter` unit cell keeps its name. See [Start a New Macro from an Existing One](../README.md#start-a-new-macro-from-an-existing-one) for what the target does, what is left to do afterwards, and where to register the macro at the chip top-level.
