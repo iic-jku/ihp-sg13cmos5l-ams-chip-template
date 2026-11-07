@@ -364,7 +364,7 @@ Solid arrows are direct `$(MAKE) <target>` calls within a single Makefile. Dashe
 At the top level, `make all` runs four steps in this order:
 
 1. `build-all` initialises the submodules and builds every component by calling its own `all` target: bondpad, logos, digital macro, analog macro, and finally the chip assembly with `build-top` (LibreLane, copy-back of all artifacts, logo and fill insertion, final GDS render).
-2. `gdscheck-drc` runs the DRC of the final `chip_top` and `chip_top_logo_fill` GDS. A violation stops `make all` (see [Design Rule Check (DRC)](#design-rule-check-drc)). `magic-drc` is left out until IHP's IO pads and SRAM are clean in Magic. The KLayout DRC, the sign-off deck, is not part of `make all` to shorten the runtime. Run it separately with `klayout-drc-minimum` or `klayout-drc-regular`.
+2. `klayout-drc-regular` (the sign-off deck) and `gdscheck-drc-regular` run the DRC of the final `chip_top_logo_fill` GDS. A violation stops `make all` (see [Design Rule Check (DRC)](#design-rule-check-drc)). `magic-drc` is left out until IHP's IO pads and SRAM are clean in Magic.
 3. `sim-all` runs the top-level RTL and gate-level simulations on the netlists produced by this build.
 4. `bondplan` generates the bonding diagram, the bondwires, and the pin table.
 
@@ -691,7 +691,7 @@ The FPGA part of that build emulates the macro on a board. It covers three board
 
 #### Build Analog Macros
 
-Each analog macro has its own `klayout-verify` and `magic-verify` targets that run DRC, LVS, and PEX for the top-level cell, and a `gdscheck-drc` target for the gdscheck DRC.
+Each analog macro has a `klayout-verify` target that runs DRC, LVS, and PEX for the top-level cell, a `gdscheck-drc` target for the gdscheck DRC, and a `magic-verify` target that runs LVS and PEX. `magic-drc` runs the Magic DRC on its own.
 
 To build the inverter macro:
 
@@ -777,7 +777,7 @@ The `DRC_JOBS` parameter (`sak-drc.sh -j`) sets how many jobs one run uses at mo
 make klayout-drc-minimum
 ```
 
-**KLayout DRC (regular)** runs a full (`regular`) KLayout DRC on the final top-level layout with logo and fill structures:
+**KLayout DRC (regular)** runs a full (`regular`) KLayout DRC on the final top-level layout with logo and fill structures. `make all` runs it as its first DRC:
 
 ```sh
 make klayout-drc-regular
@@ -807,7 +807,7 @@ make magic-drc CELL=chip_top
 make gdscheck-drc-minimum
 ```
 
-**gdscheck DRC (regular)** runs the `main` suite on the final top-level layout with logo and fill structures:
+**gdscheck DRC (regular)** runs the `main` suite on the final top-level layout with logo and fill structures. `make all` runs it after the KLayout DRC:
 
 ```sh
 make gdscheck-drc-regular
@@ -828,7 +828,7 @@ make gdscheck-drc CELL=chip_top_logo_fill GDSCHECK_DECKS=metal1,via1
 > - "This layer can't abut or partially overlap between subcells" and `CntB.h1` in the IO pads.
 > - Overlap and `M2.d` errors in the SRAM macro, which flattening the SRAM's subcells removes ([IHP-Open-PDK#794](https://github.com/IHP-GmbH/IHP-Open-PDK/issues/794)).
 >
-> A flow stops on a violation of any engine it calls, so `make all` leaves the chip's Magic DRC out until the fixes are in the container. Upstream calls gdscheck experimental, so a clean gdscheck run is no sign-off on its own.
+> A flow stops on a violation of any engine it calls, so the flows leave the Magic DRC out until the fixes are in the container: its lines are commented out in `magic-verify`, in the IP `all` and in `make all`, and `magic-drc` still runs it on its own. Upstream calls gdscheck experimental, so a clean gdscheck run is no sign-off on its own.
 
 
 ### Export Schematic Netlist for LVS
@@ -994,7 +994,7 @@ make magic-pex CELL=chip_top EXT_MODE=3 THRESHOLD=5000 MINRES=500 MINDELAY=2
 
 ### Verify a Specific Cell
 
-Runs DRC, LVS, and PEX for a specific cell (e.g. `chip_top`):
+Runs DRC, LVS, and PEX with KLayout and LVS and PEX with Magic for a specific cell (e.g. `chip_top`):
 
 ```sh
 make klayout-verify CELL=chip_top
@@ -1004,7 +1004,7 @@ make magic-verify CELL=chip_top
 
 ### Verify Top Cell
 
-Runs DRC, LVS, and PEX for the top cell:
+Runs DRC, LVS, and PEX with KLayout and LVS and PEX with Magic for the top cell:
 
 ```sh
 make klayout-verify
@@ -1042,7 +1042,7 @@ See [packaging/README.md](packaging/README.md) for the full flow documentation a
 
 ### Build, Verify and Simulate All
 
-Runs `build-all` first, followed by the gdscheck DRC of both `chip_top` and `chip_top_logo_fill`, then the chip simulations (`sim-all`) and finally generates the bondplan (`bondplan`). A violation in the DRC stops the flow, see [Design Rule Check (DRC)](#design-rule-check-drc):
+Runs `build-all` first, followed by the regular KLayout and gdscheck DRC of the final `chip_top_logo_fill`, then the chip simulations (`sim-all`) and finally generates the bondplan (`bondplan`). A violation in the DRC stops the flow, see [Design Rule Check (DRC)](#design-rule-check-drc):
 
 ```sh
 make all
@@ -1106,7 +1106,7 @@ To keep the runtime low while still covering the full toolchain, the regression 
 - The counter macro is hardened with `librelane-magicdrc` (only **Magic DRC** enabled, the slower KLayout DRC is skipped). Netgen LVS still runs as part of the flow.
 - The chip top-level runs `librelane-nodrc`. All DRC checks are skipped to save runtime on the large top-level assembly. The macros and IP blocks are DRC-checked individually beforehand, so this only leaves the top-level routing/fill unchecked.
 - KLayout DRC (`sak-drc.sh`) is skipped inside the LibreLane runs, but is still exercised in the bondpad and logo IP builds, and in the inverter `klayout-verify`.
-- Magic DRC (`sak-drc.sh -m`) runs in the bondpad and logo IP builds and in the inverter `magic-verify`. gdscheck DRC (`sak-drc.sh -g`) runs once, as `gdscheck-drc` of the bondpad, which passes it, so a broken gdscheck fails the regression.
+- Magic DRC (`sak-drc.sh -m`) runs once, as `magic-drc` of the bondpad, which passes it, so a broken Magic fails the regression. gdscheck DRC (`sak-drc.sh -g`) runs in the bondpad and logo IP builds.
 - Only **one** logo (`sg13cmos5l_ip__jku`) is regenerated. It is the only step that exercises the PNG to GDS flow. The second logo (`sg13cmos5l_ip__jku_names`) uses an identical toolchain and reuses its committed views.
 - Exactly **one** CACE parameter set is run (the AC VDD sweep `ac_params`, no Monte Carlo). Swap `ac_params` for `ac_mc_params` / `ac_mm_params` in the target to also exercise the Monte Carlo flow.
 
@@ -1117,13 +1117,13 @@ The following tools and flows are checked:
 | Tool / flow | Where it is exercised |
 | --- | --- |
 | git submodules | `init-submodules` |
-| KLayout scripting (bondpad generator), KLayout DRC, Magic DRC | `build-bondpad` |
-| gdscheck DRC (`sak-drc.sh -g`) | bondpad `gdscheck-drc` |
-| PNG to GDS logo generation, KLayout DRC, Magic DRC | `sg13cmos5l_ip__jku all` (single logo) |
+| KLayout scripting (bondpad generator), KLayout DRC, gdscheck DRC | `build-bondpad` |
+| Magic DRC (`sak-drc.sh -m`) | bondpad `magic-drc` |
+| PNG to GDS logo generation, KLayout DRC, gdscheck DRC | `sg13cmos5l_ip__jku all` (single logo) |
 | Xschem + ngspice (analog simulation) | inverter `sim-xschem` (`inverter_tb_dc_vout`) |
 | CACE (+ ngspice) | inverter CACE, single parameter set (`ac_params`) |
 | KLayout DRC (`sak-drc.sh`) + KLayout LVS (`sak-lvs.sh`) | inverter `klayout-verify CELL=inverter_top` |
-| Magic DRC (`sak-drc.sh`) + Magic extract + Netgen LVS (`sak-lvs.sh`) + Magic PEX (`sak-pex.sh`) | inverter `magic-verify CELL=inverter_top` |
+| Magic extract + Netgen LVS (`sak-lvs.sh`) + Magic PEX (`sak-pex.sh`) | inverter `magic-verify CELL=inverter_top` |
 | Magic LEF export + LIB + Verilog stub + `sak-render.py` render | inverter `build-top` |
 | Verilator lint | counter `lint-verilog-all` |
 | Icarus Verilog (`iverilog`/`vvp`) | counter `sim-rtl-verilog` |
