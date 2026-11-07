@@ -77,14 +77,11 @@ for name, x, s in (("rf_p", -XF, -1), ("rf_n", XF, 1)):
                 rows=int((y1 - y0 - 0.8 - 1.4 * (y1 == Y_FV)) / 0.41))
 
 # Cross-coupled pair, gates on top: M1 (drain rf_p) left, M2 (drain rf_n) its image in x
-pair = vl.mos(ly, "Mpair", "nmos", 20.0, 0.13, 10, tap="merge")
+pair = vl.mos(ly, "Mpair", "nmos", 20.0, 0.13, 10, tap="merge", d_metal="Metal3", s_strap=True)
 paw = pair.ports["ACT"][1].width()
 m1 = top.place(pair, -GAP - paw, Y_PAIR, mirror=True)
 m2 = top.place(pair, GAP + paw, Y_PAIR, rot=180)
-# Drains: a via array over each strap onto Metal3, which reaches the device's tank line
-for p in (m1, m2):
-    d = p["D"][1]
-    top.via(d.center().x, d.center().y, "Metal2", "Metal3", cols=9, rows=4)
+# Drains: the straps on Metal3 reach the device's tank line
 # Gates: Metal1 and Metal2 over each gate pad, two rows of vias along it. M1's gate (rf_n) runs on Metal2 to the rf_n
 # line, M2's gate (rf_p) drops to Metal3 left of the rf_n line and runs to the rf_p line. With one via per level, at
 # 9 Ohm per cut, the extraction put 41 Ohm and 23 Ohm in series with the gates.
@@ -167,7 +164,8 @@ top.rect("Metal1", tap.left, tap.bottom, XS + 0.5, tap.top)
 s1, s2 = m1["S"][1], m2["S"][1]
 sbar = top.rect("Metal1", XS - 0.5, s1.bottom, s2.right + 2.4, s1.top)
 for x in (-11.0, -6.0, -3.0, 0.0, 3.0, 6.0, 12.0):  # their Metal3 clear of the rf lines
-    top.via(x, sbar.center().y, "Metal1", "Metal4", cols=4, rows=2)
+    # The two on the devices' source rails start from the rails' Metal2
+    top.via(x, sbar.center().y, "Metal2" if abs(x) == 6.0 else "Metal1", "Metal4", cols=4, rows=2)
 top.rect("Metal4", XS - 0.5, sbar.bottom - 1.2, CCT1["x0"] - 0.3, sbar.top)
 # TopMetal1 return, its top 1.7 um under the vdd_core bar at Y_SP. TopVia1 rows every 3 um onto the Metal4 below it.
 top.rect("Metal4", X_CH[0], Y_CH[1], X_CH[1], sbar.top)
@@ -187,6 +185,9 @@ top.rect("Metal4", X_VSS_E[0], Y_VSS_BOT[0], X_VSS_E[1], Y_VSS_TOP[1])
 top.rect("Metal4", CCT2["x0"] - 1.3, Y_VSS_BOT[0], X_VSS_E[1], Y_VSS_BOT[1])
 top.rect("Metal4", CCT2["x0"] - 1.3, Y_VSS_BOT[0], CCT2["x0"] - 0.3, CCT2["y1"] - 0.5)
 top.pin("TopMetal1", "VSS", pya.DBox(vss.left, vss.bottom, vss.right, vss.bottom + 1.0))
+
+vl.check_source_strip("pair source strip", vl.I_CORE / 10)
+vl.check_cuts("pair sources to VSS", "Via3", 7 * 8, vl.I_CORE)
 
 vl.write(top, vl.out_path("vco_core", __file__), keep=("vco_var",))
 # ==============================================================================
