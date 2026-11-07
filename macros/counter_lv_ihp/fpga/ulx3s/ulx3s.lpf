@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Simon Dorrer and Harald Pretl
 # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 #
-# ULX3S v2.0 pin map for counter_top.
+# ULX3S v2.0 pin map for counter_lv_ihp_top.
 # See https://github.com/emard/ulx3s for the board pinout.
 
 LOCATE COMP "clock_i" SITE "G2";

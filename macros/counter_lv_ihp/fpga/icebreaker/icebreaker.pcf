@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Simon Dorrer and Harald Pretl
 # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 #
-# iCEBreaker pin map for counter_top.
+# iCEBreaker pin map for counter_lv_ihp_top.
 # See https://github.com/icebreaker-fpga/icebreaker for the board pinout.
 
 # 12 MHz clock
