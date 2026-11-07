@@ -15,7 +15,7 @@ meta:
 INSERT_ECO_BUFFERS:
   # === East Pads ===
   # - target: output19/X # enable_i
-  # buffer: sg13cmos5l_buf_4
+  # buffer: BUFX12
   # === END OF ECO_BUFFERS ===
     
 DESIGN_NAME: counter_lv_eth_top
@@ -61,38 +61,59 @@ CLOCK_NET: clock_i
 CLOCK_PERIOD: 20 # in ns == 50 MHz
 
 # Define Standard Cells
+# The name stays at the PDK default, every view it implies is replaced below
 STD_CELL_LIBRARY: sg13cmos5l_stdcell
+
+# Views
+TECH_LEFS:
+  "*": pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/lef/ez130_sg13cmos5l_tech.lef
+CELL_LEFS: [pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/lef/ez130_8t.lef]
+CELL_GDS: [pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/gds/ez130_8t.gds]
+CELL_VERILOG_MODELS: [pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/verilog/ez130_8t.v]
+CELL_SPICE_MODELS: [pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/cdl/ez130_8t.cdl]
+CELL_CDLS: [pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/cdl/ez130_8t.cdl]
+FP_TRACKS_INFO: dir::tracks_ez130.info
+
+# Well and substrate ties
+WELLTAP_CELL: WELLTAP
+FP_TAPCELL_DIST: 20
+
+# Role cells, matched to the IHP LV defaults on max_capacitance
+SYNTH_DRIVING_CELL: BUFX12/Y
+SYNTH_CLK_DRIVING_CELL: BUFX12/Y
+SYNTH_BUFFER_CELL: BUFX3/A/Y
+SYNTH_TIEHI_CELL: TIEHI/Y
+SYNTH_TIELO_CELL: TIELO/Y
+FILL_CELLS: [FILLER1, FILLER2, FILLER4, FILLER8, FILLER16]
+DECAP_CELLS: [DECAP4, DECAP8, DECAP16, DECAP32]
+CELL_PAD_EXCLUDE: ["FILLER*", "DECAP*"]
+TRISTATE_CELLS: ["TBUFX*", "TINVX*"]
+DIODE_CELL: ANTENNA2/A
+PDN_RAIL_WIDTH: 0.32
+CTS_ROOT_BUFFER: BUFX24
+CTS_CLK_BUFFERS: [BUFX24, BUFX12, BUFX6, BUFX3]
 
 # Technology LIBs
 LIB:
   "*_fast_1p32V_m40C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p32V_m40C.lib
+    - pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/lib/ez130_8t_ff_1p32v_m40c.lib
 
-  "*_fast_1p65V_m40C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p65V_m40C.lib
-  
   "*_slow_1p08V_125C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p08V_125C.lib
-
-  "*_slow_1p35V_125C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p35V_125C.lib
+    - pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/lib/ez130_8t_ss_1p08v_125c.lib
 
   "*_typ_1p20V_25C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p20V_25C.lib
-
-  "*_typ_1p50V_25C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p50V_25C.lib
+    - pdk_dir::../ihp-sg13g2/libs.ref/ez130_8t/lib/ez130_8t_tt_1p20v_25c.lib
 
 # Corners
 STA_CORNERS:
   - nom_fast_1p32V_m40C
-  - nom_fast_1p65V_m40C
   - nom_slow_1p08V_125C
-  - nom_slow_1p35V_125C
   - nom_typ_1p20V_25C
-  - nom_typ_1p50V_25C
 
-DEFAULT_CORNER: nom_typ_1p50V_25C
+DEFAULT_CORNER: nom_typ_1p20V_25C
+
+# The macro has no pads, and the PAD_LIBS of the PDK name only three corners, which stops repair_design on a corner without them
+PAD_LIBS: {}
 
 # Fix setup violations
 # PL_RESIZER_SETUP_SLACK_MARGIN: 0.60
