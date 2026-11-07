@@ -94,6 +94,9 @@ STA_CORNERS:
 
 DEFAULT_CORNER: nom_typ_1p50V_25C
 
+# The macro has no pads, and the PAD_LIBS of the PDK name only three corners, which stops repair_design on a corner without them
+PAD_LIBS: {}
+
 # Fix setup violations
 # PL_RESIZER_SETUP_SLACK_MARGIN: 0.60
 # GRT_RESIZER_SETUP_SLACK_MARGIN: 0.55
