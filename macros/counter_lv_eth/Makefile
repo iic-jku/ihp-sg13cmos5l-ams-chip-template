@@ -6,7 +6,7 @@ MAKEFILE_DIR := $(shell dirname $(realpath $(firstword $(MAKEFILE_LIST))))
 RUN_TAG = $(shell ls -1 $(LIBRELANE_DIR)/runs 2>/dev/null | tail -n 1)
 
 # Variables
-TOP = counter_top
+TOP = counter_lv_eth_top
 
 .DEFAULT_GOAL := help
 
@@ -88,13 +88,13 @@ FINAL_DIR      	:= final
 LAY_DIR        	:= final/gds
 
 # Variables for simulation and linting targets
-# constants.sv defines the `COUNTER_MAX_DEFAULT / `CLK_FREQ_DEFAULT macros and must
+# constants.sv defines the `COUNTER_LV_ETH_MAX_DEFAULT / `CLK_FREQ_DEFAULT macros and must
 # compile before any module that references them, so it is the first entry in MODULES_SIM
 # and in both branches of _SIM_SRCS / _LINT_SRCS below (Yosys 0.64 cannot parse
 # `import pkg::*` in a module header, see rtl/constants.sv).
 MODULES_SYNTH := \
-	$(SRC_DIR)/counter.sv \
-	$(SRC_DIR)/counter_top.sv
+	$(SRC_DIR)/counter_lv_eth.sv \
+	$(SRC_DIR)/counter_lv_eth_top.sv
 
 MODULES_SIM :=  \
 	$(SRC_DIR)/constants.sv \
@@ -144,8 +144,8 @@ lint-verilog: ## Lint Verilog source files with Verilator (usage: make lint-veri
 	verilator --lint-only -I"$(SRC_DIR)" $(_LINT_SRCS)
 .PHONY: lint-verilog
 
-lint-verilog-all: ## Lint all Verilog source files (counter, counter_top)
-	$(MAKE) lint-verilog CELL=counter
+lint-verilog-all: ## Lint all Verilog source files (counter_lv_eth, counter_lv_eth_top)
+	$(MAKE) lint-verilog CELL=counter_lv_eth
 	$(MAKE) lint-verilog
 .PHONY: lint-verilog-all
 # ================================================================================================
@@ -210,7 +210,7 @@ sim-view-xschem: ## Plot Xschem simulation results (usage: make sim-view-xschem 
 	SHOW_PLOTS=1 python3 $(SIM_PLOT_DIR)/$(SCRIPT).py
 .PHONY: sim-view-xschem
 
-sim-all: ## Simulate the macro (RTL Verilog + RTL/GL cocotb + GL Xschem for counter_top)
+sim-all: ## Simulate the macro (RTL Verilog + RTL/GL cocotb + GL Xschem for counter_lv_eth_top)
 	$(MAKE) sim-rtl-verilog
 	$(MAKE) sim-rtl-cocotb
 	$(MAKE) sim-gl-cocotb
@@ -259,11 +259,8 @@ copy-reports: ## Copy yosys, antenna, STA, power, IR-drop, DRC, LVS and manufact
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-checkantennas-1/reports/antenna_summary.rpt $(REPORT_DIR)/antenna_summary.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/summary.rpt $(REPORT_DIR)/stapostpnr_summary.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/nom_fast_1p32V_m40C/power.rpt $(REPORT_DIR)/stapostpnr_nom_fast_1p32V_m40C_power.rpt
-	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/nom_fast_1p65V_m40C/power.rpt $(REPORT_DIR)/stapostpnr_nom_fast_1p65V_m40C_power.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/nom_slow_1p08V_125C/power.rpt $(REPORT_DIR)/stapostpnr_nom_slow_1p08V_125C_power.rpt
-	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/nom_slow_1p35V_125C/power.rpt $(REPORT_DIR)/stapostpnr_nom_slow_1p35V_125C_power.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/nom_typ_1p20V_25C/power.rpt $(REPORT_DIR)/stapostpnr_nom_typ_1p20V_25C_power.rpt
-	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-stapostpnr/nom_typ_1p50V_25C/power.rpt $(REPORT_DIR)/stapostpnr_nom_typ_1p50V_25C_power.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-openroad-irdropreport/irdrop.rpt $(REPORT_DIR)/irdrop.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-magic-drc/reports/drc.magic.rpt $(REPORT_DIR)/drc.magic.rpt
 	cp $(LIBRELANE_DIR)/runs/${RUN_TAG}/*-klayout-drc/reports/drc.klayout.json $(REPORT_DIR)/drc.klayout.json
@@ -327,7 +324,7 @@ symbol-check: ## Check <CELL>.sym against the powered netlist ports, runs inside
 generate-xspice: ## Generate XSPICE model from the LibreLane-extracted SPICE netlist
 	$(MAKE) symbol-check CELL=$(TOP)
 	mkdir -p $(XSPICE_DIR)
-	python3 $(SCRIPTS_DIR)/spi2xspice.py $(PDK_ROOT)/$(PDK)/libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p50V_25C.lib -io_time=500p -time=50p -idelay=5p -odelay=50p -cload=250f $(NET_SPICE_DIR)/${TOP}.spice $(XSPICE_DIR)/${TOP}.xspice
+	python3 $(SCRIPTS_DIR)/spi2xspice.py $(PDK_ROOT)/ihp-sg13g2/libs.ref/ez130_8t/lib/ez130_8t_tt_1p20v_25c.lib -io_time=500p -time=50p -idelay=5p -odelay=50p -cload=250f $(NET_SPICE_DIR)/${TOP}.spice $(XSPICE_DIR)/${TOP}.xspice
 	sak-pin-reorder.py $(XSCHEM_SCH_DIR)/${TOP}.sym $(XSPICE_DIR)/${TOP}.xspice --format xspice
 .PHONY: generate-xspice
 # ================================================================================================
@@ -431,7 +428,7 @@ magic-pex: ## Run Parasitic Extraction with Magic on the final GDS (usage: make 
 
 # Logic Equivalence Check Targets
 LEC_DIR := flow/eqy
-LEC_LIB := $(PDK_ROOT)/$(PDK)/libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p20V_25C.lib
+LEC_LIB := $(PDK_ROOT)/ihp-sg13g2/libs.ref/ez130_8t/lib/ez130_8t_tt_1p20v_25c.lib
 
 # Read the RTL with the other front end than synthesis (USE_SLANG in config.yaml),
 # so that a front end that misreads the RTL cannot do so on both sides
@@ -441,6 +438,7 @@ else
 LEC_GOLD_READ := 'plugin -i slang' 'read_slang --single-unit --top $(TOP) $(abspath $(MODULES_SIM))'
 endif
 
+# WELLTAP and FILLER* have no pins and are in neither the Liberty file nor the Verilog models, so the proof drops them
 # clk2fflogic on both sides makes the clock an input of the proof: EQY's own SBY script assumes one clock,
 # so without it a flop on the wrong clock net would pass
 lec: ## Prove the gate-level netlist equivalent to the RTL with EQY (usage: make lec [LEC_NETLIST=<netlist>] [LEC_TIMEOUT=<seconds>])
@@ -461,9 +459,10 @@ lec: ## Prove the gate-level netlist equivalent to the RTL with EQY (usage: make
 		'[gate]' \
 		'read_liberty -ignore_miss_func $(LEC_LIB)' \
 		'read_verilog $(abspath $(LEC_NETLIST))' \
+		'delete t:WELLTAP t:FILLER*' \
 		'hierarchy -check -top $(TOP)' \
 		'flatten -noscopeinfo' \
-		'select -assert-none t:sg13cmos5l_*' \
+		'select -assert-none t:* t:$$* %d' \
 		'clk2fflogic' \
 		'' \
 		'[strategy sby]' \
@@ -475,8 +474,8 @@ lec: ## Prove the gate-level netlist equivalent to the RTL with EQY (usage: make
 
 lec-mutant: ## Check that lec catches a difference: change one cell and one clock pin in copies of the netlist and expect lec to fail on each
 	mkdir -p $(LEC_DIR)
-	sed '0,/sg13cmos5l_nand2_1 /s//sg13cmos5l_nor2_1 /' $(LEC_NETLIST) > $(LEC_DIR)/mutant_cell.nl.v
-	sed '0,/\.CLK([^)]*)/s//.CLK(enable_i)/' $(LEC_NETLIST) > $(LEC_DIR)/mutant_clock.nl.v
+	sed '0,/NAND2X1 /s//NOR2X1 /' $(LEC_NETLIST) > $(LEC_DIR)/mutant_cell.nl.v
+	sed '0,/\.CK([^)]*)/s//.CK(enable_i)/' $(LEC_NETLIST) > $(LEC_DIR)/mutant_clock.nl.v
 #	Only a partition's own FAIL counts: lec also exits non-zero when it never ran a proof
 	@for m in cell clock; do \
 		if cmp -s $(LEC_NETLIST) $(LEC_DIR)/mutant_$$m.nl.v; then \
