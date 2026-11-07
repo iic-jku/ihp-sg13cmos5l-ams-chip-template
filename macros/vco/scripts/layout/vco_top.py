@@ -55,15 +55,16 @@ for name in ("rf_p", "rf_n"):
     top.rect("Metal3", c.left, y - 0.5, c.right, c.bottom + 0.1)
     top.via(x, y, "Metal3", "Metal4", cols=2, rows=2)
 
-# vbn_buf, vbg_buf: the bias tracks on to a Metal4 riser each, which lands on the buffer's pin
+# vbn_buf, vbg_buf: the bias tracks on to a Metal4 riser each, which lands on the buffer's pin. The tabs stay below Mn.e's
+# 0.39 um, since the tracks end 0.63 um apart and two wider lines would need 0.24 um between them.
 for name in ("vbn_buf", "vbg_buf"):
     a, b = box(ap, name), box(bp, name)
     ya, yb = a.center().y, b.center().y
-    top.rect("Metal3", a.right - 0.1, ya - 0.2, X_BB + 0.3, ya + 0.2)
+    top.rect("Metal3", a.right - 0.1, ya - 0.19, X_BB + 0.3, ya + 0.19)
     top.via(X_BB, ya, "Metal3", "Metal4")
     top.rect("Metal4", X_BB - 0.2, min(ya, yb) - 0.2, X_BB + 0.2, max(ya, yb) + 0.2)
     top.via(X_BB, yb, "Metal3", "Metal4")
-    top.rect("Metal3", b.left - 0.1, yb - 0.2, X_BB + 0.3, yb + 0.2)
+    top.rect("Metal3", b.left - 0.1, yb - 0.19, X_BB + 0.3, yb + 0.19)
 
 # Inputs: the bias tracks on to the left edge
 for name in ("di_en", "ibias_100u"):
