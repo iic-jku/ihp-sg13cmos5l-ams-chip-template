@@ -1,6 +1,6 @@
 ﻿# ihp-sg13cmos5l Counter on the HV Standard Cells
 
-This macro is the template counter hardened at 50 MHz on the thick-oxide 3.3 V standard cells `sg13cmos5l_stdcell_hv`. The library ships in the IHP PDK tree, but it comes from a private contributor and not directly from IHP. Its cells keep the prefix `sg13g2_hv_`, and its outputs swing to 3.3 V, so a chip with this macro needs a 3.3 V domain and level shifters.
+This macro is the template counter hardened at 50 MHz on the thick-oxide 3.3 V standard cells `sg13cmos5l_stdcell_hv`. The library ships in the IHP PDK tree, but it comes from a private contributor and not directly from IHP. Its cells keep the prefix `sg13g2_hv_`. Its Liberty files cover 3.0 V to 3.6 V, so the timing and the benches of this macro run at 3.3 V. A chip that runs the macro at a lower supply needs no 3.3 V domain, but has no Liberty there and checks it at transistor level.
 
 <p align="center">
   <a href="render/img/counter_hv_kvc_top_white.png">
