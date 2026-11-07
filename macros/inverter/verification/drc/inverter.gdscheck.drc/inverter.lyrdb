@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+  <description>gdscheck DRC results</description>
+  <generator>gdscheck</generator>
+  <categories>
+  </categories>
+  <cells>
+    <cell>
+      <name>inverter</name>
+    </cell>
+  </cells>
+  <items>
+  </items>
+</report-database>
