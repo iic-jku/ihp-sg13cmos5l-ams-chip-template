@@ -1,4 +1,4 @@
-module counter_top (clock_i,
+module counter_lv_ihp_top (clock_i,
     enable_i,
     reset_n_i,
     counter_value_o);
@@ -76,6 +76,9 @@ module counter_top (clock_i,
  wire net34;
  wire net35;
  wire net36;
+ wire net37;
+ wire net38;
+ wire net39;
 
  sg13cmos5l_decap_8 FILLER_0_0 ();
  sg13cmos5l_decap_8 FILLER_0_105 ();
@@ -302,213 +305,207 @@ module counter_top (clock_i,
  sg13cmos5l_decap_8 FILLER_12_91 ();
  sg13cmos5l_decap_8 FILLER_12_98 ();
  sg13cmos5l_decap_8 FILLER_13_0 ();
- sg13cmos5l_decap_8 FILLER_13_105 ();
- sg13cmos5l_decap_8 FILLER_13_112 ();
- sg13cmos5l_decap_8 FILLER_13_119 ();
- sg13cmos5l_decap_8 FILLER_13_126 ();
- sg13cmos5l_decap_8 FILLER_13_133 ();
- sg13cmos5l_decap_8 FILLER_13_14 ();
- sg13cmos5l_decap_8 FILLER_13_140 ();
- sg13cmos5l_decap_8 FILLER_13_147 ();
- sg13cmos5l_decap_8 FILLER_13_154 ();
- sg13cmos5l_decap_8 FILLER_13_161 ();
- sg13cmos5l_decap_8 FILLER_13_168 ();
- sg13cmos5l_decap_8 FILLER_13_175 ();
- sg13cmos5l_decap_8 FILLER_13_182 ();
- sg13cmos5l_decap_8 FILLER_13_189 ();
- sg13cmos5l_decap_8 FILLER_13_196 ();
- sg13cmos5l_decap_8 FILLER_13_203 ();
- sg13cmos5l_decap_8 FILLER_13_21 ();
- sg13cmos5l_decap_8 FILLER_13_210 ();
- sg13cmos5l_decap_8 FILLER_13_217 ();
- sg13cmos5l_decap_8 FILLER_13_224 ();
- sg13cmos5l_decap_8 FILLER_13_231 ();
- sg13cmos5l_decap_8 FILLER_13_238 ();
- sg13cmos5l_decap_4 FILLER_13_245 ();
- sg13cmos5l_decap_8 FILLER_13_254 ();
- sg13cmos5l_decap_8 FILLER_13_261 ();
- sg13cmos5l_decap_8 FILLER_13_268 ();
- sg13cmos5l_decap_8 FILLER_13_275 ();
- sg13cmos5l_decap_8 FILLER_13_28 ();
- sg13cmos5l_decap_8 FILLER_13_282 ();
- sg13cmos5l_decap_8 FILLER_13_289 ();
- sg13cmos5l_decap_8 FILLER_13_296 ();
- sg13cmos5l_decap_8 FILLER_13_303 ();
- sg13cmos5l_decap_8 FILLER_13_310 ();
- sg13cmos5l_decap_8 FILLER_13_317 ();
- sg13cmos5l_decap_8 FILLER_13_324 ();
- sg13cmos5l_decap_8 FILLER_13_331 ();
- sg13cmos5l_decap_8 FILLER_13_338 ();
- sg13cmos5l_decap_8 FILLER_13_345 ();
- sg13cmos5l_decap_8 FILLER_13_35 ();
- sg13cmos5l_decap_8 FILLER_13_352 ();
- sg13cmos5l_decap_8 FILLER_13_359 ();
- sg13cmos5l_decap_8 FILLER_13_366 ();
- sg13cmos5l_decap_8 FILLER_13_373 ();
- sg13cmos5l_decap_8 FILLER_13_380 ();
- sg13cmos5l_decap_4 FILLER_13_387 ();
+ sg13cmos5l_decap_8 FILLER_13_102 ();
+ sg13cmos5l_decap_8 FILLER_13_109 ();
+ sg13cmos5l_decap_8 FILLER_13_116 ();
+ sg13cmos5l_decap_8 FILLER_13_123 ();
+ sg13cmos5l_decap_8 FILLER_13_130 ();
+ sg13cmos5l_decap_8 FILLER_13_137 ();
+ sg13cmos5l_fill_2 FILLER_13_14 ();
+ sg13cmos5l_decap_8 FILLER_13_144 ();
+ sg13cmos5l_decap_8 FILLER_13_151 ();
+ sg13cmos5l_decap_8 FILLER_13_158 ();
+ sg13cmos5l_decap_8 FILLER_13_165 ();
+ sg13cmos5l_decap_8 FILLER_13_172 ();
+ sg13cmos5l_decap_8 FILLER_13_179 ();
+ sg13cmos5l_decap_8 FILLER_13_186 ();
+ sg13cmos5l_decap_8 FILLER_13_19 ();
+ sg13cmos5l_decap_8 FILLER_13_193 ();
+ sg13cmos5l_decap_8 FILLER_13_200 ();
+ sg13cmos5l_decap_8 FILLER_13_207 ();
+ sg13cmos5l_decap_8 FILLER_13_214 ();
+ sg13cmos5l_decap_8 FILLER_13_221 ();
+ sg13cmos5l_decap_8 FILLER_13_228 ();
+ sg13cmos5l_decap_8 FILLER_13_235 ();
+ sg13cmos5l_decap_4 FILLER_13_242 ();
+ sg13cmos5l_fill_2 FILLER_13_246 ();
+ sg13cmos5l_decap_8 FILLER_13_253 ();
+ sg13cmos5l_decap_8 FILLER_13_26 ();
+ sg13cmos5l_decap_8 FILLER_13_260 ();
+ sg13cmos5l_fill_1 FILLER_13_267 ();
+ sg13cmos5l_decap_8 FILLER_13_277 ();
+ sg13cmos5l_decap_8 FILLER_13_284 ();
+ sg13cmos5l_decap_8 FILLER_13_291 ();
+ sg13cmos5l_decap_8 FILLER_13_298 ();
+ sg13cmos5l_decap_8 FILLER_13_305 ();
+ sg13cmos5l_decap_8 FILLER_13_312 ();
+ sg13cmos5l_decap_8 FILLER_13_319 ();
+ sg13cmos5l_decap_8 FILLER_13_326 ();
+ sg13cmos5l_decap_8 FILLER_13_33 ();
+ sg13cmos5l_decap_8 FILLER_13_333 ();
+ sg13cmos5l_decap_8 FILLER_13_340 ();
+ sg13cmos5l_decap_8 FILLER_13_347 ();
+ sg13cmos5l_decap_8 FILLER_13_354 ();
+ sg13cmos5l_decap_8 FILLER_13_361 ();
+ sg13cmos5l_decap_8 FILLER_13_368 ();
+ sg13cmos5l_decap_8 FILLER_13_375 ();
+ sg13cmos5l_decap_8 FILLER_13_382 ();
+ sg13cmos5l_fill_2 FILLER_13_389 ();
  sg13cmos5l_fill_1 FILLER_13_391 ();
- sg13cmos5l_decap_8 FILLER_13_42 ();
- sg13cmos5l_decap_4 FILLER_13_49 ();
- sg13cmos5l_fill_2 FILLER_13_53 ();
- sg13cmos5l_decap_8 FILLER_13_63 ();
+ sg13cmos5l_decap_8 FILLER_13_40 ();
+ sg13cmos5l_decap_8 FILLER_13_47 ();
+ sg13cmos5l_decap_4 FILLER_13_54 ();
+ sg13cmos5l_fill_1 FILLER_13_58 ();
+ sg13cmos5l_decap_8 FILLER_13_67 ();
  sg13cmos5l_decap_8 FILLER_13_7 ();
- sg13cmos5l_decap_8 FILLER_13_70 ();
- sg13cmos5l_decap_8 FILLER_13_77 ();
- sg13cmos5l_decap_8 FILLER_13_84 ();
- sg13cmos5l_decap_8 FILLER_13_91 ();
- sg13cmos5l_decap_8 FILLER_13_98 ();
+ sg13cmos5l_decap_8 FILLER_13_74 ();
+ sg13cmos5l_decap_8 FILLER_13_81 ();
+ sg13cmos5l_decap_8 FILLER_13_88 ();
+ sg13cmos5l_decap_8 FILLER_13_95 ();
  sg13cmos5l_decap_8 FILLER_14_0 ();
- sg13cmos5l_decap_8 FILLER_14_105 ();
- sg13cmos5l_decap_8 FILLER_14_112 ();
- sg13cmos5l_decap_8 FILLER_14_119 ();
- sg13cmos5l_decap_8 FILLER_14_126 ();
- sg13cmos5l_decap_8 FILLER_14_133 ();
+ sg13cmos5l_decap_8 FILLER_14_102 ();
+ sg13cmos5l_decap_8 FILLER_14_109 ();
+ sg13cmos5l_decap_8 FILLER_14_116 ();
+ sg13cmos5l_decap_8 FILLER_14_123 ();
+ sg13cmos5l_decap_8 FILLER_14_130 ();
+ sg13cmos5l_decap_8 FILLER_14_137 ();
  sg13cmos5l_decap_8 FILLER_14_14 ();
- sg13cmos5l_decap_8 FILLER_14_140 ();
- sg13cmos5l_decap_4 FILLER_14_147 ();
+ sg13cmos5l_decap_8 FILLER_14_144 ();
  sg13cmos5l_fill_1 FILLER_14_151 ();
  sg13cmos5l_decap_8 FILLER_14_179 ();
- sg13cmos5l_fill_2 FILLER_14_186 ();
- sg13cmos5l_fill_1 FILLER_14_188 ();
- sg13cmos5l_decap_4 FILLER_14_202 ();
- sg13cmos5l_fill_2 FILLER_14_206 ();
+ sg13cmos5l_decap_4 FILLER_14_186 ();
  sg13cmos5l_decap_8 FILLER_14_21 ();
- sg13cmos5l_decap_8 FILLER_14_215 ();
  sg13cmos5l_decap_8 FILLER_14_222 ();
  sg13cmos5l_decap_8 FILLER_14_229 ();
  sg13cmos5l_decap_8 FILLER_14_236 ();
- sg13cmos5l_fill_2 FILLER_14_243 ();
- sg13cmos5l_fill_1 FILLER_14_245 ();
- sg13cmos5l_decap_4 FILLER_14_253 ();
+ sg13cmos5l_fill_1 FILLER_14_248 ();
+ sg13cmos5l_fill_2 FILLER_14_256 ();
  sg13cmos5l_decap_8 FILLER_14_28 ();
- sg13cmos5l_decap_8 FILLER_14_284 ();
- sg13cmos5l_decap_8 FILLER_14_291 ();
- sg13cmos5l_decap_8 FILLER_14_298 ();
- sg13cmos5l_decap_8 FILLER_14_305 ();
- sg13cmos5l_decap_8 FILLER_14_312 ();
- sg13cmos5l_decap_8 FILLER_14_319 ();
- sg13cmos5l_decap_8 FILLER_14_326 ();
- sg13cmos5l_decap_8 FILLER_14_333 ();
- sg13cmos5l_decap_8 FILLER_14_340 ();
- sg13cmos5l_decap_8 FILLER_14_347 ();
+ sg13cmos5l_decap_8 FILLER_14_285 ();
+ sg13cmos5l_decap_8 FILLER_14_292 ();
+ sg13cmos5l_decap_8 FILLER_14_299 ();
+ sg13cmos5l_decap_8 FILLER_14_306 ();
+ sg13cmos5l_decap_8 FILLER_14_313 ();
+ sg13cmos5l_decap_8 FILLER_14_320 ();
+ sg13cmos5l_decap_8 FILLER_14_327 ();
+ sg13cmos5l_decap_8 FILLER_14_334 ();
+ sg13cmos5l_decap_8 FILLER_14_341 ();
+ sg13cmos5l_decap_8 FILLER_14_348 ();
  sg13cmos5l_decap_8 FILLER_14_35 ();
- sg13cmos5l_decap_8 FILLER_14_354 ();
- sg13cmos5l_decap_8 FILLER_14_361 ();
- sg13cmos5l_decap_8 FILLER_14_368 ();
- sg13cmos5l_decap_8 FILLER_14_375 ();
- sg13cmos5l_decap_8 FILLER_14_382 ();
- sg13cmos5l_fill_2 FILLER_14_389 ();
- sg13cmos5l_fill_1 FILLER_14_391 ();
+ sg13cmos5l_decap_8 FILLER_14_355 ();
+ sg13cmos5l_decap_8 FILLER_14_362 ();
+ sg13cmos5l_decap_8 FILLER_14_369 ();
+ sg13cmos5l_decap_8 FILLER_14_376 ();
+ sg13cmos5l_decap_8 FILLER_14_383 ();
+ sg13cmos5l_fill_2 FILLER_14_390 ();
  sg13cmos5l_decap_8 FILLER_14_42 ();
- sg13cmos5l_fill_2 FILLER_14_49 ();
- sg13cmos5l_fill_1 FILLER_14_51 ();
- sg13cmos5l_decap_8 FILLER_14_61 ();
+ sg13cmos5l_decap_8 FILLER_14_49 ();
+ sg13cmos5l_fill_2 FILLER_14_56 ();
+ sg13cmos5l_fill_1 FILLER_14_58 ();
+ sg13cmos5l_decap_4 FILLER_14_68 ();
  sg13cmos5l_decap_8 FILLER_14_7 ();
- sg13cmos5l_decap_8 FILLER_14_77 ();
- sg13cmos5l_decap_8 FILLER_14_84 ();
- sg13cmos5l_decap_8 FILLER_14_91 ();
- sg13cmos5l_decap_8 FILLER_14_98 ();
+ sg13cmos5l_fill_1 FILLER_14_72 ();
+ sg13cmos5l_decap_8 FILLER_14_82 ();
+ sg13cmos5l_fill_2 FILLER_14_89 ();
+ sg13cmos5l_decap_8 FILLER_14_95 ();
  sg13cmos5l_decap_8 FILLER_15_0 ();
- sg13cmos5l_decap_8 FILLER_15_102 ();
- sg13cmos5l_decap_8 FILLER_15_109 ();
- sg13cmos5l_decap_8 FILLER_15_116 ();
- sg13cmos5l_decap_8 FILLER_15_123 ();
- sg13cmos5l_decap_8 FILLER_15_130 ();
- sg13cmos5l_fill_2 FILLER_15_137 ();
- sg13cmos5l_decap_4 FILLER_15_142 ();
- sg13cmos5l_decap_4 FILLER_15_195 ();
- sg13cmos5l_decap_8 FILLER_15_21 ();
- sg13cmos5l_fill_2 FILLER_15_231 ();
- sg13cmos5l_fill_1 FILLER_15_233 ();
- sg13cmos5l_fill_1 FILLER_15_28 ();
- sg13cmos5l_decap_8 FILLER_15_282 ();
- sg13cmos5l_decap_8 FILLER_15_289 ();
- sg13cmos5l_decap_8 FILLER_15_296 ();
- sg13cmos5l_decap_8 FILLER_15_303 ();
- sg13cmos5l_decap_8 FILLER_15_310 ();
- sg13cmos5l_decap_8 FILLER_15_317 ();
- sg13cmos5l_decap_8 FILLER_15_324 ();
- sg13cmos5l_decap_8 FILLER_15_331 ();
- sg13cmos5l_decap_8 FILLER_15_338 ();
- sg13cmos5l_decap_8 FILLER_15_345 ();
- sg13cmos5l_decap_8 FILLER_15_352 ();
- sg13cmos5l_decap_8 FILLER_15_359 ();
- sg13cmos5l_decap_8 FILLER_15_366 ();
- sg13cmos5l_decap_8 FILLER_15_373 ();
- sg13cmos5l_decap_8 FILLER_15_38 ();
- sg13cmos5l_decap_8 FILLER_15_380 ();
- sg13cmos5l_decap_4 FILLER_15_387 ();
- sg13cmos5l_fill_1 FILLER_15_391 ();
- sg13cmos5l_fill_1 FILLER_15_45 ();
- sg13cmos5l_fill_1 FILLER_15_7 ();
- sg13cmos5l_decap_4 FILLER_15_83 ();
- sg13cmos5l_fill_1 FILLER_15_87 ();
- sg13cmos5l_fill_1 FILLER_15_92 ();
+ sg13cmos5l_decap_8 FILLER_15_103 ();
+ sg13cmos5l_decap_8 FILLER_15_110 ();
+ sg13cmos5l_decap_8 FILLER_15_117 ();
+ sg13cmos5l_decap_8 FILLER_15_124 ();
+ sg13cmos5l_decap_8 FILLER_15_131 ();
+ sg13cmos5l_decap_8 FILLER_15_138 ();
+ sg13cmos5l_fill_2 FILLER_15_14 ();
+ sg13cmos5l_decap_4 FILLER_15_145 ();
+ sg13cmos5l_fill_2 FILLER_15_149 ();
+ sg13cmos5l_decap_4 FILLER_15_163 ();
+ sg13cmos5l_decap_4 FILLER_15_194 ();
+ sg13cmos5l_decap_4 FILLER_15_230 ();
+ sg13cmos5l_fill_1 FILLER_15_239 ();
+ sg13cmos5l_decap_4 FILLER_15_28 ();
+ sg13cmos5l_decap_8 FILLER_15_283 ();
+ sg13cmos5l_decap_8 FILLER_15_290 ();
+ sg13cmos5l_decap_8 FILLER_15_297 ();
+ sg13cmos5l_decap_8 FILLER_15_304 ();
+ sg13cmos5l_decap_8 FILLER_15_311 ();
+ sg13cmos5l_decap_8 FILLER_15_318 ();
+ sg13cmos5l_decap_8 FILLER_15_325 ();
+ sg13cmos5l_decap_8 FILLER_15_332 ();
+ sg13cmos5l_decap_8 FILLER_15_339 ();
+ sg13cmos5l_decap_8 FILLER_15_346 ();
+ sg13cmos5l_decap_8 FILLER_15_353 ();
+ sg13cmos5l_decap_8 FILLER_15_360 ();
+ sg13cmos5l_decap_8 FILLER_15_367 ();
+ sg13cmos5l_decap_8 FILLER_15_374 ();
+ sg13cmos5l_decap_8 FILLER_15_381 ();
+ sg13cmos5l_decap_4 FILLER_15_388 ();
+ sg13cmos5l_decap_8 FILLER_15_41 ();
+ sg13cmos5l_decap_4 FILLER_15_48 ();
+ sg13cmos5l_fill_2 FILLER_15_52 ();
+ sg13cmos5l_decap_8 FILLER_15_7 ();
  sg13cmos5l_decap_8 FILLER_16_0 ();
- sg13cmos5l_fill_2 FILLER_16_110 ();
- sg13cmos5l_decap_8 FILLER_16_125 ();
- sg13cmos5l_decap_4 FILLER_16_132 ();
- sg13cmos5l_fill_1 FILLER_16_14 ();
- sg13cmos5l_decap_4 FILLER_16_144 ();
- sg13cmos5l_fill_2 FILLER_16_194 ();
- sg13cmos5l_fill_1 FILLER_16_196 ();
- sg13cmos5l_fill_1 FILLER_16_215 ();
- sg13cmos5l_decap_4 FILLER_16_225 ();
- sg13cmos5l_fill_1 FILLER_16_229 ();
- sg13cmos5l_decap_8 FILLER_16_282 ();
- sg13cmos5l_decap_8 FILLER_16_289 ();
- sg13cmos5l_decap_8 FILLER_16_296 ();
- sg13cmos5l_decap_8 FILLER_16_303 ();
- sg13cmos5l_decap_8 FILLER_16_310 ();
- sg13cmos5l_decap_8 FILLER_16_317 ();
- sg13cmos5l_decap_8 FILLER_16_324 ();
- sg13cmos5l_decap_8 FILLER_16_331 ();
- sg13cmos5l_decap_8 FILLER_16_338 ();
- sg13cmos5l_decap_8 FILLER_16_345 ();
- sg13cmos5l_decap_8 FILLER_16_352 ();
- sg13cmos5l_decap_8 FILLER_16_359 ();
- sg13cmos5l_decap_8 FILLER_16_366 ();
- sg13cmos5l_decap_8 FILLER_16_373 ();
- sg13cmos5l_decap_8 FILLER_16_380 ();
- sg13cmos5l_decap_4 FILLER_16_387 ();
- sg13cmos5l_fill_1 FILLER_16_391 ();
- sg13cmos5l_decap_4 FILLER_16_42 ();
- sg13cmos5l_fill_1 FILLER_16_46 ();
+ sg13cmos5l_fill_1 FILLER_16_113 ();
+ sg13cmos5l_fill_2 FILLER_16_14 ();
+ sg13cmos5l_fill_1 FILLER_16_16 ();
+ sg13cmos5l_fill_1 FILLER_16_176 ();
+ sg13cmos5l_fill_1 FILLER_16_195 ();
+ sg13cmos5l_fill_1 FILLER_16_214 ();
+ sg13cmos5l_decap_8 FILLER_16_224 ();
+ sg13cmos5l_decap_4 FILLER_16_231 ();
+ sg13cmos5l_fill_2 FILLER_16_235 ();
+ sg13cmos5l_fill_2 FILLER_16_243 ();
+ sg13cmos5l_fill_1 FILLER_16_245 ();
+ sg13cmos5l_fill_2 FILLER_16_251 ();
+ sg13cmos5l_decap_8 FILLER_16_280 ();
+ sg13cmos5l_decap_8 FILLER_16_287 ();
+ sg13cmos5l_decap_8 FILLER_16_294 ();
+ sg13cmos5l_decap_8 FILLER_16_301 ();
+ sg13cmos5l_decap_8 FILLER_16_308 ();
+ sg13cmos5l_decap_8 FILLER_16_315 ();
+ sg13cmos5l_decap_8 FILLER_16_322 ();
+ sg13cmos5l_decap_8 FILLER_16_329 ();
+ sg13cmos5l_decap_8 FILLER_16_336 ();
+ sg13cmos5l_decap_8 FILLER_16_343 ();
+ sg13cmos5l_decap_8 FILLER_16_350 ();
+ sg13cmos5l_decap_8 FILLER_16_357 ();
+ sg13cmos5l_decap_8 FILLER_16_364 ();
+ sg13cmos5l_decap_8 FILLER_16_371 ();
+ sg13cmos5l_decap_8 FILLER_16_378 ();
+ sg13cmos5l_decap_8 FILLER_16_385 ();
+ sg13cmos5l_fill_1 FILLER_16_44 ();
+ sg13cmos5l_fill_1 FILLER_16_62 ();
  sg13cmos5l_decap_8 FILLER_16_7 ();
  sg13cmos5l_decap_8 FILLER_17_0 ();
- sg13cmos5l_decap_8 FILLER_17_104 ();
+ sg13cmos5l_decap_8 FILLER_17_101 ();
+ sg13cmos5l_decap_8 FILLER_17_108 ();
  sg13cmos5l_fill_2 FILLER_17_11 ();
- sg13cmos5l_decap_4 FILLER_17_111 ();
  sg13cmos5l_fill_2 FILLER_17_115 ();
  sg13cmos5l_decap_8 FILLER_17_121 ();
  sg13cmos5l_decap_8 FILLER_17_128 ();
  sg13cmos5l_decap_8 FILLER_17_135 ();
- sg13cmos5l_decap_8 FILLER_17_142 ();
- sg13cmos5l_decap_8 FILLER_17_149 ();
+ sg13cmos5l_decap_4 FILLER_17_142 ();
  sg13cmos5l_fill_2 FILLER_17_17 ();
- sg13cmos5l_decap_8 FILLER_17_185 ();
  sg13cmos5l_fill_1 FILLER_17_19 ();
- sg13cmos5l_decap_8 FILLER_17_192 ();
- sg13cmos5l_decap_8 FILLER_17_199 ();
- sg13cmos5l_fill_1 FILLER_17_206 ();
- sg13cmos5l_fill_1 FILLER_17_220 ();
+ sg13cmos5l_decap_8 FILLER_17_196 ();
+ sg13cmos5l_fill_2 FILLER_17_203 ();
+ sg13cmos5l_fill_1 FILLER_17_205 ();
+ sg13cmos5l_fill_2 FILLER_17_219 ();
  sg13cmos5l_decap_8 FILLER_17_225 ();
  sg13cmos5l_decap_8 FILLER_17_232 ();
  sg13cmos5l_decap_8 FILLER_17_239 ();
- sg13cmos5l_decap_8 FILLER_17_24 ();
- sg13cmos5l_decap_4 FILLER_17_268 ();
+ sg13cmos5l_fill_2 FILLER_17_246 ();
+ sg13cmos5l_fill_2 FILLER_17_270 ();
  sg13cmos5l_fill_1 FILLER_17_272 ();
  sg13cmos5l_decap_8 FILLER_17_277 ();
  sg13cmos5l_decap_8 FILLER_17_284 ();
  sg13cmos5l_decap_8 FILLER_17_291 ();
  sg13cmos5l_decap_8 FILLER_17_298 ();
  sg13cmos5l_decap_8 FILLER_17_305 ();
- sg13cmos5l_decap_8 FILLER_17_31 ();
  sg13cmos5l_decap_8 FILLER_17_312 ();
  sg13cmos5l_decap_4 FILLER_17_319 ();
  sg13cmos5l_fill_2 FILLER_17_323 ();
  sg13cmos5l_decap_8 FILLER_17_329 ();
+ sg13cmos5l_decap_8 FILLER_17_33 ();
  sg13cmos5l_decap_8 FILLER_17_336 ();
  sg13cmos5l_decap_8 FILLER_17_343 ();
  sg13cmos5l_decap_8 FILLER_17_350 ();
@@ -516,19 +513,17 @@ module counter_top (clock_i,
  sg13cmos5l_decap_8 FILLER_17_364 ();
  sg13cmos5l_decap_4 FILLER_17_371 ();
  sg13cmos5l_fill_2 FILLER_17_375 ();
- sg13cmos5l_decap_8 FILLER_17_38 ();
  sg13cmos5l_decap_8 FILLER_17_381 ();
  sg13cmos5l_decap_4 FILLER_17_388 ();
- sg13cmos5l_decap_8 FILLER_17_45 ();
- sg13cmos5l_decap_8 FILLER_17_52 ();
- sg13cmos5l_decap_4 FILLER_17_59 ();
- sg13cmos5l_fill_2 FILLER_17_63 ();
- sg13cmos5l_decap_8 FILLER_17_69 ();
+ sg13cmos5l_decap_8 FILLER_17_40 ();
+ sg13cmos5l_decap_8 FILLER_17_47 ();
+ sg13cmos5l_decap_4 FILLER_17_54 ();
+ sg13cmos5l_fill_2 FILLER_17_58 ();
  sg13cmos5l_decap_4 FILLER_17_7 ();
- sg13cmos5l_decap_8 FILLER_17_76 ();
- sg13cmos5l_decap_8 FILLER_17_83 ();
- sg13cmos5l_decap_8 FILLER_17_90 ();
- sg13cmos5l_decap_8 FILLER_17_97 ();
+ sg13cmos5l_decap_8 FILLER_17_73 ();
+ sg13cmos5l_decap_8 FILLER_17_80 ();
+ sg13cmos5l_decap_8 FILLER_17_87 ();
+ sg13cmos5l_decap_8 FILLER_17_94 ();
  sg13cmos5l_decap_8 FILLER_1_102 ();
  sg13cmos5l_decap_8 FILLER_1_109 ();
  sg13cmos5l_decap_8 FILLER_1_11 ();
@@ -1037,190 +1032,196 @@ module counter_top (clock_i,
  sg13cmos5l_decap_8 FILLER_9_95 ();
  sg13cmos5l_inv_1 _37_ (.Y(_08_),
     .A(net2));
- sg13cmos5l_inv_1 _38_ (.Y(_09_),
-    .A(net36));
- sg13cmos5l_nand4_1 _39_ (.B(net1),
-    .C(net33),
-    .A(net31),
-    .Y(_10_),
-    .D(net35));
- sg13cmos5l_buf_4 _40_ (.X(_11_),
-    .A(_10_));
- sg13cmos5l_xnor2_1 _41_ (.Y(_12_),
-    .A(_09_),
-    .B(net11));
- sg13cmos5l_nor2_1 _42_ (.A(_08_),
-    .B(_12_),
-    .Y(_00_));
- sg13cmos5l_o21ai_1 _43_ (.B1(net28),
-    .Y(_13_),
-    .A1(_09_),
-    .A2(net11));
- sg13cmos5l_or3_1 _44_ (.A(net28),
-    .B(_09_),
-    .C(net11),
-    .X(_14_));
- sg13cmos5l_a21oi_1 _45_ (.A1(net29),
-    .A2(_14_),
-    .Y(_01_),
-    .B1(_08_));
- sg13cmos5l_nand2_1 _46_ (.Y(_15_),
-    .A(net7),
-    .B(net6));
- sg13cmos5l_o21ai_1 _47_ (.B1(net25),
+ sg13cmos5l_nand3_1 _38_ (.B(net4),
+    .C(net1),
+    .A(net3),
+    .Y(_09_));
+ sg13cmos5l_o21ai_1 _39_ (.B1(net25),
     .Y(_16_),
     .A1(net11),
     .A2(_15_));
- sg13cmos5l_or3_1 _48_ (.A(net25),
+ sg13cmos5l_or3_1 _40_ (.A(net25),
     .B(net11),
     .C(_15_),
     .X(_17_));
- sg13cmos5l_a21oi_1 _49_ (.A1(net26),
+ sg13cmos5l_a21oi_1 _41_ (.A1(net26),
     .A2(_17_),
-    .Y(_02_),
+    .Y(_05_),
     .B1(_08_));
- sg13cmos5l_nand3_1 _50_ (.B(net7),
-    .C(net6),
-    .A(net8),
-    .Y(_18_));
- sg13cmos5l_o21ai_1 _51_ (.B1(net19),
-    .Y(_19_),
-    .A1(net11),
-    .A2(_18_));
- sg13cmos5l_or3_1 _52_ (.A(net19),
-    .B(net11),
-    .C(_18_),
-    .X(_20_));
- sg13cmos5l_a21oi_1 _53_ (.A1(net20),
-    .A2(_20_),
-    .Y(_03_),
-    .B1(_08_));
- sg13cmos5l_nand4_1 _54_ (.B(net8),
-    .C(net7),
-    .A(net19),
+ sg13cmos5l_xnor2_1 _42_ (.Y(_18_),
+    .A(net33),
+    .B(net1));
+ sg13cmos5l_nor2_1 _43_ (.A(_08_),
+    .B(net34),
+    .Y(_04_));
+ sg13cmos5l_inv_1 _44_ (.Y(_19_),
+    .A(net38));
+ sg13cmos5l_xnor2_1 _45_ (.Y(_20_),
+    .A(_19_),
+    .B(net11));
+ sg13cmos5l_nor2_1 _46_ (.A(_08_),
+    .B(_20_),
+    .Y(_03_));
+ sg13cmos5l_nand4_1 _47_ (.B(net7),
+    .C(net8),
+    .A(net6),
     .Y(_21_),
-    .D(net6));
- sg13cmos5l_o21ai_1 _55_ (.B1(net22),
+    .D(net9));
+ sg13cmos5l_o21ai_1 _48_ (.B1(net22),
     .Y(_22_),
     .A1(net11),
     .A2(_21_));
- sg13cmos5l_or3_1 _56_ (.A(net22),
-    .B(_11_),
+ sg13cmos5l_xor2_1 _49_ (.B(_09_),
+    .A(net19),
+    .X(_10_));
+ sg13cmos5l_or3_1 _50_ (.A(net22),
+    .B(net11),
     .C(_21_),
     .X(_23_));
- sg13cmos5l_a21oi_1 _57_ (.A1(net23),
+ sg13cmos5l_a21oi_1 _51_ (.A1(net23),
     .A2(_23_),
-    .Y(_04_),
+    .Y(_02_),
     .B1(_08_));
- sg13cmos5l_xor2_1 _58_ (.B(net35),
-    .A(net1),
-    .X(_24_));
- sg13cmos5l_and2_1 _59_ (.A(net2),
-    .B(_24_),
-    .X(_05_));
- sg13cmos5l_nand2_1 _60_ (.Y(_25_),
-    .A(net1),
-    .B(net3));
- sg13cmos5l_xnor2_1 _61_ (.Y(_26_),
-    .A(net33),
-    .B(_25_));
- sg13cmos5l_and2_1 _62_ (.A(net2),
-    .B(net34),
-    .X(_06_));
- sg13cmos5l_nand3_1 _63_ (.B(net4),
-    .C(net3),
-    .A(net1),
-    .Y(_27_));
- sg13cmos5l_xnor2_1 _64_ (.Y(_28_),
+ sg13cmos5l_o21ai_1 _52_ (.B1(net35),
+    .Y(_24_),
+    .A1(_19_),
+    .A2(net11));
+ sg13cmos5l_or3_1 _53_ (.A(_19_),
+    .B(net35),
+    .C(net11),
+    .X(_25_));
+ sg13cmos5l_a21oi_1 _54_ (.A1(net36),
+    .A2(_25_),
+    .Y(_01_),
+    .B1(_08_));
+ sg13cmos5l_nand2_1 _55_ (.Y(_26_),
+    .A(net6),
+    .B(net7));
+ sg13cmos5l_o21ai_1 _56_ (.B1(net28),
+    .Y(_27_),
+    .A1(net11),
+    .A2(_26_));
+ sg13cmos5l_or3_1 _57_ (.A(net28),
+    .B(_14_),
+    .C(_26_),
+    .X(_28_));
+ sg13cmos5l_a21oi_1 _58_ (.A1(net29),
+    .A2(_28_),
+    .Y(_00_),
+    .B1(_08_));
+ sg13cmos5l_nor2_1 _59_ (.A(_08_),
+    .B(net20),
+    .Y(_07_));
+ sg13cmos5l_nand2_1 _60_ (.Y(_11_),
+    .A(net39),
+    .B(net1));
+ sg13cmos5l_xor2_1 _61_ (.B(_11_),
     .A(net31),
-    .B(_27_));
- sg13cmos5l_and2_1 _65_ (.A(net2),
+    .X(_12_));
+ sg13cmos5l_nor2_1 _62_ (.A(_08_),
     .B(net32),
-    .X(_07_));
+    .Y(_06_));
+ sg13cmos5l_nand4_1 _63_ (.B(net31),
+    .C(net19),
+    .A(net33),
+    .Y(_13_),
+    .D(net1));
+ sg13cmos5l_buf_4 _64_ (.X(_14_),
+    .A(_13_));
+ sg13cmos5l_nand3_1 _65_ (.B(net7),
+    .C(net8),
+    .A(net6),
+    .Y(_15_));
  sg13cmos5l_dfrbpq_1 _66_ (.RESET_B(net17),
-    .D(net27),
-    .Q(net8),
-    .CLK(clknet_1_1__leaf_clock_i));
- sg13cmos5l_tiehi _66__18 (.L_HI(net17));
- sg13cmos5l_dfrbpq_1 _67_ (.RESET_B(net15),
-    .D(net21),
-    .Q(net9),
-    .CLK(clknet_1_1__leaf_clock_i));
- sg13cmos5l_tiehi _67__16 (.L_HI(net15));
- sg13cmos5l_dfrbpq_1 _68_ (.RESET_B(net13),
-    .D(net24),
-    .Q(net10),
-    .CLK(clknet_1_1__leaf_clock_i));
- sg13cmos5l_tiehi _68__14 (.L_HI(net13));
- sg13cmos5l_dfrbpq_1 _69_ (.RESET_B(net18),
-    .D(_05_),
+    .D(_04_),
     .Q(net3),
     .CLK(clknet_1_0__leaf_clock_i));
- sg13cmos5l_tiehi _69__19 (.L_HI(net18));
- sg13cmos5l_dfrbpq_1 _70_ (.RESET_B(net14),
+ sg13cmos5l_tiehi _66__18 (.L_HI(net17));
+ sg13cmos5l_dfrbpq_1 _67_ (.RESET_B(net14),
     .D(_06_),
     .Q(net4),
     .CLK(clknet_1_0__leaf_clock_i));
- sg13cmos5l_tiehi _70__15 (.L_HI(net14));
- sg13cmos5l_dfrbpq_1 _71_ (.RESET_B(net16),
-    .D(_07_),
+ sg13cmos5l_tiehi _67__15 (.L_HI(net14));
+ sg13cmos5l_dfrbpq_1 _68_ (.RESET_B(net16),
+    .D(net21),
     .Q(net5),
     .CLK(clknet_1_0__leaf_clock_i));
- sg13cmos5l_tiehi _71__17 (.L_HI(net16));
- sg13cmos5l_dfrbpq_1 _72_ (.RESET_B(net12),
-    .D(_00_),
+ sg13cmos5l_tiehi _68__17 (.L_HI(net16));
+ sg13cmos5l_dfrbpq_1 _69_ (.RESET_B(net13),
+    .D(_03_),
     .Q(net6),
     .CLK(clknet_1_0__leaf_clock_i));
- sg13cmos5l_tiehi _72__13 (.L_HI(net12));
- sg13cmos5l_dfrbpq_1 _73_ (.RESET_B(net),
-    .D(net30),
+ sg13cmos5l_tiehi _69__14 (.L_HI(net13));
+ sg13cmos5l_dfrbpq_1 _70_ (.RESET_B(net),
+    .D(net37),
     .Q(net7),
     .CLK(clknet_1_1__leaf_clock_i));
- sg13cmos5l_tiehi _73__12 (.L_HI(net));
- sg13cmos5l_buf_8 clkbuf_0_clock_i (.A(clock_i),
-    .X(clknet_0_clock_i));
- sg13cmos5l_buf_8 clkbuf_1_0__f_clock_i (.A(clknet_0_clock_i),
-    .X(clknet_1_0__leaf_clock_i));
- sg13cmos5l_buf_8 clkbuf_1_1__f_clock_i (.A(clknet_0_clock_i),
-    .X(clknet_1_1__leaf_clock_i));
- sg13cmos5l_buf_1 fanout11 (.A(_11_),
+ sg13cmos5l_tiehi _70__12 (.L_HI(net));
+ sg13cmos5l_dfrbpq_1 _71_ (.RESET_B(net18),
+    .D(net30),
+    .Q(net8),
+    .CLK(clknet_1_1__leaf_clock_i));
+ sg13cmos5l_tiehi _71__19 (.L_HI(net18));
+ sg13cmos5l_dfrbpq_1 _72_ (.RESET_B(net12),
+    .D(net27),
+    .Q(net9),
+    .CLK(clknet_1_1__leaf_clock_i));
+ sg13cmos5l_tiehi _72__13 (.L_HI(net12));
+ sg13cmos5l_dfrbpq_1 _73_ (.RESET_B(net15),
+    .D(net24),
+    .Q(net10),
+    .CLK(clknet_1_1__leaf_clock_i));
+ sg13cmos5l_tiehi _73__16 (.L_HI(net15));
+ sg13cmos5l_buf_16 clkbuf_0_clock_i (.X(clknet_0_clock_i),
+    .A(clock_i));
+ sg13cmos5l_buf_16 clkbuf_1_0__f_clock_i (.X(clknet_1_0__leaf_clock_i),
+    .A(clknet_0_clock_i));
+ sg13cmos5l_buf_16 clkbuf_1_1__f_clock_i (.X(clknet_1_1__leaf_clock_i),
+    .A(clknet_0_clock_i));
+ sg13cmos5l_buf_1 fanout11 (.A(_14_),
     .X(net11));
- sg13cmos5l_dlygate4sd3_1 hold20 (.A(net9),
+ sg13cmos5l_dlygate4sd3_1 hold20 (.A(net5),
     .X(net19));
- sg13cmos5l_dlygate4sd3_1 hold21 (.A(_19_),
+ sg13cmos5l_dlygate4sd3_1 hold21 (.A(_10_),
     .X(net20));
- sg13cmos5l_dlygate4sd3_1 hold22 (.A(_03_),
+ sg13cmos5l_dlygate4sd3_1 hold22 (.A(_07_),
     .X(net21));
  sg13cmos5l_dlygate4sd3_1 hold23 (.A(net10),
     .X(net22));
  sg13cmos5l_dlygate4sd3_1 hold24 (.A(_22_),
     .X(net23));
- sg13cmos5l_dlygate4sd3_1 hold25 (.A(_04_),
+ sg13cmos5l_dlygate4sd3_1 hold25 (.A(_02_),
     .X(net24));
- sg13cmos5l_dlygate4sd3_1 hold26 (.A(net8),
+ sg13cmos5l_dlygate4sd3_1 hold26 (.A(net9),
     .X(net25));
  sg13cmos5l_dlygate4sd3_1 hold27 (.A(_16_),
     .X(net26));
- sg13cmos5l_dlygate4sd3_1 hold28 (.A(_02_),
+ sg13cmos5l_dlygate4sd3_1 hold28 (.A(_05_),
     .X(net27));
- sg13cmos5l_dlygate4sd3_1 hold29 (.A(net7),
+ sg13cmos5l_dlygate4sd3_1 hold29 (.A(net8),
     .X(net28));
- sg13cmos5l_dlygate4sd3_1 hold30 (.A(_13_),
+ sg13cmos5l_dlygate4sd3_1 hold30 (.A(_27_),
     .X(net29));
- sg13cmos5l_dlygate4sd3_1 hold31 (.A(_01_),
+ sg13cmos5l_dlygate4sd3_1 hold31 (.A(_00_),
     .X(net30));
- sg13cmos5l_dlygate4sd3_1 hold32 (.A(net5),
+ sg13cmos5l_dlygate4sd3_1 hold32 (.A(net4),
     .X(net31));
- sg13cmos5l_dlygate4sd3_1 hold33 (.A(_28_),
+ sg13cmos5l_dlygate4sd3_1 hold33 (.A(_12_),
     .X(net32));
- sg13cmos5l_dlygate4sd3_1 hold34 (.A(net4),
+ sg13cmos5l_dlygate4sd3_1 hold34 (.A(net3),
     .X(net33));
- sg13cmos5l_dlygate4sd3_1 hold35 (.A(_26_),
+ sg13cmos5l_dlygate4sd3_1 hold35 (.A(_18_),
     .X(net34));
- sg13cmos5l_dlygate4sd3_1 hold36 (.A(net3),
+ sg13cmos5l_dlygate4sd3_1 hold36 (.A(net7),
     .X(net35));
- sg13cmos5l_dlygate4sd3_1 hold37 (.A(net6),
+ sg13cmos5l_dlygate4sd3_1 hold37 (.A(_24_),
     .X(net36));
+ sg13cmos5l_dlygate4sd3_1 hold38 (.A(_01_),
+    .X(net37));
+ sg13cmos5l_dlygate4sd3_1 hold39 (.A(net6),
+    .X(net38));
+ sg13cmos5l_dlygate4sd3_1 hold40 (.A(net3),
+    .X(net39));
  sg13cmos5l_buf_1 input1 (.A(enable_i),
     .X(net1));
  sg13cmos5l_buf_1 input2 (.A(reset_n_i),
