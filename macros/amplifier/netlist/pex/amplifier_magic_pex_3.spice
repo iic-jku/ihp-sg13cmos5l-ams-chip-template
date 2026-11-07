@@ -1,4 +1,4 @@
-* PEX produced on Wed Aug  5 02:14:10 CEST 2026 using scripts/sak-pex.sh with m=3 and s=1 (extresist threshold=10000 mOhm, minres=1000 mOhm, mindelay=1 ps)
+* PEX produced on Sat Nov  7 06:04:45 PM CET 2026 using /foss/tools/sak/sak-pex.sh with m=3 and s=1 (extresist threshold=10000 mOhm, minres=1000 mOhm, mindelay=1 ps)
 * NGSPICE file created from amplifier_pex.ext - technology: ihp-sg13cmos5l
 
 .subckt amplifier_pex VDD vin vout VSS
@@ -48,15 +48,15 @@ X42 vout vin VDD VDD sg13_lv_pmos ad=1.14p pd=6.38u as=1.14p ps=6.38u w=6u l=1u
 X43 VSS vin vout VSS.t0 sg13_lv_nmos ad=0.19p pd=1.38u as=0.19p ps=1.38u w=1u l=1u
 X44 VSS.t20 VSS VSS.t25 VSS.t0 sg13_lv_nmos ad=0.19p pd=1.38u as=0 ps=0 w=1u l=1u
 R0 VSS.t20 VSS 5.66454
-R1 VSS VSS.t25 5.66338
+R1 VSS.t25 VSS 5.66464
 R2 VSS.t23 VSS 5.66454
-R3 VSS VSS.t1 5.66338
-R4 VSS VSS.t0 11.0649
-C0 vout vin 18.7384f
-C1 a_838_n346# vin 0.35391f
-C2 a_838_n346# vout 0.05483f
-C3 VDD vin 29.7671f
-C4 vout VDD 19.4648f
-C5 vout VSS 19.23117f
+R3 VSS VSS.t1 5.66464
+R4 VSS VSS.t0 11.0665
+C0 vout vin 16.0125f
+C1 vout VDD 11.1271f
+C2 VDD vin 26.5036f
+C3 vout a_838_n346# 0.05483f
+C4 a_838_n346# vin 0.19732f
+C5 vout VSS 15.12998f
 .ends
 

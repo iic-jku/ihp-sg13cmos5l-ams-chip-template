@@ -3,7 +3,7 @@
     "statements": [
         {
             "lib_name": "inverter",
-            "lib_path": "inverter.gds"
+            "lib_path": "../../inverter/layout/inverter.gds"
         }
     ]
 }

@@ -1,4 +1,4 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 05/08/2026 02:14
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 07/11/2026 18:04
 
 .SUBCKT amplifier VDD VSS vin vout
 X$1 VSS VDD vout vin inverter
