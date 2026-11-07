@@ -8,7 +8,6 @@
 # ============================================
 
 # Imports
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 import ngspice2python as ng
@@ -151,10 +150,7 @@ def main():
     # ------------------------------------------------------------------
     # 5. Open the plot window (blocks until it is closed)
     # ------------------------------------------------------------------
-    # Only open the interactive window when requested (sim-view-xschem sets
-    # SHOW_PLOTS=1); batch/headless runs just save the figures and exit.
-    if os.environ.get("SHOW_PLOTS"):
-        plt.show()
+    plt.show()
     # =========================================================================
 
 # Main Execution
