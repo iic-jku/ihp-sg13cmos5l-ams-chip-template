@@ -1,6 +1,6 @@
 # FPGA Emulation Flow
 
-Emulates the `counter` macro on an FPGA, across three boards. The synthesis top is `counter_top` from [`../rtl/`](../rtl/), and its ports (`clock_i`, `reset_n_i`, `enable_i`, `counter_value_o[7:0]`) are mapped straight onto board pins, so no board-top wrapper is needed.
+Emulates the `counter_lv_eth` macro on an FPGA, across three boards. The synthesis top is `counter_lv_eth_top` from [`../rtl/`](../rtl/), and its ports (`clock_i`, `reset_n_i`, `enable_i`, `counter_value_o[7:0]`) are mapped straight onto board pins, so no board-top wrapper is needed.
 
 The flow is driven by one shared Makefile fragment, [`fpga.mk`](fpga.mk), parameterised per architecture and per board. Adding a board is one folder: its `Makefile` and its pin constraints, see [Adding a Board](#adding-a-board).
 
@@ -63,7 +63,7 @@ The flow is split across four layers, so that a new board touches as little as p
 A board directory's `Makefile` holds all of its board's configuration in one place. It includes `dut.mk` for the sources, names the top module and the pin file, sets the device and programmer variables, then includes `fpga.mk` last, which pulls in the `arch/` fragment named by the board's `ARCH`:
 
 ```make
-TOP := counter_top
+TOP := counter_lv_eth_top
 
 include ../dut.mk
 MODULES_SYNTH := $(DUT_SRCS)
@@ -166,11 +166,11 @@ Run Verilator lint checks:
 
 ```sh
 make lint-verilog
-make lint-verilog CELL=counter
+make lint-verilog CELL=counter_lv_eth
 make lint-verilog-all
 ```
 
-`make lint-verilog` defaults to `CELL=counter_top` and checks `constants.sv`, `counter.sv` and `counter_top.sv`. `make lint-verilog CELL=<cellname>` checks `constants.sv` together with `../rtl/<cellname>.sv` or `../rtl/<cellname>.v`. `make lint-verilog-all` runs both checks in sequence.
+`make lint-verilog` defaults to `CELL=counter_lv_eth_top` and checks `constants.sv`, `counter_lv_eth.sv` and `counter_lv_eth_top.sv`. `make lint-verilog CELL=<cellname>` checks `constants.sv` together with `../rtl/<cellname>.sv` or `../rtl/<cellname>.v`. `make lint-verilog-all` runs both checks in sequence.
 
 
 ### Synthesis
