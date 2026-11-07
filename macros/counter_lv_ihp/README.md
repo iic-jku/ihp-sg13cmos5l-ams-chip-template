@@ -1,4 +1,6 @@
-﻿# ihp-sg13cmos5l Counter
+﻿# ihp-sg13cmos5l Counter on the IHP LV Standard Cells
+
+This macro is the template counter hardened at 50 MHz on the low-voltage standard cells `sg13cmos5l_stdcell` of the IHP PDK. [`counter_hv_kvc`](../counter_hv_kvc/) and [`counter_lv_eth`](../counter_lv_eth/) are the same macro on the other two libraries.
 
 <p align="center">
   <a href="render/img/counter_lv_ihp_top_white.png">
@@ -819,7 +821,7 @@ The drive digit is not comparable between the libraries. `BUFX3` has the `max_ca
 
 ### Switching the Library
 
-The library is selected in [`flow/librelane/config.yaml`](flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners of IHP LV. For IHP HV, replace the block from `# Define Standard Cells` to `DEFAULT_CORNER` with the following lines. The PDK configuration of the library supplies the rest.
+The library is selected in [`flow/librelane/config.yaml`](flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners of IHP LV. For IHP HV, replace the block from `# Define Standard Cells` to `DEFAULT_CORNER` with the following lines. The PDK configuration of the library supplies the rest. This macro itself adds `PAD_LIBS: {}` after `DEFAULT_CORNER`, because the macro has no pads and the `PAD_LIBS` of the PDK name only three corners.
 
 <details>
 <summary>Show Configuration for IHP HV</summary>
@@ -985,6 +987,22 @@ In speed, the two thin-oxide libraries are close. At 20 ns the worst path starts
 The power numbers come with three caveats. First, on this nearly empty die the leakage is almost entirely decap fill (97 % in IHP LV and 99 % in ETH LV), which leaks more per area in ETH LV, while the logic of ETH LV alone leaks 10 nW against 19 nW in IHP LV. Second, the clock buffers decide more than the library: with `sg13cmos5l_buf_4` and `BUFX12` as root buffer, the supply power drops to 38.5 µW for IHP LV and 29.5 µW for ETH LV, and the advantage of ETH LV grows from 12 % to 23 %. Third, the `power.rpt` numbers are vectorless estimates: they sit below the transistor-level values, more for ETH LV than for IHP LV, and for IHP HV the dynamic part is missing altogether. At 3.3 V, the supply power of IHP HV is 17.5 times that of IHP LV.
 
 
+### Measured on This Macro
+
+This macro, 50 MHz, `make all` in `ghcr.io/iic-jku/iic-osic-tools:nightly` with digest `sha256:8ea7cab3` (built 2026-11-02, PDK commit `ac438346`, LibreLane v3.1.0.dev4). The results above stay as the record of image tag `2026.10`. Since that record, the PDK moved `CTS_ROOT_BUFFER` from `sg13cmos5l_buf_8` to `sg13cmos5l_buf_16`.
+
+| Corner | Worst setup slack | Worst hold slack | Total in `power.rpt` |
+|---|---|---|---|
+| `nom_fast_1p32V_m40C` | 14.85 ns | 0.40 ns | 68.0 µW |
+| `nom_fast_1p65V_m40C` | 15.14 ns | 0.27 ns | 115 µW |
+| `nom_slow_1p08V_125C` | 13.37 ns | 1.07 ns | 41.7 µW |
+| `nom_slow_1p35V_125C` | 14.23 ns | 0.69 ns | 67.0 µW |
+| `nom_typ_1p20V_25C` | 14.32 ns | 0.64 ns | 53.2 µW |
+| `nom_typ_1p50V_25C` | 14.81 ns | 0.42 ns | 86.8 µW |
+
+Magic and KLayout DRC, LVS and antenna report 0 errors, the cell area after place and route is 1299 µm² at a utilisation of 10.1 %, `lec` proves all 8 partitions, cocotb passes 4 of 4 tests on RTL and on the gate-level netlist, and the Xschem bench counts through 255 without a wrong step.
+
+
 ## Start a New Digital Macro from This Template
 
-The counter is meant to be the starting point for a new digital macro. It already carries the full digital flow: SystemVerilog RTL, Verilator lint, Icarus Verilog and cocotb simulation, the LibreLane hardening flow with its SDC files and pin order, the XSPICE model generation for mixed-signal simulation in Xschem, and an FPGA emulation flow for three boards. `make macro FROM=counter NAME=<name>` in [`macros/`](../) copies and renames it, including `TOP` in every `fpga/<board>/Makefile` and `DESIGN_NAME` in the LibreLane config. See [Start a New Macro from an Existing One](../README.md#start-a-new-macro-from-an-existing-one) for what the target does, what is left to do afterwards, and where to register the macro at the chip top-level.
+The counter is meant to be the starting point for a new digital macro. It already carries the full digital flow: SystemVerilog RTL, Verilator lint, Icarus Verilog and cocotb simulation, the LibreLane hardening flow with its SDC files and pin order, the XSPICE model generation for mixed-signal simulation in Xschem, and an FPGA emulation flow for three boards. `make macro FROM=counter_lv_ihp NAME=<name>` in [`macros/`](../) copies and renames it, including `TOP` in every `fpga/<board>/Makefile` and `DESIGN_NAME` in the LibreLane config. See [Start a New Macro from an Existing One](../README.md#start-a-new-macro-from-an-existing-one) for what the target does, what is left to do afterwards, and where to register the macro at the chip top-level.
