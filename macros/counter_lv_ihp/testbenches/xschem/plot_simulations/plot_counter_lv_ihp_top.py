@@ -44,7 +44,7 @@ def main():
     # ------------------------------------------------------------------
     # 1. Load ngspice gate-level transient simulation data
     # ------------------------------------------------------------------
-    ngspice_file = data_dir / "counter_top_tb_tran.txt"
+    ngspice_file = data_dir / "counter_lv_ihp_top_tb_tran.txt"
 
     data_time = ng.loadngspicecol(str(ngspice_file), "time") * 1e6
     data_clock = ng.loadngspicecol(str(ngspice_file), "clock")
@@ -111,10 +111,10 @@ def main():
     # ------------------------------------------------------------------
     # 3. Export transient figures and CSV
     # ------------------------------------------------------------------
-    fig1.savefig(str(figures_dir / "counter_top_tb_tran.svg"), bbox_inches='tight')
-    fig1.savefig(str(figures_dir / "counter_top_tb_tran.pdf"), bbox_inches='tight')
+    fig1.savefig(str(figures_dir / "counter_lv_ihp_top_tb_tran.svg"), bbox_inches='tight')
+    fig1.savefig(str(figures_dir / "counter_lv_ihp_top_tb_tran.pdf"), bbox_inches='tight')
     np.savetxt(
-        str(figures_dir / "counter_top_tb_tran.csv"),
+        str(figures_dir / "counter_lv_ihp_top_tb_tran.csv"),
         np.column_stack((
             data_time, data_clock, data_reset_n, data_enable,
             data_b0, data_b1, data_b2, data_b3,

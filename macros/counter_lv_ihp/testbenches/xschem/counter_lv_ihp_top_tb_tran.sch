@@ -147,10 +147,10 @@ tclcommand="xschem raw_read $netlist_dir/[file rootname [file tail [xschem get c
 C {code_shown.sym} 60 -1510 0 0 {name=NGSPICE
 only_toplevel=false
 value="
-*Post-Layout Simulation (PEX), used by the counter_top_pex DUT
-.include ../../../netlist/pex/counter_top_magic_pex_3.spice
+*Post-Layout Simulation (PEX), used by the counter_lv_ihp_top_pex DUT
+.include ../../../netlist/pex/counter_lv_ihp_top_magic_pex_3.spice
 *True Mixed Signal Simulation (.xspice)
-.include ../../../netlist/xspice/counter_top.xspice
+.include ../../../netlist/xspice/counter_lv_ihp_top.xspice
 .param VDD=1.5
 .temp 27
 .param fclk=50e6
@@ -213,7 +213,7 @@ value="
 .lib cornerRES.lib res_typ
 .lib cornerDIO.lib dio_tt
 "}
-C {counter_top.sym} 1100 -440 0 0 {name=x1}
+C {counter_lv_ihp_top.sym} 1100 -440 0 0 {name=x1}
 C {devices/lab_wire.sym} 1220 -600 1 0 {name=p3 sig_type=std_logic lab=bit0}
 C {bus_tap.sym} 1210 -440 0 0 {name=l4 lab=0}
 C {res.sym} 1220 -550 0 0 {name=R1
@@ -275,7 +275,7 @@ format="tcleval( @value )"
 value="
 .include [file rootname [file tail [xschem get schname]]].save
 "}
-C {counter_top.sym} 1320 -1140 0 0 {name=x2
+C {counter_lv_ihp_top.sym} 1320 -1140 0 0 {name=x2
 spice_ignore=true}
-C {counter_top_pex.sym} 1320 -860 0 0 {name=x3
+C {counter_lv_ihp_top_pex.sym} 1320 -860 0 0 {name=x3
 spice_ignore=true}

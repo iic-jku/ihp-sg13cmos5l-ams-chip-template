@@ -18,10 +18,10 @@ INSERT_ECO_BUFFERS:
   # buffer: sg13cmos5l_buf_4
   # === END OF ECO_BUFFERS ===
     
-DESIGN_NAME: counter_top
+DESIGN_NAME: counter_lv_ihp_top
 VERILOG_FILES: ["dir::../../rtl/constants.sv",
-"dir::../../rtl/counter.sv",
-"dir::../../rtl/counter_top.sv"]
+"dir::../../rtl/counter_lv_ihp.sv",
+"dir::../../rtl/counter_lv_ihp_top.sv"]
 
 # Enable plugin for better SystemVerilog support
 # USE_SLANG: True

@@ -4,11 +4,11 @@
 // of the counter macro in SystemVerilog.
 
 `default_nettype none
-`ifndef __COUNTER_TOP__
-`define __COUNTER_TOP__
+`ifndef __COUNTER_LV_IHP_TOP__
+`define __COUNTER_LV_IHP_TOP__
 
-module counter_top #(
-  parameter  int unsigned CTR_MAX = `COUNTER_MAX_DEFAULT,
+module counter_lv_ihp_top #(
+  parameter  int unsigned CTR_MAX = `COUNTER_LV_IHP_MAX_DEFAULT,
   localparam int unsigned CTR_BW  = $clog2(CTR_MAX + 1)
 )(
   input logic               clock_i,
@@ -23,7 +23,7 @@ module counter_top #(
   assign reset = ~reset_n_i;
 
   // Embed Counter
-  counter #(
+  counter_lv_ihp #(
     .CTR_BW(CTR_BW),
     .CTR_MAX(CTR_MAX)
   ) counter_0 (
@@ -32,7 +32,7 @@ module counter_top #(
     .enable_i(enable_i),
     .counter_value_o(counter_value_o)
   );
-endmodule // counter_top
+endmodule // counter_lv_ihp_top
 
 `endif
 `default_nettype wire
