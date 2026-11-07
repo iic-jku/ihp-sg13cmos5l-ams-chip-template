@@ -104,11 +104,20 @@ make bondpad DIAMETER=70.0 SHAPE=octagon BOTTOM_METAL=2
 The `script/bondpad.py` script runs in KLayout batch mode. It:
 
 1. Instantiates the `bondpad` PCell from the `SG13_dev` library
-2. Flattens the PCell into a static layout
-3. Exports the layout as GDSII
-4. Generates a matching LEF file (with `pad` pin on Metal2–TopMetal1 and metal obstruction layers)
+2. Flattens the PCell and redraws its Metal4 ring and TopVia1 to meet `Pad.gR`
+3. Exports the layout as GDSII, with the pad in the child cell `bondpad`
+4. Generates a matching LEF file (with `pad` pin on TopMetal1 and metal obstruction layers)
+5. Stops if a TopVia1 fails `Pad.gR`, if the LEF pin lies outside the drawn metal on any layer, or if it covers under 90 % of the pad
 
 The metal stack used for the bondpad covers `Metal3` through `TopMetal1` by default (`BOTTOM_METAL=3`, matching the SG13CMOS5L PDK default). Override `BOTTOM_METAL` to start the stack at a different layer.
+
+**The `pad` pin is on TopMetal1 only.** TopMetal1 is the only plate the PCell draws. Every metal below it down to `BOTTOM_METAL` is a ring at the pad edge, so a lower pin plate would claim metal that is not there. `place_bondpad` makes the chip's terminal on TopMetal1. The `OBS` stays a full-size rectangle on every layer, because an obstruction that stops short leaves the conductor exposed.
+
+**`Pad.gR` asks for 1.40 µm of Metal4 around every TopVia1 inside `dfpad`.** The PCell's ring is 1.53 µm wide with its cuts 0.555 µm from either edge, which gives 648 `Pad.gR` markers per 70 µm square pad in gdscheck's `recommended` suite, and KLayout's deck does not run the rule. `pad_gr` redraws the ring 3.45 µm wide from the same outer edge, with the cuts on its centre line and outside the passivation opening. The price is at the chip top level: the wider ring reaches under the passivation opening, so `Pad.fR_M4` starts to apply to the 3 µm `pad` strip of the IO cell, one recommended marker per pad in a KLayout run with recommended rules, next to the `Pad.fR_TM1` that strip already causes.
+
+**The pad stays in a child cell.** Magic's `Slt.c` flags a solid plate drawn in the top cell, 6 markers on the 70 µm square pad, while KLayout and gdscheck exempt metal under `dfpad`. In a child cell, where the PCell instance always was, `make magic-drc` is clean.
+
+**`SHAPE=circle` keeps the PCell's rings.** A circle has no 0/45/90 outline to redraw, so it does not meet `Pad.gR`, and its Metal3 and Metal4 rings fail the 45° angle rule in KLayout and gdscheck, 129 markers per layer at `BOTTOM_METAL=3`.
 
 
 ## RF Pad

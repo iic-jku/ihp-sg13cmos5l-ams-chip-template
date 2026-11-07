@@ -44,10 +44,14 @@ Examples (single-line, copy-paste friendly):
 
 LEF output features:
     - MACRO with CLASS COVER (identifies the cell as a cover/pad macro)
-    - PIN ``pad`` exposed on Metal2 through TopMetal1 (multi-layer port)
+    - PIN ``pad`` on TopMetal1 only, the only full plate the PCell draws
     - OBS (obstructions) on every metal from ``bottom_metal`` up to TopMetal1,
       blocking the router from using those layers under the pad
     - Layer names matching the IHP SG13CMOS5L tech.lef
+
+Pad.gR:
+    The PCell's Metal4 ring is 1.53 um wide with its TopVia1 0.555 um from either edge, against 1.40 um in ``Pad.gR``, so ``pad_gr`` redraws that ring and its cuts.
+    A circle has no 0/45/90 outline to redraw, so it keeps the PCell's ring and does not meet the rule.
 
 RF pad:
     An 80 x 250 um pad cell that takes the slot of ``sg13cmos5l_IOPadAnalog`` plus its 70 x 70 bondpad.
@@ -84,6 +88,62 @@ METAL_LAYERS = ['Metal1', 'Metal2', 'Metal3', 'Metal4', 'TopMetal1']
 PCELL_BOTTOM_METAL = {1: '1', 2: '2', 3: '3', 4: '4'}
 
 
+def write_gds(layout, path):
+    """Write a GDS without timestamps, so that a rebuild of the same geometry gives the same bytes."""
+    pathlib.Path(path).parent.mkdir(parents=True, exist_ok=True)
+    opt = pya.SaveLayoutOptions()
+    opt.format = 'GDS2'
+    opt.gds2_write_timestamps = False
+    layout.write(path, opt)
+    print(f"GDS written to: {path}")
+
+
+def pad_pin_rects(size: float, shape: str, step: float = 1.0):
+    """Rectangles for the ``pad`` PIN, all of them inside the drawn shape.
+
+    A pin must not claim metal that is not drawn: ``place_bondpad`` turns it into the chip's top-level terminal.
+    A slanted edge is approximated by ``step`` tall bands, each taking the narrower of its two horizontal edges, snapped inward to the 5 nm grid.
+    """
+    if shape == 'square':
+        return [(0.0, 0.0, size, size)]
+    if shape not in ('octagon', 'circle'):
+        raise ValueError("pad_pin_rects: unknown shape %r" % shape)
+    r = size / 2.0
+    # Regular octagon across flats, each chamfer takes this off both ends of the bottom edge.
+    chamfer = size * (2.0 - 2.0 ** 0.5) / 2.0
+    # The PCell's circle is a 64-gon, a pin stays inside its inscribed circle.
+    r_in = r * math.cos(math.pi / 64.0) - 0.005
+
+    def half_width(y):
+        dy = abs(y - r)
+        if shape == 'circle':
+            return (r_in * r_in - dy * dy) ** 0.5 if dy < r_in else 0.0
+        return r if dy <= r - chamfer else r - (dy - (r - chamfer))
+
+    def snap_up(v):
+        return round(math.ceil(v / 0.005 - 1e-6) * 0.005, 3)
+
+    def snap_down(v):
+        return round(math.floor(v / 0.005 + 1e-6) * 0.005, 3)
+
+    out = []
+    y = 0.0
+    while y < size - 1e-9:
+        y2 = min(y + step, size)
+        hw = min(half_width(y), half_width(y2))
+        if hw > 0.0:
+            out.append((snap_up(r - hw), y, snap_down(r + hw), y2))
+        y = y2
+    # Bands of equal width merge, so the straight middle of the pad stays one rectangle.
+    merged = []
+    for r in out:
+        if merged and abs(merged[-1][0] - r[0]) < 1e-9 and abs(merged[-1][2] - r[2]) < 1e-9:
+            merged[-1] = (merged[-1][0], merged[-1][1], merged[-1][2], r[3])
+        else:
+            merged.append(r)
+    return merged
+
+
 def generate_bondpad_lef(size: float, shape: str, output: str,
                          bottom_metal: int = 1):
     """Generate a LEF macro description for the bondpad.
@@ -92,14 +152,14 @@ def generate_bondpad_lef(size: float, shape: str, output: str,
     dot), e.g. ``lef/bondpad_70x70.lef`` -> macro name ``bondpad_70x70``.
 
     The generated LEF follows the same conventions as the hand-crafted reference:
-    - PIN ``pad`` exposed on Metal2 through TopMetal1 (multi-layer port)
+    - PIN ``pad`` on TopMetal1, the only full plate the PCell draws
     - OBS covering the full pad area on every metal from ``bottom_metal``
       (default Metal1) up to TopMetal1
     - SYMMETRY X Y R90 and SITE sg13cmos5l_ioSite for padring placement
 
     :param size: Pad side length / diameter in microns.
     :param shape: Pad geometry ('square', 'octagon', or 'circle').
-        Only affects the GDS; the LEF always uses full-size rectangles.
+        Affects the GDS and the LEF PIN; the OBS stays a full-size rectangle.
     :param output: Filesystem path for the LEF file to write.
     :param bottom_metal: Lowest metal layer in the stack (1-4, default 1).
     """
@@ -122,24 +182,25 @@ def generate_bondpad_lef(size: float, shape: str, output: str,
         f.write("  SYMMETRY X Y R90 ;\n")
         f.write("  SITE sg13cmos5l_ioSite ;\n")
 
-        # --- PIN pad – exposed on Metal2 through TopMetal1 so the router can
-        #     connect at any upper-metal level.  Uses lowercase ``pad`` to
+        # --- PIN pad on TopMetal1 only. Below it the PCell draws just a ring per
+        #     metal down to bottom_metal and nothing under that, so a lower plate
+        #     would claim metal that is not there. Uses lowercase ``pad`` to
         #     match the Verilog module port name. ---
         f.write("  PIN pad\n")
         f.write("    USE SIGNAL ;\n")
         f.write("    PORT\n")
-        # Expose pin on Metal2 up to TopMetal1 (skip Metal1 – typically not
-        # routed to for a bondpad connection).
-        for layer in METAL_LAYERS[1:]:  # Metal2 .. TopMetal1
-            f.write(f"      LAYER {layer} ;\n")
-            f.write(f"        RECT 0 0 {size:.1f} {size:.1f} ;\n")
+        f.write(f"      LAYER {METAL_LAYERS[-1]} ;\n")
+        for x0, y0, x1, y1 in pad_pin_rects(size, shape):
+            f.write(f"        RECT {x0:.3f} {y0:.3f} {x1:.3f} {y1:.3f} ;\n")
         f.write("    END\n")
         f.write("  END pad\n")
         f.write("\n")
 
         # --- OBS – conservatively block the full pad area on every metal
         #     from bottom_metal up to TopMetal1 to prevent DRC violations
-        #     from routes running underneath the pad. ---
+        #     from routes running underneath the pad. A full-size rectangle even
+        #     for an octagon, the opposite rounding from the PIN on purpose: an
+        #     obstruction that stops short leaves the conductor exposed. ---
         f.write("  OBS\n")
         for i in range(bottom_metal - 1, len(METAL_LAYERS)):
             layer_name = METAL_LAYERS[i]
@@ -183,11 +244,71 @@ def generate_bondpad_gds(diameter: float, shape: str, output: str,
          'bottomMetal': PCELL_BOTTOM_METAL[bottom_metal]})
     top_cell.insert(klayout.db.CellInstArray(pcell, klayout.db.Trans(klayout.db.Vector(offset, offset))))
 
-    # Ensure the output directory exists.
-    pathlib.Path(output).parent.mkdir(parents=True, exist_ok=True)
+    # pad_gr needs a flat cell. A circle has no 0/45/90 outline to redraw.
+    layout.flatten(top_cell.cell_index(), -1, True)
+    if shape == 'circle':
+        print("note: circle pad, Metal4 ring left as the PCell drew it, Pad.gR not met")
+    else:
+        pad_gr(layout, top_cell)
+        check_bondpad_pad_gr(layout, top_cell)
 
-    layout.write(output)
-    print(f"GDS written to: {output}")
+    # The pad goes back into a child cell, as the PCell instance was: Magic's Slt.c flags a plate drawn in the top cell, which KLayout and gdscheck exempt under dfpad.
+    child = layout.create_cell(PCELL)
+    for li in layout.layer_indexes():
+        child.shapes(li).insert(top_cell.shapes(li))
+        top_cell.shapes(li).clear()
+    top_cell.insert(klayout.db.CellInstArray(child.cell_index(), klayout.db.Trans()))
+
+    write_gds(layout, output)
+
+
+def check_bondpad_pad_gr(layout, top_cell):
+    """Fail if a TopVia1 in the pad has under 1.40 um of Metal4 around it, which the PCell's own ring does."""
+    li = {k: layout.layer(*v) for k, v in GR_LAYERS.items()}
+    dfpad = pya.Region(top_cell.shapes(li['dfpad']))
+    cuts = pya.Region(top_cell.shapes(li['TopVia1'])).inside(dfpad)
+    ring = pya.Region(top_cell.shapes(li['Metal4'])) & dfpad
+    assert not cuts.is_empty(), "no TopVia1 in the pad"
+    fails = ring.enclosing_check(cuts, 1400, False, pya.Metrics.Euclidian)
+    assert fails.is_empty(), "Pad.gR: %d TopVia1 edges under 1.40 um of Metal4" % fails.count()
+
+
+def check_bondpad_lef(gds_path, lef_path, shape):
+    """Hold the LEF pin against the metal the GDS draws: nothing outside it on any layer, and the pad covered."""
+    ly = pya.Layout()
+    ly.read(gds_path)
+    top = ly.top_cell()
+
+    def metal(layer):
+        return pya.Region(top.begin_shapes_rec(ly.layer(*LEF_METALS[layer]))).merged()
+
+    plate = metal('TopMetal1')
+    assert plate.count() == 1, "TopMetal1 is %d polygons, want 1" % plate.count()
+    points = {'square': 4, 'octagon': 8}.get(shape)
+    if points is not None:
+        got = list(plate.each())[0].num_points()
+        assert got == points, "TopMetal1 has %d points, %s wants %d" % (got, shape, points)
+
+    with open(lef_path, encoding='utf-8') as f:
+        body = re.search(r"\n  PIN pad\b(.*?)\n  END pad\b", f.read(), re.S)
+    assert body, "no PIN pad in %s" % lef_path
+    pins, layer = {}, None
+    for line in body.group(1).split("\n"):
+        m = re.search(r"LAYER (\S+) ;", line)
+        if m:
+            layer = m.group(1)
+            continue
+        m = re.search(r"RECT ([-\d.]+) ([-\d.]+) ([-\d.]+) ([-\d.]+) ;", line)
+        if m:
+            box = pya.Box(*[int(round(float(v) / ly.dbu)) for v in m.groups()])
+            pins.setdefault(layer, pya.Region()).insert(box)
+    assert 'TopMetal1' in pins, "PIN pad has no TopMetal1 rectangle"
+    for name, pin in pins.items():
+        outside = pin.merged() - metal(name)
+        assert outside.is_empty(), "the LEF pin lies %.4f um2 outside the drawn %s" % (outside.area() * ly.dbu * ly.dbu, name)
+    cover = pins['TopMetal1'].merged().area() / float(plate.area())
+    assert cover >= 0.90, "the LEF pin covers only %.4f of the pad" % cover
+    print(f"LEF pin checked: {shape}, on {', '.join(sorted(pins))}, covers {cover:.4f} of the pad")
 
 
 # ---------------------------------------------------------------------------
@@ -575,7 +696,9 @@ def pad_gr(layout, cell, ring_w=GR_RING_W):
         cuts = cuts.inside(ring)
         bad = _gr_enc_fails(ring, cuts, enc)
         cuts -= cuts.interacting(bad.second_edges())
-        boxes = sorted((p.bbox() for p in cuts.each()), key=lambda b: (b.left, b.bottom))
+        # Candidates of two sides can merge at a corner, and a merged pair is no legal cut.
+        boxes = sorted((p.bbox() for p in cuts.each() if p.bbox().width() == cut and p.bbox().height() == cut),
+                       key=lambda b: (b.left, b.bottom))
         kept = _gr_spaced(boxes, space)
         cuts = pya.Region()
         for b in kept:
@@ -1764,13 +1887,7 @@ def generate_rfpad(gds_path, lef_path, lib_path):
     check_rfpad_nets(ly, top)
     print(f"RF pad checks passed: {RF_CELL}")
     if gds_path:
-        pathlib.Path(gds_path).parent.mkdir(parents=True, exist_ok=True)
-        # Without timestamps a rebuild of the same geometry gives the same bytes.
-        opt = pya.SaveLayoutOptions()
-        opt.format = 'GDS2'
-        opt.gds2_write_timestamps = False
-        ly.write(gds_path, opt)
-        print(f"GDS written to: {gds_path}")
+        write_gds(ly, gds_path)
     if lef_path:
         write_rfpad_lef(ly, top, lef_path)
     if lib_path:
@@ -1859,3 +1976,6 @@ if gds_output:
 if lef_output:
     generate_bondpad_lef(float(diameter), shape, lef_output,  # pylint: disable=undefined-variable
                          bottom_metal=bottom_metal)
+
+if gds_output and lef_output:
+    check_bondpad_lef(gds_output, lef_output, shape)
