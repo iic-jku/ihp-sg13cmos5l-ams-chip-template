@@ -4,10 +4,10 @@
 // synchronous reset & enable in SystemVerilog.
 
 `default_nettype none
-`ifndef __COUNTER__
-`define __COUNTER__
+`ifndef __COUNTER_HV_KVC__
+`define __COUNTER_HV_KVC__
 
-module counter #(
+module counter_hv_kvc #(
   parameter int unsigned       CTR_BW  = 8,
   parameter logic [CTR_BW-1:0] CTR_MAX = 2**CTR_BW - 1
 )(
@@ -33,7 +33,7 @@ module counter #(
     end
   end
 
-endmodule // counter
+endmodule // counter_hv_kvc
 
 `endif
 `default_nettype wire

@@ -7,13 +7,13 @@
 // module header. Compile constants.sv before any module that references the
 // macros (the Makefiles list it first in MODULES_SIM/MODULES_SYNTH).
 
-`ifndef __COUNTER_CONSTANTS__
-`define __COUNTER_CONSTANTS__
+`ifndef __COUNTER_HV_KVC_CONSTANTS__
+`define __COUNTER_HV_KVC_CONSTANTS__
 
 // Default clock frequency for simulations and testbenches (Hz)
 `define CLK_FREQ_DEFAULT      50.0e6
 
-// Default upper bound (inclusive) of the counter range: counts 0 .. COUNTER_MAX
-`define COUNTER_MAX_DEFAULT   255
+// Default upper bound (inclusive) of the counter range: counts 0 .. COUNTER_HV_KVC_MAX
+`define COUNTER_HV_KVC_MAX_DEFAULT   255
 
 `endif
