@@ -89,7 +89,7 @@ def main():
         ("B6", data_b6, "#7b2cbf"),
         ("B7", data_b7, "#b39f00"),
     ]
-    y_ticks = [0.0, 0.5, 1.0, 1.5]
+    y_ticks = [0.0, 1.1, 2.2, 3.3]
 
     fig1, axs = plt.subplots(len(signals), sharex=True)
     fig1.set_figwidth(16)
@@ -99,9 +99,9 @@ def main():
     for ax, (name, values, color) in zip(axs, signals):
         ax.plot(data_time, values, color=color, linewidth=1.3)
         ax.set_ylabel(f'{name} (V)', fontsize=11)
-        ax.set_ylim(-0.1, 1.6)
+        ax.set_ylim(-0.2, 3.5)
         ax.set_yticks(y_ticks)
-        ax.set_yticklabels(["0", "0.5", "1.0", "1.5"], fontsize=8)
+        ax.set_yticklabels(["0", "1.1", "2.2", "3.3"], fontsize=8)
         ax.tick_params(axis='x', labelsize=8)
         ax.grid(True, alpha=0.4)
 

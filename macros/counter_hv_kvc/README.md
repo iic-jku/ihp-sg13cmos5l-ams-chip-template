@@ -1,4 +1,6 @@
-﻿# ihp-sg13cmos5l Counter
+﻿# ihp-sg13cmos5l Counter on the HV Standard Cells
+
+This macro is the template counter hardened at 50 MHz on the thick-oxide 3.3 V standard cells `sg13cmos5l_stdcell_hv`. The library ships in the IHP PDK tree, but it comes from a private contributor and not directly from IHP. Its cells keep the prefix `sg13g2_hv_`, and its outputs swing to 3.3 V, so a chip with this macro needs a 3.3 V domain and level shifters.
 
 <p align="center">
   <a href="render/img/counter_hv_kvc_top_white.png">
@@ -22,12 +24,9 @@
 │  ├─ 📁 lef/
 │  │  └─ counter_hv_kvc_top.lef
 │  ├─ 📁 lib/
-│  │  ├─ 📁 nom_fast_1p32V_m40C/
-│  │  ├─ 📁 nom_fast_1p65V_m40C/
-│  │  ├─ 📁 nom_slow_1p08V_125C/
-│  │  ├─ 📁 nom_slow_1p35V_125C/
-│  │  ├─ 📁 nom_typ_1p20V_25C/
-│  │  └─ 📁 nom_typ_1p50V_25C/
+│  │  ├─ 📁 nom_fast_3p60V_m40C/
+│  │  ├─ 📁 nom_slow_3p00V_125C/
+│  │  └─ 📁 nom_typ_3p30V_25C/
 │  ├─ 📁 nl/
 │  │  └─ counter_hv_kvc_top.nl.v
 │  ├─ 📁 pnl/
@@ -124,12 +123,9 @@
 │  ├─ antenna_summary.rpt
 │  ├─ antenna_violations.rpt
 │  ├─ stapostpnr_summary.rpt
-│  ├─ stapostpnr_nom_fast_1p32V_m40C_power.rpt
-│  ├─ stapostpnr_nom_fast_1p65V_m40C_power.rpt
-│  ├─ stapostpnr_nom_slow_1p08V_125C_power.rpt
-│  ├─ stapostpnr_nom_slow_1p35V_125C_power.rpt
-│  ├─ stapostpnr_nom_typ_1p20V_25C_power.rpt
-│  ├─ stapostpnr_nom_typ_1p50V_25C_power.rpt
+│  ├─ stapostpnr_nom_fast_3p60V_m40C_power.rpt
+│  ├─ stapostpnr_nom_slow_3p00V_125C_power.rpt
+│  ├─ stapostpnr_nom_typ_3p30V_25C_power.rpt
 │  ├─ irdrop.rpt
 │  ├─ drc.magic.rpt
 │  ├─ drc.klayout.json
@@ -671,17 +667,17 @@ make lec-mutant                  # check that lec catches a difference
 `lec` writes an [EQY](https://github.com/YosysHQ/eqy) script to `flow/eqy/counter_hv_kvc_top.eqy` and runs it in `flow/eqy/work/`. EQY splits the design into partitions, proves each of them, and exits with 0 only when all of them are equivalent. On the counter, it proves 8 partitions, one per output bit, in a few seconds. Four details of the script matter:
 
 - The RTL is read with the other front end than synthesis: yosys-slang while `USE_SLANG` is off in `flow/librelane/config.yaml`, and Yosys' own `read_verilog -sv` when it is on. With the same front end on both sides, a front end that misreads the RTL would produce the same mistake in the netlist and prove it equivalent.
-- The functions of the standard cells come from the Liberty file of the PDK, not from its Verilog models. `-ignore_miss_func` skips the cells without a function (e.g. the clock gate `sg13cmos5l_lgcp_1`), and `hierarchy -check` together with `select -assert-none t:sg13cmos5l_*` makes the run fail if the netlist uses a cell without a model, instead of treating it as an empty box that proves trivially.
+- The functions of the standard cells come from the Liberty file of the PDK, not from its Verilog models. `-ignore_miss_func` skips the cells without a function (e.g. the clock gate `sg13g2_hv_lgcp_1`), and `hierarchy -check` together with `select -assert-none t:sg13g2_hv_*` makes the run fail if the netlist uses a cell without a model, instead of treating it as an empty box that proves trivially.
 - `clk2fflogic` on both sides makes the clock an input of the proof. Without it, EQY's own SBY script assumes one clock, and a flop on the wrong clock net still proves equivalent.
 - Each partition is proved with SBY and the ABC engine `pdr`, which needs no depth bound. A partition that runs into `LEC_TIMEOUT` counts as not proved, so `lec` fails instead of running on.
 
-`lec-mutant` changes two copies of the netlist: `flow/eqy/mutant_cell.nl.v` has its first `sg13cmos5l_nand2_1` swapped for a `sg13cmos5l_nor2_1`, and `flow/eqy/mutant_clock.nl.v` has its first flop clocked by `enable_i`. It passes only if a partition of `lec` reports `FAIL` on each, so a `lec` that never ran a proof (a missing tool, a broken script) fails it too. Run it after changing the script, to make sure the check can still fail.
+`lec-mutant` changes two copies of the netlist: `flow/eqy/mutant_cell.nl.v` has its first `sg13g2_hv_nand2_1` swapped for a `sg13g2_hv_nor2_1`, and `flow/eqy/mutant_clock.nl.v` has its first flop clocked by `enable_i`. It passes only if a partition of `lec` reports `FAIL` on each, so a `lec` that never ran a proof (a missing tool, a broken script) fails it too. Run it after changing the script, to make sure the check can still fail.
 
 `lec` has limits:
 
 - It checks function, not timing. Static timing analysis and gate-level simulation stay.
 - A register the RTL leaves unknown (`X`) matches any netlist, because EQY takes an `X` in the RTL as don't-care. Deleting the reset from the RTL of the counter still passes against the old netlist.
-- It pairs registers by name, so it can fail on a correct netlist or run into `LEC_TIMEOUT`. `sg13cmos5l_dfrbpq_1` only resets to 0, so synthesis stores a register that resets to 1 inverted, and the match by name then compares the complement. A Gray counter with a binary register next to its Gray output fails, and some of its partitions also run into the limit. Such a macro needs extra match rules. Variants of the counter with an asynchronous reset, a pipeline stage, a small FSM or only a Gray register pass without any.
+- It pairs registers by name, so it can fail on a correct netlist or run into `LEC_TIMEOUT`. `sg13g2_hv_dfrbpq_1` only resets to 0, so synthesis stores a register that resets to 1 inverted, and the match by name then compares the complement. A Gray counter with a binary register next to its Gray output fails, and some of its partitions also run into the limit. Such a macro needs extra match rules. Variants of the counter with an asynchronous reset, a pipeline stage, a small FSM or only a Gray register pass without any.
 
 LibreLane has an equivalence step of its own (`Yosys.EQY`, enabled with `RUN_EQY`), but it skips every PDK other than sky130A, which is why the macro runs EQY from its Makefile. `lec` was tested with IIC-OSIC-TOOLS `2026.10`.
 
@@ -781,7 +777,7 @@ make all
 
 ## Standard Cell Libraries
 
-The `ihp-sg13cmos5l` PDK in the IIC-OSIC-TOOLS container ships three standard cell libraries, and this macro hardens on the first one: the IHP low-voltage library `sg13cmos5l_stdcell` (IHP LV), the IHP high-voltage library `sg13cmos5l_stdcell_hv` (IHP HV), and version 1.1 of [`ez130_8t`](https://iip.ethz.ch/ez-library/ihp130-8t.html) (ETH LV), an [open library from ETH Zurich](https://arxiv.org/abs/2609.29965) on the same thin-oxide transistors as IHP LV, available since image tag `2026.10`. The following numbers are read from the library views.
+The `ihp-sg13cmos5l` PDK in the IIC-OSIC-TOOLS container ships three standard cell libraries, and this macro hardens on the second one: the IHP low-voltage library `sg13cmos5l_stdcell` (IHP LV), the high-voltage library `sg13cmos5l_stdcell_hv` (IHP HV after the PDK tree it ships in, the cells come from a private contributor), and version 1.1 of [`ez130_8t`](https://iip.ethz.ch/ez-library/ihp130-8t.html) (ETH LV), an [open library from ETH Zurich](https://arxiv.org/abs/2609.29965) on the same thin-oxide transistors as IHP LV, available since image tag `2026.10`. The following numbers are read from the library views.
 
 | | IHP LV | IHP HV | ETH LV |
 |---|---|---|---|
@@ -819,7 +815,7 @@ The drive digit is not comparable between the libraries. `BUFX3` has the `max_ca
 
 ### Switching the Library
 
-The library is selected in [`flow/librelane/config.yaml`](flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners of IHP LV. For IHP HV, replace the block from `# Define Standard Cells` to `DEFAULT_CORNER` with the following lines. The PDK configuration of the library supplies the rest.
+The library is selected in [`flow/librelane/config.yaml`](flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners. This macro carries the block for IHP HV below from `# Define Standard Cells` to `DEFAULT_CORNER`, followed by `PAD_LIBS: {}`, because the macro has no pads and the `PAD_LIBS` of the PDK name only three corners. The PDK configuration of the library supplies the rest. [`counter_lv_ihp`](../counter_lv_ihp/) and [`counter_lv_eth`](../counter_lv_eth/) are the same macro on the other two libraries.
 
 <details>
 <summary>Show Configuration for IHP HV</summary>
@@ -936,20 +932,20 @@ TopMetal1 Y 0.0 2.28
 - Role cells: the digit is matched on `max_capacitance`, as explained above. A smaller clock buffer is worth trying.
 - Not in the block, since the counter does not need them: `SYNTH_LATCH_MAP` and `SYNTH_TRISTATE_MAP` still name IHP LV cells, so a design with latches or tri-states needs its own maps. `SYNTH_EXCLUDED_CELL_FILE` and `PNR_EXCLUDED_CELL_FILE` still list IHP LV cells, which is harmless apart from the `[STA-0122] cell 'sg13cmos5l_lgcp_1' not found` warnings, but they leave the clock gates and the scan flip-flop of ETH LV selectable.
 
-### What Works After the Switch
+### What Works on This Library
 
-`make librelane` runs through on all three libraries with 0 DRC, LVS and antenna errors and timing met. The targets after LibreLane are still written for IHP LV:
+`make all` runs through on this macro. Each target after LibreLane that depends on the library is adapted to it:
 
-| Target | IHP HV | ETH LV |
-|---|---|---|
-| `make librelane`, `librelane-nodrc` | works | works |
-| `make copy-final`, `copy-netlist`, `copy-render`, `render-gds`, `magic-pex` | works | works |
-| `make copy-reports`, and with it `make build-top` | stops, it names the six IHP LV corners | stops for the same reason |
-| `make generate-xspice` | exits 0 with an empty model, because the recipe names the IHP LV Liberty. With the HV Liberty in the recipe and 3.3 V in the testbench, `make sim-gl-xschem` counts | exits 0 with an empty model, and `spi2xspice.py` cannot read the ETH Liberty yet |
-| `make sim-gl-cocotb` | passes with `SCL=sg13cmos5l_stdcell_hv` | fails with `SCL=ez130_8t`: the testbench looks in the tree of this PDK, and the library has no `sg13cmos5l_udp.v` and no Verilog models for `WELLTAP` and `FILLER*`. It passes after pointing the source to the `ihp-sg13g2` tree, dropping `sg13cmos5l_udp.v` and adding empty modules |
+| Target | In this macro |
+|---|---|
+| `make copy-reports` | copies the power reports of the three corners of the library |
+| `make generate-xspice` | reads `sg13cmos5l_stdcell_hv_typ_3p30V_25C.lib`. `spi2xspice.py` stops when a cell with signal pins is missing from the Liberty file, so a wrong Liberty can no longer write an empty model and exit 0 |
+| `make sim-gl-xschem` | drives supply and stimulus at 3.3 V, since `spi2xspice.py` takes its logic thresholds from `nom_voltage` of the Liberty file |
+| `make sim-gl-cocotb` | `SCL` defaults to `sg13cmos5l_stdcell_hv` |
+| `make lec`, `make lec-mutant` | read the same Liberty file and swap `sg13g2_hv_nand2_1` for `sg13g2_hv_nor2_1` |
 
-> [!WARNING]
-> `make copy-reports` deletes `verification/` before it stops, and `make copy-final` and `make copy-netlist` overwrite committed files. Restore them with `git restore .` in this folder after trying another library.
+> [!NOTE]
+> The `Makefile`, the benches and the plot script of this macro name this library. Another library takes the same edits again, as a diff against [`counter_lv_ihp`](../counter_lv_ihp/) shows.
 
 > [!IMPORTANT]
 > <details>
@@ -984,7 +980,22 @@ In speed, the two thin-oxide libraries are close. At 20 ns the worst path starts
 
 The power numbers come with three caveats. First, on this nearly empty die the leakage is almost entirely decap fill (97 % in IHP LV and 99 % in ETH LV), which leaks more per area in ETH LV, while the logic of ETH LV alone leaks 10 nW against 19 nW in IHP LV. Second, the clock buffers decide more than the library: with `sg13cmos5l_buf_4` and `BUFX12` as root buffer, the supply power drops to 38.5 µW for IHP LV and 29.5 µW for ETH LV, and the advantage of ETH LV grows from 12 % to 23 %. Third, the `power.rpt` numbers are vectorless estimates: they sit below the transistor-level values, more for ETH LV than for IHP LV, and for IHP HV the dynamic part is missing altogether. At 3.3 V, the supply power of IHP HV is 17.5 times that of IHP LV.
 
+### Measured on This Macro
+
+This macro, 50 MHz, `make all` in `ghcr.io/iic-jku/iic-osic-tools:nightly` with digest `sha256:8ea7cab3` (built 2026-11-02, PDK commit `ac438346`, LibreLane v3.1.0.dev4). The results above stay as the record of image tag `2026.10`.
+
+| Corner | Worst setup slack | Worst hold slack | Total in `power.rpt` |
+|---|---|---|---|
+| `nom_fast_3p60V_m40C` | 14.95 ns | 0.55 ns | 5.39 nW |
+| `nom_slow_3p00V_125C` | 13.93 ns | 1.15 ns | 18.2 nW |
+| `nom_typ_3p30V_25C` | 14.58 ns | 0.76 ns | 3.41 nW |
+
+Magic and KLayout DRC, LVS and antenna report 0 errors, the cell area after place and route is 2749 µm² at a utilisation of 34.1 %, `lec` proves all 8 partitions, cocotb passes 4 of 4 tests on RTL and on the gate-level netlist, and the Xschem bench counts through 255 without a wrong step.
+
+The Liberty files of this library have no dynamic power data, so `power.rpt` shows leakage only.
+
+
 
 ## Start a New Digital Macro from This Template
 
-The counter is meant to be the starting point for a new digital macro. It already carries the full digital flow: SystemVerilog RTL, Verilator lint, Icarus Verilog and cocotb simulation, the LibreLane hardening flow with its SDC files and pin order, the XSPICE model generation for mixed-signal simulation in Xschem, and an FPGA emulation flow for three boards. `make macro FROM=counter NAME=<name>` in [`macros/`](../) copies and renames it, including `TOP` in every `fpga/<board>/Makefile` and `DESIGN_NAME` in the LibreLane config. See [Start a New Macro from an Existing One](../README.md#start-a-new-macro-from-an-existing-one) for what the target does, what is left to do afterwards, and where to register the macro at the chip top-level.
+The counter is meant to be the starting point for a new digital macro. It already carries the full digital flow: SystemVerilog RTL, Verilator lint, Icarus Verilog and cocotb simulation, the LibreLane hardening flow with its SDC files and pin order, the XSPICE model generation for mixed-signal simulation in Xschem, and an FPGA emulation flow for three boards. `make macro FROM=counter_hv_kvc NAME=<name>` in [`macros/`](../) copies and renames it, including `TOP` in every `fpga/<board>/Makefile` and `DESIGN_NAME` in the LibreLane config. See [Start a New Macro from an Existing One](../README.md#start-a-new-macro-from-an-existing-one) for what the target does, what is left to do afterwards, and where to register the macro at the chip top-level.

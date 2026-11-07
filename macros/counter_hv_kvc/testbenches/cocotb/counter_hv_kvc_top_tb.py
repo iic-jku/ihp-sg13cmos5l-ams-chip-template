@@ -14,7 +14,7 @@ from cocotb_tools.runner import get_runner
 sim      = os.getenv("SIM", "icarus")
 pdk_root = os.getenv("PDK_ROOT", Path("~/.ciel").expanduser())
 pdk      = os.getenv("PDK", "ihp-sg13cmos5l")
-scl      = os.getenv("SCL", "sg13cmos5l_stdcell")
+scl      = os.getenv("SCL", "sg13cmos5l_stdcell_hv")
 # GL=1 selects the gate-level netlist; anything else (unset, "0", "") stays in RTL mode.
 gl       = os.getenv("GL", "0").strip().lower() in ("1", "true", "yes", "on")
 
@@ -175,7 +175,7 @@ def counter_hv_kvc_top_runner():
     build_args = []
 
     if sim == "icarus":
-        # -gno-specify: skip specify blocks; sg13cmos5l_stdcell.v uses
+        # -gno-specify: skip specify blocks; sg13cmos5l_stdcell_hv.v uses
         # `ifnone with edge-sensitive paths`, which iverilog can't parse.
         build_args = ["-DSIM", "-gno-specify"]
 

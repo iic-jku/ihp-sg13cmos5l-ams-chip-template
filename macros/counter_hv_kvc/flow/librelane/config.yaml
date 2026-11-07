@@ -15,7 +15,7 @@ meta:
 INSERT_ECO_BUFFERS:
   # === East Pads ===
   # - target: output19/X # enable_i
-  # buffer: sg13cmos5l_buf_4
+  # buffer: sg13g2_hv_buf_4
   # === END OF ECO_BUFFERS ===
     
 DESIGN_NAME: counter_hv_kvc_top
@@ -61,38 +61,29 @@ CLOCK_NET: clock_i
 CLOCK_PERIOD: 20 # in ns == 50 MHz
 
 # Define Standard Cells
-STD_CELL_LIBRARY: sg13cmos5l_stdcell
+STD_CELL_LIBRARY: sg13cmos5l_stdcell_hv
 
 # Technology LIBs
 LIB:
-  "*_fast_1p32V_m40C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p32V_m40C.lib
+  "*_fast_3p60V_m40C":
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell_hv/lib/sg13cmos5l_stdcell_hv_fast_3p60V_m40C.lib
 
-  "*_fast_1p65V_m40C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_fast_1p65V_m40C.lib
-  
-  "*_slow_1p08V_125C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p08V_125C.lib
+  "*_slow_3p00V_125C":
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell_hv/lib/sg13cmos5l_stdcell_hv_slow_3p00V_125C.lib
 
-  "*_slow_1p35V_125C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_slow_1p35V_125C.lib
-
-  "*_typ_1p20V_25C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p20V_25C.lib
-
-  "*_typ_1p50V_25C":
-    - pdk_dir::libs.ref/sg13cmos5l_stdcell/lib/sg13cmos5l_stdcell_typ_1p50V_25C.lib
+  "*_typ_3p30V_25C":
+    - pdk_dir::libs.ref/sg13cmos5l_stdcell_hv/lib/sg13cmos5l_stdcell_hv_typ_3p30V_25C.lib
 
 # Corners
 STA_CORNERS:
-  - nom_fast_1p32V_m40C
-  - nom_fast_1p65V_m40C
-  - nom_slow_1p08V_125C
-  - nom_slow_1p35V_125C
-  - nom_typ_1p20V_25C
-  - nom_typ_1p50V_25C
+  - nom_fast_3p60V_m40C
+  - nom_slow_3p00V_125C
+  - nom_typ_3p30V_25C
 
-DEFAULT_CORNER: nom_typ_1p50V_25C
+DEFAULT_CORNER: nom_typ_3p30V_25C
+
+# The macro has no pads, and the PAD_LIBS of the PDK name only three corners, which stops repair_design on a corner without them
+PAD_LIBS: {}
 
 # Fix setup violations
 # PL_RESIZER_SETUP_SLACK_MARGIN: 0.60

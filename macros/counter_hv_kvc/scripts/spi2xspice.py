@@ -322,6 +322,9 @@ def read_spice(filein, fileout, celldefs, debug, modelfile, timing):
 
                 if 'type' not in cellrec:
                     print('Cell ' + cellname + ' does not have a type defined!')
+                    # Physical cells have only supply pins. Anything else means the wrong Liberty file, which would leave an empty model
+                    if set(cellrec['spicepins']) - {'VDD', 'VSS', 'VNW', 'VPW'}:
+                        sys.exit('Cell ' + cellname + ' has signal pins, but is not in the Liberty file.')
                     if debug:
                         print('Cell record is: ' + str(cellrec))
                     # Provide defaults for the cell so that it doesn't cause failures

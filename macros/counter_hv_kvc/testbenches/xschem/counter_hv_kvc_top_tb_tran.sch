@@ -128,10 +128,10 @@ N 1460 -600 1460 -580 {lab=bit6}
 N 1460 -520 1460 -450 {lab=b6}
 N 1500 -300 1500 -280 {lab=bit7}
 N 1500 -430 1500 -360 {lab=b7}
-C {devices/vsource.sym} 120 -650 0 0 {name=VDD value="1.5"}
+C {devices/vsource.sym} 120 -650 0 0 {name=VDD value="3.3"}
 C {devices/gnd.sym} 120 -580 0 0 {name=l6 lab=GND}
 C {devices/vdd.sym} 120 -720 0 0 {name=l8 lab=VDD}
-C {devices/vsource.sym} 120 -390 0 0 {name=vclk value="pulse(0 1.5 0 10p 10p \{0.5/fclk\} \{1/fclk\})"
+C {devices/vsource.sym} 120 -390 0 0 {name=vclk value="pulse(0 3.3 0 10p 10p \{0.5/fclk\} \{1/fclk\})"
 }
 C {devices/lab_wire.sym} 120 -460 0 0 {name=p2 sig_type=std_logic lab=clock}
 C {devices/gnd.sym} 120 -320 0 0 {name=l1 lab=GND}
@@ -151,7 +151,7 @@ value="
 .include ../../../netlist/pex/counter_hv_kvc_top_magic_pex_3.spice
 *True Mixed Signal Simulation (.xspice)
 .include ../../../netlist/xspice/counter_hv_kvc_top.xspice
-.param VDD=1.5
+.param VDD=3.3
 .temp 27
 .param fclk=50e6
 .csparam fclk=fclk
@@ -189,10 +189,10 @@ wrdata ../plot_simulations/data/@schname\\\\.txt clock enable reset_n b0 b1 b2 b
 .endc"}
 C {devices/lab_wire.sym} 500 -720 0 0 {name=p1 sig_type=std_logic lab=reset_n}
 C {devices/gnd.sym} 500 -580 0 0 {name=l2 lab=GND}
-C {devices/vsource.sym} 500 -650 0 0 {name=vrst value="pulse(0 1.5 \{1/fclk\} 10p 10p \{0.5/fclk*800\} \{1/fclk*600\} 1)"
+C {devices/vsource.sym} 500 -650 0 0 {name=vrst value="pulse(0 3.3 \{1/fclk\} 10p 10p \{0.5/fclk*800\} \{1/fclk*600\} 1)"
 }
 C {devices/gnd.sym} 500 -320 0 0 {name=l9 lab=GND}
-C {devices/vsource.sym} 500 -390 0 0 {name=ven value="pulse(1.5 0 \{4/fclk\} 10p 10p \{0.5/fclk*100\} \{1/fclk*100\} 1)"
+C {devices/vsource.sym} 500 -390 0 0 {name=ven value="pulse(3.3 0 \{4/fclk\} 10p 10p \{0.5/fclk*100\} \{1/fclk*100\} 1)"
 }
 C {devices/lab_wire.sym} 500 -460 0 0 {name=p11 sig_type=std_logic lab=enable}
 C {devices/launcher.sym} 1700 -1530 0 0 {name=h3
