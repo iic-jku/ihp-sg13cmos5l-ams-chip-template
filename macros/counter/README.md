@@ -821,6 +821,9 @@ The drive digit is not comparable between the libraries. `BUFX3` has the `max_ca
 
 The library is selected in [`flow/librelane/config.yaml`](flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners of IHP LV. For IHP HV, replace the block from `# Define Standard Cells` to `DEFAULT_CORNER` with the following lines. The PDK configuration of the library supplies the rest.
 
+<details>
+<summary>Show Configuration for IHP HV</summary>
+
 ```yaml
 # Define Standard Cells
 STD_CELL_LIBRARY: sg13cmos5l_stdcell_hv
@@ -845,7 +848,12 @@ STA_CORNERS:
 DEFAULT_CORNER: nom_typ_3p30V_25C
 ```
 
+</details>
+
 ETH LV takes more. The image ships its views but no LibreLane configuration, so `STD_CELL_LIBRARY: ez130_8t` stops right away with `Neither '.../libs.tech/librelane/ez130_8t/config.tcl' nor ... were found`. Keep the name of the default library instead and replace everything it implies. The image installs `ez130_8t` only in the `ihp-sg13g2` tree, together with a technology LEF for this PDK, so the paths below leave `$PDK_ROOT/ihp-sg13cmos5l` with `pdk_dir::../ihp-sg13g2/`. Replace the same block with the first of the following two listings, and save the second one as `flow/librelane/tracks_ez130.info`.
+
+<details>
+<summary>Show Configuration for ETH LV</summary>
 
 ```yaml
 # Define Standard Cells
@@ -901,6 +909,11 @@ STA_CORNERS:
 DEFAULT_CORNER: nom_typ_1p20V_25C
 ```
 
+</details>
+
+<details>
+<summary>Show Track File for ETH LV</summary>
+
 ```text
 Metal1 X 0.21 0.42
 Metal1 Y 0.0 0.42
@@ -913,6 +926,8 @@ Metal4 Y 0.0 0.42
 TopMetal1 X 0.0 2.28
 TopMetal1 Y 0.0 2.28
 ```
+
+</details>
 
 - `TECH_LEFS`: `ez130_8t` has its own technology LEF with a 0.42 µm vertical routing pitch and the site of 0.42 µm × 3.36 µm. The stock `sg13cmos5l_tech.lef` does not fit the cells.
 - `FP_TRACKS_INFO`: the file follows that LEF. With the tracks of the PDK, detailed routing on the counter does not converge: after 35 iterations and 20 minutes it still has 1 or 2 violations on `Metal1`.
