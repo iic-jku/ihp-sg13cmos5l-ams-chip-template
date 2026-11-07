@@ -1,6 +1,6 @@
 ﻿# ihp-sg13cmos5l Ring Oscillator
 
-This is the **three-stage ring oscillator with output buffer** of the [HeiChips 2026 Analog Workshop](https://heichips.github.io/heichips26-analog-workshop/), the reference solution of exercise 2: four instances of the `inverter` unit cell, three of them closed into a ring and the fourth used as output buffer. The exercise is described on the [workshop website](https://heichips.github.io/heichips26-analog-workshop/#sec-exercise2).
+This is the **three-stage ring oscillator with output buffer**: four instances of the `inverter` unit cell, three of them closed into a ring and the fourth used as output buffer. The unit cell comes from the [`inverter` macro](../inverter/), which `xschemrc` and `layout/<TOP>.klay.klib` point at, so this macro needs `macros/inverter/` beside it.
 
 <p align="center">
   <a href="render/img/ringosc_white.png">
@@ -52,9 +52,6 @@ The top cell `ringosc` is 133.52 µm × 15.28 µm and holds four abutted `invert
 │     ├─ ringosc.sch
 │     ├─ ringosc.sym
 │     ├─ ringosc_pex.sym
-│     ├─ inverter.sch
-│     ├─ inverter.sym
-│     ├─ inverter_pex.sym
 │     └─ xschemrc
 ├─ 📁 scripts/
 │  ├─ check_boundary.py

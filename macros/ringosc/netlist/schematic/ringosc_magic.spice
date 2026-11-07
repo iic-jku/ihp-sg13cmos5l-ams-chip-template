@@ -8,8 +8,8 @@ x4 VDD vosc vout VSS inverter
 .ends
 
 * expanding   symbol:  inverter.sym # of pins=4
-** sym_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/ringosc/schematic/xschem/inverter.sym
-** sch_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/ringosc/schematic/xschem/inverter.sch
+** sym_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/inverter/schematic/xschem/inverter.sym
+** sch_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/inverter/schematic/xschem/inverter.sch
 .subckt inverter VDD vin vout VSS
 *.PININFO vin:I VDD:B VSS:B vout:B
 XMdummy1 VSS VSS VSS VSS sg13_lv_nmos w=2.0u l=1.0u ng=2 m=1 mm_ok=1
