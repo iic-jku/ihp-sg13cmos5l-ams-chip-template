@@ -1,4 +1,4 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 04/11/2026 13:41
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 07/11/2026 21:41
 
 .SUBCKT vco_ind LA LB VSS
 L$1 LA LB VSS inductor w=3.999u s=4u d=50.004u nr_r=2

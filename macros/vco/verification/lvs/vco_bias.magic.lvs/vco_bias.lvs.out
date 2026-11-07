@@ -57,26 +57,30 @@ Circuit 1: rppd                            |Circuit 2: rppd
 Cell pin lists are equivalent.
 Device classes rppd and rppd are equivalent.
 
-Class vco_bias (0):  Merged 22 parallel devices.
-Class vco_bias (1):  Merged 6 parallel devices.
+Class vco_bias (0):  Merged 21 parallel devices.
+Class vco_bias (1):  Merged 5 parallel devices.
 Subcircuit summary:
 Circuit 1: vco_bias                        |Circuit 2: vco_bias                        
 -------------------------------------------|-------------------------------------------
-sg13_lv_pmos (9->6)                        |sg13_lv_pmos (9->6)                        
+sg13_lv_pmos (9->7)                        |sg13_lv_pmos (9->7)                        
 sg13_lv_nmos (29->10)                      |sg13_lv_nmos (13->10)                      
 rhigh (2)                                  |rhigh (2)                                  
-rppd (1)                                   |rppd (1)                                   
-Number of devices: 19                      |Number of devices: 19                      
-Number of nets: 11                         |Number of nets: 11                         
+rppd (2)                                   |rppd (2)                                   
+Number of devices: 21                      |Number of devices: 21                      
+Number of nets: 12                         |Number of nets: 12                         
 ---------------------------------------------------------------------------------------
 Netlists match uniquely with property errors.
 rppd:22 vs. rppd:Rg:
 Property mm_ok in circuit2 has no matching property in circuit1
 rppd:22 vs. rppd:Rg:
 Property mm_ok in circuit2 has no matching property in circuit1
-rhigh:9 vs. rhigh:Rn:
+rppd:36 vs. rppd:Rb:
 Property mm_ok in circuit2 has no matching property in circuit1
-rhigh:9 vs. rhigh:Rn:
+rppd:36 vs. rppd:Rb:
+Property mm_ok in circuit2 has no matching property in circuit1
+rhigh:10 vs. rhigh:Rn:
+Property mm_ok in circuit2 has no matching property in circuit1
+rhigh:10 vs. rhigh:Rn:
 Property mm_ok in circuit2 has no matching property in circuit1
 rhigh:30 vs. rhigh:Rf:
 Property mm_ok in circuit2 has no matching property in circuit1
@@ -85,6 +89,10 @@ Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:1 vs. sg13_lv_nmos:MNi1:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:1 vs. sg13_lv_nmos:MNi1:
+Property mm_ok in circuit2 has no matching property in circuit1
+sg13_lv_nmos:2 vs. sg13_lv_nmos:MN0:
+Property mm_ok in circuit2 has no matching property in circuit1
+sg13_lv_nmos:2 vs. sg13_lv_nmos:MN0:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:33 vs. sg13_lv_nmos:MNd0:
 Property mm_ok in circuit2 has no matching property in circuit1
@@ -101,10 +109,6 @@ Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:14 vs. sg13_lv_nmos:MN1:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:14 vs. sg13_lv_nmos:MN1:
-Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:2 vs. sg13_lv_nmos:MN0:
-Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:2 vs. sg13_lv_nmos:MN0:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:26 vs. sg13_lv_nmos:MN3:
 Property mm_ok in circuit2 has no matching property in circuit1
@@ -114,7 +118,7 @@ sg13_lv_nmos:3 vs. sg13_lv_nmos:MCn1:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_nmos:5 vs. sg13_lv_nmos:MCg1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_nmos:10 vs. sg13_lv_nmos:MDn1:
+sg13_lv_nmos:11 vs. sg13_lv_nmos:MDn1:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_pmos:0 vs. sg13_lv_pmos:MPi1:
 Property mm_ok in circuit2 has no matching property in circuit1
@@ -124,34 +128,38 @@ sg13_lv_pmos:27 vs. sg13_lv_pmos:MPi2:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_pmos:27 vs. sg13_lv_pmos:MPi2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:7 vs. sg13_lv_pmos:MP1:
+sg13_lv_pmos:8 vs. sg13_lv_pmos:MP1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:7 vs. sg13_lv_pmos:MP1:
-Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:17 vs. sg13_lv_pmos:MPd:
+sg13_lv_pmos:8 vs. sg13_lv_pmos:MP1:
 Property mm_ok in circuit2 has no matching property in circuit1
 sg13_lv_pmos:17 vs. sg13_lv_pmos:MPd:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:36 vs. sg13_lv_pmos:MP2:
+sg13_lv_pmos:17 vs. sg13_lv_pmos:MPd:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:36 vs. sg13_lv_pmos:MP2:
+sg13_lv_pmos:37 vs. sg13_lv_pmos:MP2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:8 vs. sg13_lv_pmos:MDp1:
+sg13_lv_pmos:37 vs. sg13_lv_pmos:MP2:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:8 vs. sg13_lv_pmos:MDp1:
+sg13_lv_pmos:9 vs. sg13_lv_pmos:MDp1:
 Property mm_ok in circuit2 has no matching property in circuit1
-sg13_lv_pmos:8 vs. sg13_lv_pmos:MDp1:
+sg13_lv_pmos:9 vs. sg13_lv_pmos:MDp1:
+Property mm_ok in circuit2 has no matching property in circuit1
+sg13_lv_pmos:9 vs. sg13_lv_pmos:MDp1:
+Property mm_ok in circuit2 has no matching property in circuit1
+sg13_lv_pmos:7 vs. sg13_lv_pmos:MPb:
+Property mm_ok in circuit2 has no matching property in circuit1
+sg13_lv_pmos:7 vs. sg13_lv_pmos:MPb:
 Property mm_ok in circuit2 has no matching property in circuit1
 
 Subcircuit pins:
 Circuit 1: vco_bias                        |Circuit 2: vco_bias                        
 -------------------------------------------|-------------------------------------------
 vbn_buf                                    |vbn_buf                                    
-ibias_100u                                 |ibias_100u                                 
 VSS                                        |VSS                                        
 VDD                                        |VDD                                        
 di_en                                      |di_en                                      
 vbg_buf                                    |vbg_buf                                    
+en_b                                       |en_b                                       
 ---------------------------------------------------------------------------------------
 Cell pin lists are equivalent.
 Device classes vco_bias and vco_bias are equivalent.

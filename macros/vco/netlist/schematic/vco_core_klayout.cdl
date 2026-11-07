@@ -1,4 +1,4 @@
-** sch_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/vco/schematic/xschem/vco_core.sch
+** sch_path: /foss/designs/_wt/ihp-sg13cmos5l-ams-chip-template-rf/macros/vco/schematic/xschem/vco_core.sch
 .subckt vco_core vdd_core VSS vtune rf_p rf_n
 *.PININFO vdd_core:B VSS:B vtune:I rf_p:B rf_n:B
 CCct1a1 vdd_core VSS cap_cmomf w=19e-6 l=26e-6
@@ -13,8 +13,8 @@ CCct2b VSS vdd_core cap_cmomf w=25.5e-6 l=19e-6
 .ends
 
 * expanding   symbol:  vco_var.sym # of pins=4
-** sym_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/vco/schematic/xschem/vco_var.sym
-** sch_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/macros/vco/schematic/xschem/vco_var.sch
+** sym_path: /foss/designs/_wt/ihp-sg13cmos5l-ams-chip-template-rf/macros/vco/schematic/xschem/vco_var.sym
+** sch_path: /foss/designs/_wt/ihp-sg13cmos5l-ams-chip-template-rf/macros/vco/schematic/xschem/vco_var.sch
 .subckt vco_var rf_p rf_n vtune VSS
 *.PININFO vtune:I rf_p:B rf_n:B VSS:B
 CCvar1 rf_p vtune rf_n VSS sg13_hv_svaricap w=3.74u l=0.3u Nx=8
