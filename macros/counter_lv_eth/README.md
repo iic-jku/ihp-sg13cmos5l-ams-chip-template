@@ -947,7 +947,7 @@ TopMetal1 Y 0.0 2.28
 | `make lec`, `make lec-mutant` | read the same Liberty file, drop `WELLTAP` and `FILLER*`, swap `NAND2X1` for `NOR2X1`, and move the clock pin `CK` of the first flop |
 
 > [!NOTE]
-> The `Makefile`, the benches, the plot script and `spi2xspice.py` of this macro name this library or carry fixes for it. Another library takes the same edits again, as a diff against [`counter_lv_ihp`](../counter_lv_ihp/) shows.
+> The `Makefile`, the benches and the plot script of this macro name this library. Another library takes the same edits again, as a diff against [`counter_lv_ihp`](../counter_lv_ihp/) shows.
 
 > [!IMPORTANT]
 > <details>
