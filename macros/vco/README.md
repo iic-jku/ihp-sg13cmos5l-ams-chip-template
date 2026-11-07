@@ -441,18 +441,18 @@ The combs make the meshes large: 288 thousand tetrahedra for the buffer's cap, w
 
 ### Layout, Verification and Build
 
-The verification and build targets are those of the [inverter](../inverter/README.md): `klayout-drc`, `magic-drc`, `gdscheck-drc`, `klayout-lvs`, `magic-lvs`, their `*-lvs-netlist` exporters, `symbol-pex`, `klayout-pex`, `magic-pex`, `klayout-verify`, `magic-verify`, `check-boundary`, `lef`, `lib`, `verilog`, `copy-gds`, `render-gds` and `build-top`, plus `check-mom`, `check-coil-tap`, `klayout-pex-leads` and `klayout-drc-regular`. As in the inverter, `klayout-verify` runs DRC and LVS and `magic-verify` DRC, LVS and PEX. What runs on which cell:
+The verification and build targets are those of the [inverter](../inverter/README.md): `klayout-drc`, `magic-drc`, `gdscheck-drc`, `klayout-lvs`, `magic-lvs`, their `*-lvs-netlist` exporters, `symbol-pex`, `klayout-pex`, `magic-pex`, `klayout-verify`, `magic-verify`, `check-boundary`, `lef`, `lib`, `verilog`, `copy-gds`, `render-gds` and `build-top`, plus `check-mom`, `check-coil-tap`, `klayout-pex-leads` and `klayout-drc-regular`. As in the inverter, `klayout-verify` runs DRC and LVS and `magic-verify` LVS and PEX. What runs on which cell:
 
-| Cell | KLayout | Magic |
-| --- | --- | --- |
-| `vco_bias` | DRC, LVS, `check-mom` | DRC, LVS without the `cap_cmomf`, PEX |
-| `vco_buf` | DRC, LVS, `check-mom` | DRC, LVS without the `cap_cmomf`, PEX |
-| `vco_var` | DRC, LVS | DRC |
-| `vco_ind` | DRC, LVS, `check-coil-tap` | DRC |
-| `vco_core` | DRC, LVS, `check-mom` | DRC |
-| `vco_top` | DRC, LVS, `check-coil-tap` of the `vdd_core` feed, PEX without the coil and the varactor array (`klayout-pex-leads`) | DRC, PEX for the pin list of the Verilog stub |
+| Cell | KLayout | gdscheck | Magic |
+| --- | --- | --- | --- |
+| `vco_bias` | DRC, LVS, `check-mom` | DRC | LVS without the `cap_cmomf`, PEX |
+| `vco_buf` | DRC, LVS, `check-mom` | DRC | LVS without the `cap_cmomf`, PEX |
+| `vco_var` | DRC, LVS | DRC | |
+| `vco_ind` | DRC, LVS, `check-coil-tap` | DRC | |
+| `vco_core` | DRC, LVS, `check-mom` | DRC | |
+| `vco_top` | DRC, LVS, `check-coil-tap` of the `vdd_core` feed, PEX without the coil and the varactor array (`klayout-pex-leads`) | DRC | PEX for the pin list of the Verilog stub |
 
-`klayout-verify-all` and `magic-verify-all` run exactly that. The gaps have three reasons:
+`klayout-verify-all`, `gdscheck-drc-all` and `magic-verify-all` run exactly that. The gaps have three reasons:
 
 - **Magic extracts `sg13_hv_svaricap` as two two-terminal halves** and extracts no device for the coil or for `cap_cmomf`, so Netgen cannot compare a cell that holds the varactor or the coil, and compares the buffer without its coupling caps.
 - **KPEX cannot read Magic's extraction of the varactor.** Magic writes it as a `veriloga` device, and KPEX's parser of the `.ext` file stops on `'veriloga' is not a valid DeviceType`. Every cell above the array inherits it.
@@ -460,7 +460,9 @@ The verification and build targets are those of the [inverter](../inverter/READM
 
 The KLayout `macro` level of `klayout-drc` leaves out the density rules, and with them rules a macro has to meet on its own, such as the minimum metal areas `Mn.d` and `pSD.b`. So `klayout-verify-all` also runs `klayout-drc-regular` on `TOP`, which fails on any rule but the global densities that only the chip's fill can meet.
 
-`magic-drc` does not pass: `vco_var`, `vco_core` and `vco_top` report `LU.d` on `sg13_hv_svaricap`. A bare PCell, with none of this macro's wiring, reports the same rule and KLayout passes it, so it belongs to the PDK's cell or Magic's rule deck and gets fixed upstream. Until then `magic-verify-all` and `make all` stop there, so run the targets after it by hand. `gdscheck-drc` needs a container whose `sak-drc.sh` has `-g` and has not run on this macro yet.
+The flows leave the Magic DRC out until the PDK's cells are clean in it, `make magic-drc` still runs it: `vco_var`, `vco_core` and `vco_top` report `LU.d` on `sg13_hv_svaricap`. A bare PCell, with none of this macro's wiring, reports the same rule and KLayout passes it, so it belongs to the PDK's cell or Magic's rule deck and gets fixed upstream.
+
+gdscheck 0.2.0 does not pass `vco_var`, `vco_core` and `vco_top`: 804 items on `sg13_hv_svaricap`, such as `Cnt.j`, `Cnt.e` and `Gat.a3`. A bare PCell with `Nx=1` reports the same rules 46 times and KLayout passes it, so they belong to the PDK's cell or gdscheck's rule deck and get fixed upstream. Until then `gdscheck-drc-all` and `make all` stop at `vco_var`, so run the targets after it by hand.
 
 `make build-top` checks the PR boundary and writes the LEF, the Liberty stub, the Verilog stub (from the Magic PEX netlist of `vco_top`), the GDS in `final/` and the renders.
 
@@ -515,7 +517,7 @@ The first post-layout simulation of this macro extracted the leads at Magic's de
 make all
 ```
 
-Runs `klayout-script-all`, `klayout-verify-all`, `magic-verify-all`, `build-top` and `sim-all`: the inverter's chain, which first writes the layouts from their scripts. It takes about 6 minutes. The EM simulation of the coil and the corners are not part of it, see [EM Simulation of the Coil](#em-simulation-of-the-coil) and [Simulate Over Corners](#simulate-over-corners).
+Runs `klayout-script-all`, `klayout-verify-all`, `gdscheck-drc-all`, `magic-verify-all`, `build-top` and `sim-all`: the inverter's chain, which first writes the layouts from their scripts. It takes about 6 minutes. The EM simulation of the coil and the corners are not part of it, see [EM Simulation of the Coil](#em-simulation-of-the-coil) and [Simulate Over Corners](#simulate-over-corners).
 
 
 ### Clean
