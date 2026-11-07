@@ -1,31 +1,26 @@
 # SPDX-FileCopyrightText: 2026 The HeiChips Contributors, Simon Dorrer and Harald Pretl
 # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
-# Description: Check that a layout holds a unit cell and everything below it exactly as a reference layout does.
+# Description: Check that a layout holds a unit cell as the layout of its macro does, and that no cell name the two share has two contents.
 
 import argparse
 import sys
 
 
-def subtree(layout, cell):
-    """Return the cell and every cell below it by name."""
-    indexes = [cell.cell_index()] + list(cell.called_cells())
-    return {layout.cell(index).name: layout.cell(index) for index in indexes}
-
-
-def geometry(kdb, layout, cell):
-    """Return the merged flat geometry of a cell per GDS layer."""
-    regions = {}
+def contents(kdb, layout, cell):
+    """Return the merged flat geometry and the texts of a cell per GDS layer."""
+    found = {}
     for index in layout.layer_indexes():
         info = layout.get_info(index)
         region = kdb.Region(cell.begin_shapes_rec(index)).merged()
-        if not region.is_empty():
-            regions[(info.layer, info.datatype)] = region
-    return regions
+        texts = sorted((text.string, text.x, text.y) for text in kdb.Texts(cell.begin_shapes_rec(index)).each())
+        if not region.is_empty() or texts:
+            found[(info.layer, info.datatype)] = (region, texts)
+    return found
 
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Check that a layout holds a unit cell and everything below it exactly as a reference layout does."
+        description="Check that a layout holds a unit cell as the layout of its macro does, and that no cell name the two share has two contents."
     )
     parser.add_argument("layout", help="layout file to check (GDS or OASIS)")
     parser.add_argument("reference", help="layout file of the macro the unit cell comes from")
@@ -39,38 +34,41 @@ def main():
               "IIC-OSIC-TOOLS container.", file=sys.stderr)
         return 2
 
-    trees = []
+    layouts = []
     for path in (args.layout, args.reference):
         layout = kdb.Layout()
         layout.read(path)
-        cell = layout.cell(args.cell)
-        if cell is None:
+        if layout.cell(args.cell) is None:
             print(f"[ERROR] {path}: no cell '{args.cell}' found.", file=sys.stderr)
             return 1
-        trees.append((layout, subtree(layout, cell)))
-    (layout, cells), (ref_layout, ref_cells) = trees
+        layouts.append(layout)
+    layout, reference = layouts
 
     print(f"[INFO] Checking {args.cell} in {args.layout} against {args.reference} ...", flush=True)
-    # Cells of one name merge at the chip top-level, so the names have to match as well as the geometry
-    errors = [f"cell '{name}' is only in {path}" for names, others, path in
-              ((cells, ref_cells, args.layout), (ref_cells, cells, args.reference))
-              for name in sorted(set(names) - set(others))]
+    # Cells of one name merge at the chip top-level. The numbers in via_stack$3 are per layout, so the two lists of names may differ.
+    names = sorted({cell.name for cell in layout.each_cell()} & {cell.name for cell in reference.each_cell()})
     dbu = layout.dbu
-    for name in sorted(set(cells) & set(ref_cells)):
-        regions = geometry(kdb, layout, cells[name])
-        ref_regions = geometry(kdb, ref_layout, ref_cells[name])
-        for key in sorted(set(regions) | set(ref_regions)):
-            xor = regions.get(key, kdb.Region()) ^ ref_regions.get(key, kdb.Region())
+    empty = (kdb.Region(), [])
+    errors = []
+    for name in names:
+        ours = contents(kdb, layout, layout.cell(name))
+        theirs = contents(kdb, reference, reference.cell(name))
+        for key in sorted(set(ours) | set(theirs)):
+            region, texts = ours.get(key, empty)
+            ref_region, ref_texts = theirs.get(key, empty)
+            xor = region ^ ref_region
             if not xor.is_empty():
                 errors.append(f"cell '{name}' differs on layer {key[0]}/{key[1]} by {xor.area() * dbu * dbu:.3f} um2")
+            if texts != ref_texts:
+                errors.append(f"cell '{name}' has other texts on layer {key[0]}/{key[1]}")
 
     if errors:
         for error in errors:
             print(f"[ERROR] {error}", file=sys.stderr)
-        print(f"[ERROR] {args.layout} does not hold {args.cell} as {args.reference} does. "
-              f"Re-create the instance from the library and re-export the GDS.", file=sys.stderr)
+        print(f"[ERROR] {args.layout} and {args.reference} hold different cells of one name, which merge at the chip top-level. "
+              f"Export both layouts with the same PCell revision, see the layout section of README.md.", file=sys.stderr)
         return 1
-    print(f"[INFO] {len(cells)} cells match. Unit cell check passed.")
+    print(f"[INFO] {len(names)} shared cell names match. Unit cell check passed.")
     return 0
 
 
