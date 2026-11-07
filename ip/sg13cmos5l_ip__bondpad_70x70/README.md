@@ -122,7 +122,7 @@ The metal stack used for the bondpad covers `Metal3` through `TopMetal1` by defa
 
 ## RF Pad
 
-`make rfpad` runs `script/bondpad.py` with `-rd pad_type=rf` and draws `sg13cmos5l_ip__rfpad_70x70`. It takes the slot of `sg13cmos5l_IOPadAnalog` plus its bondpad at one place of the pad ring, for a signal that cannot carry the capacitance of that cell. It is one fixed cell, so `DIAMETER`, `SHAPE` and `BOTTOM_METAL` do not apply.
+`make rfpad` runs `script/bondpad.py` with `-rd pad_type=rf` and draws `sg13cmos5l_ip__rfpad_70x70`. It takes the slot of `sg13cmos5l_IOPadAnalog` plus its bondpad at one place of the pad ring, for a signal that needs about half the load of that cell (197 fF against about 395 fF) and a defined return path under the pad. It is one fixed cell, so `DIAMETER`, `SHAPE` and `BOTTOM_METAL` do not apply.
 
 | y (µm, 0 is the die edge) | Content |
 | --- | --- |
@@ -149,7 +149,7 @@ A circuit on its own, higher supply can therefore drive this pad, but `vdd` has 
 
 | Part | fF | Source |
 | --- | --- | --- |
-| Plate and rings to the shield | 60.7 | Palace, order 3, 2.44 GHz, against 66.6 fF from Magic |
+| Plate and rings to the shield | 60.7 | Palace, order 3, 2.44 GHz, a separate EM solve whose setup is not in this repo, against 66.6 fF from Magic |
 | All other metal on the node | 84.3 | Magic, `sak-pex.sh -m 2`, 150.95 fF in total less Magic's plate term |
 | `diodevss_2kv` at 0.6 V | 27.2 | PDK model card |
 | `diodevdd_2kv` at 0.6 V to `vdd` | 24.7 | PDK model card |
@@ -186,7 +186,7 @@ A chip instantiates it like `sg13cmos5l_IOPadAnalog`, with `.pad` and `.padbare`
 | `EXTRA_GDS` | `final/gds/sg13cmos5l_ip__rfpad_70x70.gds` |
 | `LIB` | `final/lib/sg13cmos5l_ip__rfpad_70x70.lib`, in every corner. `EXTRA_LIBS` does not work, Yosys then replaces the Verilog blackbox and the power ports are gone |
 | `PAD_PLACE_IO_TERMINALS` | `sg13cmos5l_ip__rfpad_70x70/pad`. `place_bondpad` is what creates a pad's top-level terminal, and this cell gets no bondpad |
-| `PAD_CFG` | A copy of LibreLane's `scripts/openroad/common/pad_cfg.tcl` that moves the cell 70 µm outward before `connect_by_abutment`, see below |
+| `PAD_CFG` | A copy of LibreLane's `scripts/openroad/common/pad_cfg.tcl` that moves every pad whose master matches no `PAD_BONDPAD_OFFSETS` regex outward by the bondpad depth, 70 µm, before `connect_by_abutment`. `place_pad` leaves the instance `FIRM`, so the script sets it to `PLACED` for the move and restores it |
 
 The cell is 70 µm taller than the IO library's pads and its rail bands are drawn 70 µm further in, so its rails abut its neighbours only when its outer edge sits where the bondpads' outer edges are. `OpenROAD.PadRing` places every pad at the row, which leaves this cell 70 µm too far in with an open supply ring and no report. `PAD_BONDPAD_OFFSETS` already skips it, because its name does not match `sg13cmos5l_IOPad*`. The width of 80 µm is that of the IO library's pads, so the pad pitch does not change.
 

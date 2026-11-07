@@ -1,5 +1,4 @@
 # SPDX-FileCopyrightText: 2026 Simon Dorrer and Harald Pretl
-# SPDX-FileCopyrightText: 2026 Harald Pretl, Johannes Kepler University
 # SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
 
 """Automated bondpad generator for the IHP SG13CMOS5L PDK.
@@ -1392,7 +1391,7 @@ class RfPad:
                     raise AssertionError("%s strip at y %.1f: %d Via2" % (net, y0, n))
 
     def shield_straps(self):
-        """Metal1 from the shield to the vss lanes. Metal2 over the pad would add a layer between the pad and the shield, and capacitance with it."""
+        """Metal1 from the shield to the vss lanes, a wider path than the collar's own overlap with them. Metal2 over the pad would add a layer between the pad and the shield, and capacitance with it."""
         dbu = self.ly.dbu
         straps = pya.Region()
         for x0, x1 in STRAP_X:

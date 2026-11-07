@@ -1539,7 +1539,7 @@ The available Makefile targets for the bondpad are summarised below.
 | `rfpad-klayout-drc` | Run KLayout DRC of the RF pad, which passes only with exactly its 7 waived markers. |
 | `rfpad-lvs`   | Run KLayout LVS of the RF pad against its schematic.                                                                                                                                                    |
 | `open`        | Browse this folder with `sak-open.py` and open each file in its tool (needs the VNC/X11 desktop).                                                                                                        |
-| `clean`       | Remove the `final/`, `verification/` and `netlist/` output directories.                                                                                                                                 |
+| `clean`       | Remove the output directories under `final/`, `verification/` and `netlist/`.                                                                                                                           |
 
 To execute the `clean`, `bondpad`, `rfpad`, `verilog`, `klayout-drc` and `gdscheck-drc` targets in sequence, followed by `rfpad-klayout-drc`, `gdscheck-drc` of the RF pad and `rfpad-lvs`, run:
 
@@ -1566,7 +1566,7 @@ make bondpad DIAMETER=80 SHAPE=octagon BOTTOM_METAL=2
 
 ## RF Pad Generation {#sec-rf-pad}
 
-A signal in the GHz range cannot carry the capacitance of `sg13cmos5l_IOPadAnalog`: the devices of that cell read 146 fF at the pad (ngspice, 20 GHz) and its bondpad another 78 fF (Magic), before counting the cell's metal. The same script therefore also draws `sg13cmos5l_ip__rfpad_70x70`, one cell of 80 µm × 250 µm that takes the slot of an analog pad plus its bondpad and loads the node with about 197 fF in total, metal and ESD included. With `-rd pad_type=rf` the script draws this fixed cell, so `DIAMETER`, `SHAPE` and `BOTTOM_METAL` do not apply:
+A signal in the GHz range feels the load of `sg13cmos5l_IOPadAnalog`: about 395 fF at the pad, from 144 fF of devices (ngspice, 20 GHz), 171 fF of cell metal and 78 fF of bondpad (Magic). The same script therefore also draws `sg13cmos5l_ip__rfpad_70x70`, one cell of 80 µm × 250 µm that takes the slot of an analog pad plus its bondpad and loads the node with about 197 fF in total, metal and ESD included, with a defined return path under the pad. With `-rd pad_type=rf` the script draws this fixed cell, so `DIAMETER`, `SHAPE` and `BOTTOM_METAL` do not apply:
 
 ```sh
 cd ip/sg13cmos5l_ip__bondpad_70x70
@@ -1579,7 +1579,7 @@ ke final/gds/sg13cmos5l_ip__rfpad_70x70.gds
 
 The capacitance comes down through four layout decisions:
 
-- **A Metal1 shield under the plate.** Metal below TopMetal1 is only a ring in the `bondpad` PCell, so the plate looks straight down into the substrate, a return path with a Q of about 1 at 2.44 GHz. A solid Metal1 plate on `vss` turns it into a 61 fF capacitor with a Q of about 160 (Palace).
+- **A Metal1 shield under the plate.** Metal below TopMetal1 is only a ring in the `bondpad` PCell, so the plate looks straight down into the substrate, a return path with a Q of about 1 at 2.44 GHz. A solid Metal1 plate on `vss` turns it into a 61 fF capacitor with a Q of about 160 (a separate Palace solve, whose setup is not in this repo).
 - **A corridor through the rails.** The TopMetal1 and Metal4 rails are cut around the RF line, 5 µm clear on either side, and `iovss` and `iovdd` cross it on Metal3 and Metal2. Cutting Metal4, the layer right under the line, is worth 18.4 fF, the 5 µm gap against the `TM1.b` minimum of 1.64 µm another 3.0 fF (Magic).
 - **A teardrop exit.** TopMetal1 allows only 0°, 45° and 90°, and `Pad.fR` asks for 7 µm of unchanged metal past the pad, so the line holds 14.92 µm for 7 µm and then tapers at 45° onto 4.92 µm. Past the ESD tap it narrows to 1.64 µm, because it no longer carries the strike.
 - **Small ESD devices on the core rails.** `diodevss_2kv` and `diodevdd_2kv` add 52 fF. They connect to `vss` and `vdd`, so an RC-triggered clamp between `vdd` and `vss` sits in the same cell, under the IO bands.

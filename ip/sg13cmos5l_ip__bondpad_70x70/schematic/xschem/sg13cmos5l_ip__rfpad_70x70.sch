@@ -90,7 +90,7 @@ N 320 -400 520 -400 {lab=pad}
 N 120 -400 320 -400 {lab=pad}
 N 1020 -580 1120 -580 {lab=vdd}
 N 720 -220 1080 -220 {lab=vss}
-C {devices/title.sym} 160 0 0 0 {name=l1 author="(c) 2026 Harald Pretl, JKU, Apache-2.0 WITH SHL-2.1"}
+C {devices/title.sym} 160 0 0 0 {name=l1 author="(c) 2026 Simon Dorrer and Harald Pretl, Apache-2.0 WITH SHL-2.1"}
 C {devices/iopin.sym} 120 -220 2 0 {name=p1 lab=vss}
 C {devices/iopin.sym} 120 -580 2 0 {name=p2 lab=vdd}
 C {devices/iopin.sym} 120 -180 2 0 {name=p3 lab=iovss}
