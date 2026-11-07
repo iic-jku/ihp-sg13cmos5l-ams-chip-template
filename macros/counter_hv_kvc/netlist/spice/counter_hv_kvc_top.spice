@@ -1,0 +1,383 @@
+* NGSPICE file created from counter_hv_kvc_top.ext - technology: ihp-sg13cmos5l
+
+* Black-box entry subcircuit for sg13g2_hv_tiehi abstract view
+.subckt sg13g2_hv_tiehi L_HI VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_fill_8 abstract view
+.subckt sg13g2_hv_fill_8 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_nand2b_1 abstract view
+.subckt sg13g2_hv_nand2b_1 Y A_N B VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_nand4_1 abstract view
+.subckt sg13g2_hv_nand4_1 Y A B C D VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_buf_1 abstract view
+.subckt sg13g2_hv_buf_1 X A VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_decap_4 abstract view
+.subckt sg13g2_hv_decap_4 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_and2_1 abstract view
+.subckt sg13g2_hv_and2_1 X A B VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_inv_1 abstract view
+.subckt sg13g2_hv_inv_1 Y A VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_fill_1 abstract view
+.subckt sg13g2_hv_fill_1 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_nand2_1 abstract view
+.subckt sg13g2_hv_nand2_1 Y A B VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_xnor2_1 abstract view
+.subckt sg13g2_hv_xnor2_1 Y A B VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_fill_2 abstract view
+.subckt sg13g2_hv_fill_2 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_a21oi_1 abstract view
+.subckt sg13g2_hv_a21oi_1 Y A1 A2 B1 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_or3_1 abstract view
+.subckt sg13g2_hv_or3_1 X A B C VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_o21ai_1 abstract view
+.subckt sg13g2_hv_o21ai_1 Y A1 A2 B1 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_buf_16 abstract view
+.subckt sg13g2_hv_buf_16 X A VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_dfrbpq_1 abstract view
+.subckt sg13g2_hv_dfrbpq_1 Q CLK D RESET_B VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_decap_8 abstract view
+.subckt sg13g2_hv_decap_8 VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_nand3_1 abstract view
+.subckt sg13g2_hv_nand3_1 Y A B C VDD VSS
+.ends
+
+* Black-box entry subcircuit for sg13g2_hv_buf_2 abstract view
+.subckt sg13g2_hv_buf_2 X A VDD VSS
+.ends
+
+.subckt counter_hv_kvc_top VDD VSS clock_i counter_value_o[0] counter_value_o[1] counter_value_o[2]
++ counter_value_o[3] counter_value_o[4] counter_value_o[5] counter_value_o[6] counter_value_o[7]
++ enable_i reset_n_i
+X_72__16 _72__16/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_3_45 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_335 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_195 VDD VSS sg13g2_hv_fill_8
+X_49_ _49_/Y _67_/X _57_/A VDD VSS sg13g2_hv_nand2b_1
+X_66_ _67_/A _70_/Q _71_/Q _72_/Q _66_/D VDD VSS sg13g2_hv_nand4_1
+XFILLER_2_154 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_46 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_355 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_300 VDD VSS sg13g2_hv_fill_8
+Xoutput7 counter_value_o[4] _74_/Q VDD VSS sg13g2_hv_buf_1
+XFILLER_0_241 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_163 VDD VSS sg13g2_hv_decap_4
+X_65_ _71_/D _65_/A _65_/B VDD VSS sg13g2_hv_and2_1
+X_48_ _57_/A _73_/Q VDD VSS sg13g2_hv_inv_1
+XFILLER_2_133 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_14 VDD VSS sg13g2_hv_fill_8
+Xoutput10 counter_value_o[7] _77_/Q VDD VSS sg13g2_hv_buf_1
+Xoutput8 counter_value_o[5] _75_/Q VDD VSS sg13g2_hv_buf_1
+XFILLER_3_283 VDD VSS sg13g2_hv_fill_1
+XFILLER_0_297 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_359 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_131 VDD VSS sg13g2_hv_fill_8
+X_47_ _47_/Y _73_/Q _67_/X VDD VSS sg13g2_hv_nand2_1
+X_64_ _65_/B _71_/Q _64_/B VDD VSS sg13g2_hv_xnor2_1
+XFILLER_2_178 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_145 VDD VSS sg13g2_hv_fill_2
+XFILLER_2_101 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_207 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_0 VDD VSS sg13g2_hv_fill_8
+Xoutput9 counter_value_o[6] _76_/Q VDD VSS sg13g2_hv_buf_1
+XFILLER_0_265 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_324 VDD VSS sg13g2_hv_fill_1
+XFILLER_5_187 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_37 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_327 VDD VSS sg13g2_hv_fill_8
+X_63_ _75_/D _60_/Y _61_/X _42_/Y VDD VSS sg13g2_hv_a21oi_1
+XFILLER_1_360 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_38 VDD VSS sg13g2_hv_fill_8
+X_46_ _70_/D _44_/Y _45_/Y _42_/Y VDD VSS sg13g2_hv_a21oi_1
+XFILLER_3_296 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_230 VDD VSS sg13g2_hv_fill_2
+XFILLER_0_233 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_347 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_391 VDD VSS sg13g2_hv_fill_1
+XFILLER_5_155 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_111 VDD VSS sg13g2_hv_decap_4
+XFILLER_5_8 VDD VSS sg13g2_hv_decap_4
+XFILLER_2_125 VDD VSS sg13g2_hv_fill_8
+X_62_ _64_/B _70_/Q _66_/D VDD VSS sg13g2_hv_nand2_1
+X_45_ _45_/Y _70_/Q _66_/D VDD VSS sg13g2_hv_nand2b_1
+XFILLER_0_201 VDD VSS sg13g2_hv_fill_8
+X_75__18 _75__18/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_0_289 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_167 VDD VSS sg13g2_hv_fill_2
+XFILLER_5_123 VDD VSS sg13g2_hv_fill_8
+X_61_ _61_/X _75_/Q _67_/X _61_/C VDD VSS sg13g2_hv_or3_1
+XFILLER_1_384 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_60 VDD VSS sg13g2_hv_fill_2
+X_44_ _44_/Y _66_/D _70_/Q VDD VSS sg13g2_hv_nand2b_1
+XFILLER_5_316 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_371 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_29 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_257 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_179 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_319 VDD VSS sg13g2_hv_fill_8
+X_60_ _60_/Y _67_/X _61_/C _75_/Q VDD VSS sg13g2_hv_o21ai_1
+XFILLER_1_352 VDD VSS sg13g2_hv_fill_8
+X_43_ _76_/D _69_/Y _41_/X _42_/Y VDD VSS sg13g2_hv_a21oi_1
+XFILLER_3_288 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_222 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_225 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_339 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_147 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_103 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_320 VDD VSS sg13g2_hv_fill_8
+X_42_ _42_/Y _65_/A VDD VSS sg13g2_hv_inv_1
+XFILLER_2_117 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_115 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_376 VDD VSS sg13g2_hv_fill_8
+X_41_ _41_/X _76_/Q _67_/X _68_/Y VDD VSS sg13g2_hv_or3_1
+XFILLER_3_279 VDD VSS sg13g2_hv_decap_4
+XFILLER_0_249 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_308 VDD VSS sg13g2_hv_fill_8
+X_71__14 _71__14/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_4_363 VDD VSS sg13g2_hv_fill_8
+X_74__11 _74__11/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_4_160 VDD VSS sg13g2_hv_decap_4
+X_40_ _51_/B _72_/Q _40_/B VDD VSS sg13g2_hv_xnor2_1
+XFILLER_1_130 VDD VSS sg13g2_hv_decap_4
+XFILLER_1_344 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_214 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_32 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_98 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_217 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_139 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_331 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_87 VDD VSS sg13g2_hv_fill_2
+XFILLER_2_109 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_312 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_8 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_387 VDD VSS sg13g2_hv_decap_4
+Xclkbuf_1_1__f_clock_i _77_/CLK clkbuf_0_clock_i/X VDD VSS sg13g2_hv_buf_16
+XFILLER_1_154 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_368 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_355 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_56 VDD VSS sg13g2_hv_decap_4
+XFILLER_4_12 VDD VSS sg13g2_hv_fill_1
+XFILLER_1_336 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_122 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_206 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_250 VDD VSS sg13g2_hv_fill_8
+Xinput1 _66_/D enable_i VDD VSS sg13g2_hv_buf_1
+XFILLER_1_24 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_209 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_323 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_134 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_156 VDD VSS sg13g2_hv_fill_1
+XFILLER_1_304 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_292 VDD VSS sg13g2_hv_fill_8
+Xinput2 _65_/A reset_n_i VDD VSS sg13g2_hv_buf_1
+XFILLER_4_379 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_143 VDD VSS sg13g2_hv_fill_2
+Xclkbuf_1_0__f_clock_i _74_/CLK clkbuf_0_clock_i/X VDD VSS sg13g2_hv_buf_16
+XFILLER_5_271 VDD VSS sg13g2_hv_fill_2
+XFILLER_2_274 VDD VSS sg13g2_hv_fill_2
+XFILLER_4_347 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_114 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_328 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_361 VDD VSS sg13g2_hv_fill_8
+X_77_ _77_/Q _77_/CLK _77_/D _77__15/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+XFILLER_1_16 VDD VSS sg13g2_hv_fill_8
+X_77__15 _77__15/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_4_0 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_220 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_315 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_145 VDD VSS sg13g2_hv_fill_1
+XFILLER_5_284 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_251 VDD VSS sg13g2_hv_fill_8
+X_76_ _76_/Q _77_/CLK _76_/D _76__12/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+XFILLER_2_210 VDD VSS sg13g2_hv_fill_2
+X_59_ _61_/C _73_/Q _74_/Q VDD VSS sg13g2_hv_nand2_1
+XFILLER_2_93 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_360 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_385 VDD VSS sg13g2_hv_decap_8
+XFILLER_5_71 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_193 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_266 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_61 VDD VSS sg13g2_hv_fill_8
+X_58_ _74_/D _56_/Y _57_/X _42_/Y VDD VSS sg13g2_hv_a21oi_1
+X_75_ _75_/Q _77_/CLK _75_/D _75__18/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+XFILLER_4_339 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_106 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_353 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_50 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_212 VDD VSS sg13g2_hv_fill_1
+X_74_ _74_/Q _74_/CLK _74_/D _74__11/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+X_57_ _57_/X _57_/A _74_/Q _67_/X VDD VSS sg13g2_hv_or3_1
+XFILLER_2_0 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_384 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_321 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_95 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_243 VDD VSS sg13g2_hv_fill_8
+X_73_ _73_/Q _77_/CLK _73_/D _73__13/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+XFILLER_2_202 VDD VSS sg13g2_hv_fill_2
+X_56_ _56_/Y _57_/A _67_/X _74_/Q VDD VSS sg13g2_hv_o21ai_1
+XFILLER_2_85 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_352 VDD VSS sg13g2_hv_fill_8
+X_39_ _40_/B _70_/Q _71_/Q _66_/D VDD VSS sg13g2_hv_nand3_1
+XFILLER_0_163 VDD VSS sg13g2_hv_fill_2
+XFILLER_0_185 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_377 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_211 VDD VSS sg13g2_hv_fill_8
+X_72_ _72_/Q _74_/CLK _72_/D _72__16/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+X_55_ _77_/D _53_/Y _54_/X _42_/Y VDD VSS sg13g2_hv_a21oi_1
+XFILLER_2_258 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_53 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_320 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_345 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_42 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_161 VDD VSS sg13g2_hv_decap_4
+XFILLER_3_150 VDD VSS sg13g2_hv_fill_1
+XFILLER_0_131 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_267 VDD VSS sg13g2_hv_decap_4
+X_54_ _54_/X _77_/Q _67_/X _54_/C VDD VSS sg13g2_hv_or3_1
+X_71_ _71_/Q _74_/CLK _71_/D _71__14/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+XFILLER_2_21 VDD VSS sg13g2_hv_fill_8
+X_73__13 _73__13/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_3_376 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_140 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_313 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_279 VDD VSS sg13g2_hv_fill_1
+XFILLER_5_235 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_87 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_21 VDD VSS sg13g2_hv_fill_1
+X_70_ _70_/Q _74_/CLK _70_/D _70__17/L_HI VDD VSS sg13g2_hv_dfrbpq_1
+X_53_ _53_/Y _67_/X _54_/C _77_/Q VDD VSS sg13g2_hv_o21ai_1
+XFILLER_2_77 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_344 VDD VSS sg13g2_hv_fill_8
+X_70__17 _70__17/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_0_369 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_155 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_177 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_203 VDD VSS sg13g2_hv_fill_8
+X_52_ _54_/C _73_/Q _74_/Q _75_/Q _76_/Q VDD VSS sg13g2_hv_nand4_1
+XFILLER_4_8 VDD VSS sg13g2_hv_decap_4
+XFILLER_2_228 VDD VSS sg13g2_hv_decap_4
+XFILLER_2_45 VDD VSS sg13g2_hv_fill_8
+X_76__12 _76__12/L_HI VDD VSS sg13g2_hv_tiehi
+XFILLER_3_312 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_337 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_259 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_34 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_12 VDD VSS sg13g2_hv_fill_1
+XFILLER_0_123 VDD VSS sg13g2_hv_fill_8
+X_51_ _72_/D _65_/A _51_/B VDD VSS sg13g2_hv_and2_1
+XFILLER_1_240 VDD VSS sg13g2_hv_fill_1
+XFILLER_3_368 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_79 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_165 VDD VSS sg13g2_hv_fill_1
+XFILLER_3_132 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_305 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_227 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_271 VDD VSS sg13g2_hv_fill_1
+X_50_ _73_/D _47_/Y _49_/Y _42_/Y VDD VSS sg13g2_hv_a21oi_1
+XFILLER_2_69 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_296 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_336 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_391 VDD VSS sg13g2_hv_fill_1
+XFILLER_5_58 VDD VSS sg13g2_hv_decap_8
+XFILLER_0_91 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_147 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_169 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_261 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_37 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_304 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_8 VDD VSS sg13g2_hv_decap_8
+XFILLER_5_26 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_115 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_329 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_6 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_219 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_200 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_288 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_391 VDD VSS sg13g2_hv_fill_1
+XFILLER_3_328 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_383 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_83 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_139 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_253 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_29 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_148 VDD VSS sg13g2_hv_fill_2
+XFILLER_2_351 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_170 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_62 VDD VSS sg13g2_hv_fill_1
+XFILLER_0_107 VDD VSS sg13g2_hv_fill_8
+XFILLER_1_202 VDD VSS sg13g2_hv_fill_1
+XFILLER_5_371 VDD VSS sg13g2_hv_decap_4
+XFILLER_3_84 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_73 VDD VSS sg13g2_hv_decap_4
+XFILLER_0_30 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_19 VDD VSS sg13g2_hv_fill_2
+XFILLER_1_236 VDD VSS sg13g2_hv_decap_4
+XFILLER_5_383 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_0 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_375 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_194 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_75 VDD VSS sg13g2_hv_fill_8
+Xoutput3 counter_value_o[0] _70_/Q VDD VSS sg13g2_hv_buf_1
+XFILLER_3_53 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_281 VDD VSS sg13g2_hv_fill_8
+X_69_ _69_/Y _67_/X _68_/Y _76_/Q VDD VSS sg13g2_hv_o21ai_1
+XFILLER_2_343 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_162 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_54 VDD VSS sg13g2_hv_fill_8
+Xoutput4 counter_value_o[1] _71_/Q VDD VSS sg13g2_hv_buf_1
+XFILLER_5_363 VDD VSS sg13g2_hv_fill_8
+XFILLER_3_65 VDD VSS sg13g2_hv_fill_1
+X_68_ _68_/Y _73_/Q _74_/Q _75_/Q VDD VSS sg13g2_hv_nand3_1
+XFILLER_2_141 VDD VSS sg13g2_hv_decap_4
+XFILLER_0_22 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_99 VDD VSS sg13g2_hv_fill_8
+XFILLER_4_269 VDD VSS sg13g2_hv_fill_2
+Xclkbuf_0_clock_i clkbuf_0_clock_i/X clock_i VDD VSS sg13g2_hv_buf_16
+XFILLER_1_228 VDD VSS sg13g2_hv_fill_8
+XFILLER_5_375 VDD VSS sg13g2_hv_fill_2
+XFILLER_5_331 VDD VSS sg13g2_hv_fill_8
+Xoutput5 counter_value_o[2] _72_/Q VDD VSS sg13g2_hv_buf_1
+X_67_ _67_/X _67_/A VDD VSS sg13g2_hv_buf_2
+XFILLER_2_367 VDD VSS sg13g2_hv_fill_8
+XFILLER_2_186 VDD VSS sg13g2_hv_fill_8
+XFILLER_0_67 VDD VSS sg13g2_hv_fill_8
+Xoutput6 counter_value_o[3] _73_/Q VDD VSS sg13g2_hv_buf_1
+XFILLER_4_226 VDD VSS sg13g2_hv_fill_2
+XFILLER_4_215 VDD VSS sg13g2_hv_fill_2
+XFILLER_0_273 VDD VSS sg13g2_hv_fill_8
+.ends
+

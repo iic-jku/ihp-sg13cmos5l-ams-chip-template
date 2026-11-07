@@ -143,7 +143,8 @@ def write_models(cellsused, celldefs, ofile, timing, debug=False):
                     for j in range(0, nin):
                         bchar = cellrec['inputs'][nin - j - 1].strip('"')
                         bval = binstring[j]
-                        psubs = psubs.replace(bchar, bval)
+                        # Whole names only: pin B must not hit pin AB
+                        psubs = re.sub(r'(?<![\w\[\]])' + re.escape(bchar) + r'(?![\w\[\]])', bval, psubs)
 
                     # Handle the awkward syntax where, e.g., (A B) means (A & B)
                     # Must be done in a loop because re.sub does not work on
@@ -322,6 +323,9 @@ def read_spice(filein, fileout, celldefs, debug, modelfile, timing):
 
                 if 'type' not in cellrec:
                     print('Cell ' + cellname + ' does not have a type defined!')
+                    # Physical cells have only supply pins. Anything else means the wrong Liberty file, which would leave an empty model
+                    if set(cellrec['spicepins']) - {'VDD', 'VSS', 'VNW', 'VPW'}:
+                        sys.exit('Cell ' + cellname + ' has signal pins, but is not in the Liberty file.')
                     if debug:
                         print('Cell record is: ' + str(cellrec))
                     # Provide defaults for the cell so that it doesn't cause failures
@@ -331,6 +335,9 @@ def read_spice(filein, fileout, celldefs, debug, modelfile, timing):
                     cellrec['outputs'] = []
                     cellrec['nin'] = 0
                     cellrec['nout'] = 0
+
+                if cellrec['type'] == 'multibit':
+                    sys.exit('Cell ' + cellname + ' is a multi-bit cell, which has no XSPICE model.')
 
                 # Print the record.  Special handling for flops and latches.
                 if cellrec['type'] == 'flop':
@@ -721,14 +728,24 @@ def write_lib(fileout, celldefs, debug, timing):
         write_models(cellsused, celldefs, ofile, timing, debug)
         print(".end", file=ofile)
 
+def strip_outer_parens(pstring):
+    # (A * B) + (C * D) keeps its parentheses, they do not pair with each other
+    if not (pstring.startswith('(') and pstring.endswith(')')):
+        return pstring
+    depth = 0
+    for i, char in enumerate(pstring):
+        depth += (char == '(') - (char == ')')
+        if depth == 0 and i < len(pstring) - 1:
+            return pstring
+    return pstring[1:-1].strip()
+
 def parse_pin(function):
     # Handle n' as way of expressing ~n or !n
     primerex    = re.compile(r"([^ \t]+)[ \t]*'")
-    outparenrex = re.compile(r'^[ \t]*\([ \t]*(.+)[ \t]*\)[ \t]*$')
     parenrex    = re.compile(r'\([ \t]*([^ \t\)|&~^]+)[ \t]*\)')
     pstring = function.strip().strip('"').strip()
     pstring = pstring.replace('*', '&').replace('+', '|').replace('!', '~')
-    pstring = outparenrex.sub(r'\g<1>', pstring)
+    pstring = strip_outer_parens(pstring)
     pstring = parenrex.sub(r'\g<1>', pstring)
     pstring = primerex.sub(r'~\g<1>', pstring)
     return pstring
@@ -737,6 +754,7 @@ def read_liberty(filein, debug):
     global vdd
 
     celldefs = {}
+    cellrec = {}
     voltrex  = re.compile(r'[ \t]*nom_voltage[ \t]*:[ \t]*([^;]+);')
     cellrex  = re.compile(r'[ \t]*cell[ \t]*\(([^)]+)\)')
     pinrex   = re.compile(r'[ \t]*pin[ \t]*\(([^)]+)\)')
@@ -753,6 +771,7 @@ def read_liberty(filein, debug):
     enarex   = re.compile(r'[ \t]*enable[ \t]*:[ \t]*([^;]+);')
     trirex   = re.compile(r'[ \t]*three_state[ \t]*:[ \t]*([^;]+);')
     funcrex  = re.compile(r'[ \t]*function[ \t]*:[ \t]*"?[ \t]*([^"]+)[ \t]*"?')
+    bankrex  = re.compile(r'[ \t]*(bundle|ff_bank|latch_bank)[ \t]*\(')
     with open(filein, 'r') as ifile:
         lines = ifile.readlines()
         if debug:
@@ -785,6 +804,14 @@ def read_liberty(filein, debug):
                 celldefs[cellname] = cellrec
                 continue
                 
+            # A bundle pin has no pin record of its own, and XSPICE has no multi-bit model
+            if bankrex.match(line):
+                cellrec['type'] = 'multibit'
+                continue
+
+            if cellrec.get('type') == 'multibit':
+                continue
+
             pmatch = pinrex.match(line)
             if pmatch:
                 pinname = pmatch.group(1).strip('"')
