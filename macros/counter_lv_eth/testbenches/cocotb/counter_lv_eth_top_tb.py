@@ -18,7 +18,7 @@ scl      = os.getenv("SCL", "sg13cmos5l_stdcell")
 # GL=1 selects the gate-level netlist; anything else (unset, "0", "") stays in RTL mode.
 gl       = os.getenv("GL", "0").strip().lower() in ("1", "true", "yes", "on")
 
-hdl_toplevel = "counter_top"
+hdl_toplevel = "counter_lv_eth_top"
 
 # Defaults sourced from rtl/constants.sv, the single source of truth shared with the SV testbench and the DUT.
 _CONSTANTS_SV = Path(__file__).resolve().parent / "../../rtl/constants.sv"
@@ -33,7 +33,7 @@ def _read_define(name: str) -> str:
     return m.group(1)
 
 
-CTR_MAX      = int(_read_define("COUNTER_MAX_DEFAULT"))
+CTR_MAX      = int(_read_define("COUNTER_LV_ETH_MAX_DEFAULT"))
 CLK_FREQ_HZ      = float(_read_define("CLK_FREQ_DEFAULT"))
 CLK_FREQ_MHZ     = int(CLK_FREQ_HZ / 1e6)
 CTR_BW = (CTR_MAX + 1).bit_length() if CTR_MAX > 0 else 1
@@ -149,7 +149,7 @@ async def test_wraps_at_max(dut):
     logger.info("Done!")
 
 
-def counter_top_runner():
+def counter_lv_eth_top_runner():
 
     proj_path = Path(__file__).resolve().parent
 
@@ -169,8 +169,8 @@ def counter_top_runner():
         # (passing USE_POWER_PINS=False would still define the macro).
     else:
         sources.append(proj_path / "../../rtl/constants.sv")
-        sources.append(proj_path / "../../rtl/counter.sv")
-        sources.append(proj_path / "../../rtl/counter_top.sv")
+        sources.append(proj_path / "../../rtl/counter_lv_eth.sv")
+        sources.append(proj_path / "../../rtl/counter_lv_eth_top.sv")
 
     build_args = []
 
@@ -198,11 +198,11 @@ def counter_top_runner():
 
     runner.test(
         hdl_toplevel=hdl_toplevel,
-        test_module="counter_top_tb",
+        test_module="counter_lv_eth_top_tb",
         plusargs=plusargs,
         waves=True,
     )
 
 
 if __name__ == "__main__":
-    counter_top_runner()
+    counter_lv_eth_top_runner()

@@ -24,11 +24,11 @@
     autoload_sibling_state_files: None,
     autoreload_files: None,
     waves: Some((
-        source: File("testbenches/verilog/counter_top_tb.vcd"),
+        source: File("testbenches/verilog/counter_lv_eth_top_tb.vcd"),
         format: Vcd,
         active_scope: Some(WaveScope((
             strs: [
-                "counter_top_tb",
+                "counter_lv_eth_top_tb",
                 "dut_counter",
             ],
             id: Wellen((3)),
@@ -96,7 +96,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top_tb",
+                            "counter_lv_eth_top_tb",
                         ],
                         id: Wellen((2)),
                     ),
@@ -118,7 +118,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top_tb",
+                            "counter_lv_eth_top_tb",
                             "dut_counter",
                         ],
                         id: Wellen((3)),
@@ -146,7 +146,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top_tb",
+                            "counter_lv_eth_top_tb",
                             "dut_counter",
                         ],
                         id: Wellen((3)),
@@ -169,7 +169,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top_tb",
+                            "counter_lv_eth_top_tb",
                             "dut_counter",
                         ],
                         id: Wellen((3)),
@@ -202,7 +202,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top_tb",
+                            "counter_lv_eth_top_tb",
                         ],
                         id: Wellen((2)),
                     ),
@@ -224,7 +224,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top_tb",
+                            "counter_lv_eth_top_tb",
                             "dut_counter",
                         ],
                         id: Wellen((3)),

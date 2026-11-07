@@ -24,11 +24,11 @@
     autoload_sibling_state_files: None,
     autoreload_files: None,
     waves: Some((
-        source: File("testbenches/cocotb/sim_build/counter_top.fst"),
+        source: File("testbenches/cocotb/sim_build/counter_lv_eth_top.fst"),
         format: Fst,
         active_scope: Some(WaveScope((
             strs: [
-                "counter_top",
+                "counter_lv_eth_top",
             ],
             id: Wellen((2)),
         ))),
@@ -95,7 +95,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top",
+                            "counter_lv_eth_top",
                         ],
                         id: Wellen((2)),
                     ),
@@ -117,7 +117,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top",
+                            "counter_lv_eth_top",
                         ],
                         id: Wellen((2)),
                     ),
@@ -144,7 +144,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top",
+                            "counter_lv_eth_top",
                         ],
                         id: Wellen((2)),
                     ),
@@ -166,7 +166,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top",
+                            "counter_lv_eth_top",
                         ],
                         id: Wellen((2)),
                     ),
@@ -193,7 +193,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top",
+                            "counter_lv_eth_top",
                         ],
                         id: Wellen((2)),
                     ),
@@ -220,7 +220,7 @@
                 variable_ref: (
                     path: (
                         strs: [
-                            "counter_top",
+                            "counter_lv_eth_top",
                         ],
                         id: Wellen((2)),
                     ),

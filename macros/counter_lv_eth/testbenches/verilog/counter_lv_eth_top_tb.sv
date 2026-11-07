@@ -1,13 +1,13 @@
 // SPDX-FileCopyrightText: 2026 Simon Dorrer and Harald Pretl
 // SPDX-License-Identifier: Apache-2.0 WITH SHL-2.1
-// Description: SystemVerilog testbench for the counter_top module.
+// Description: SystemVerilog testbench for the counter_lv_eth_top module.
 
 `timescale 1ns / 1ps
 
-module counter_top_tb;
+module counter_lv_eth_top_tb;
   // Parameters
   parameter  real CLK_FREQ      = `CLK_FREQ_DEFAULT;
-  parameter  int  CTR_MAX       = `COUNTER_MAX_DEFAULT;
+  parameter  int  CTR_MAX       = `COUNTER_LV_ETH_MAX_DEFAULT;
   localparam int  CTR_BW        = $clog2(CTR_MAX + 1);
   localparam real CLK_PERIOD_NS = 1e9 / CLK_FREQ;
 
@@ -18,7 +18,7 @@ module counter_top_tb;
   logic [CTR_BW-1:0] counter_value;
 
   // DUT
-  counter_top #(
+  counter_lv_eth_top #(
     .CTR_MAX(CTR_MAX)
   ) dut_counter (
     .clock_i(clock),
@@ -34,7 +34,7 @@ module counter_top_tb;
 
   // Self-checking stimulus
   initial begin
-    $dumpfile("counter_top_tb.vcd");
+    $dumpfile("counter_lv_eth_top_tb.vcd");
     $dumpvars;
 
     // Reset pulse (2 clock cycles)
@@ -68,4 +68,4 @@ module counter_top_tb;
     $display("PASS: simulation complete.");
     $finish;
   end
-endmodule // counter_top_tb
+endmodule // counter_lv_eth_top_tb
