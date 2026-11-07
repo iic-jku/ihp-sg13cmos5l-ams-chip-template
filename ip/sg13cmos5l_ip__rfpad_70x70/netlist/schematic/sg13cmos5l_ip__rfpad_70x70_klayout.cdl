@@ -1,4 +1,4 @@
-** sch_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/ip/sg13cmos5l_ip__bondpad_70x70/schematic/xschem/sg13cmos5l_ip__rfpad_70x70.sch
+** sch_path: /foss/designs/ihp-sg13cmos5l-ams-chip-template/ip/sg13cmos5l_ip__rfpad_70x70/schematic/xschem/sg13cmos5l_ip__rfpad_70x70.sch
 .subckt sg13cmos5l_ip__rfpad_70x70 vss vdd iovss iovdd pad
 *.PININFO vss:B vdd:B iovss:B iovdd:B pad:B
 DDesd_vdd vdd pad vss diodevdd_2kv

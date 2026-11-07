@@ -1,5 +1,5 @@
 /*
- * Liberty view of sg13cmos5l_ip__rfpad_70x70, written by script/bondpad.py.
+ * Liberty view of sg13cmos5l_ip__rfpad_70x70, written by script/rfpad.py.
  * The capacitance on pad and padbare is measured, see the README.
  * No timing arc: a pad is not a delay element, there is nothing for STA to time.
  */

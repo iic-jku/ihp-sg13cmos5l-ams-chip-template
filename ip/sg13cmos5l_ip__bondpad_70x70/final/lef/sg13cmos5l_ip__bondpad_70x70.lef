@@ -10,8 +10,14 @@ MACRO sg13cmos5l_ip__bondpad_70x70
   PIN pad
     USE SIGNAL ;
     PORT
+      LAYER Metal2 ;
+        RECT 0 0 70.0 70.0 ;
+      LAYER Metal3 ;
+        RECT 0 0 70.0 70.0 ;
+      LAYER Metal4 ;
+        RECT 0 0 70.0 70.0 ;
       LAYER TopMetal1 ;
-        RECT 0.000 0.000 70.000 70.000 ;
+        RECT 0 0 70.0 70.0 ;
     END
   END pad
 

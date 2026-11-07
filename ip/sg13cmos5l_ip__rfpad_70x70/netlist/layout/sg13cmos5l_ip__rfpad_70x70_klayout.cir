@@ -1,4 +1,4 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 07/11/2026 18:35
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 07/11/2026 21:09
 
 .SUBCKT sg13cmos5l_ip__rfpad_70x70 pad vdd vss
 M$1 vss \$10 vss vss sg13_hv_nmos L=9.5u W=126u AS=51.84p AD=51.84p PS=173.52u
