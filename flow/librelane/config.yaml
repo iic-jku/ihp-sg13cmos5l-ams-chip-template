@@ -248,8 +248,7 @@ DEFAULT_CORNER: nom_typ_1p50V_25C
 
 # Non-Default Rules (NDRs) for the following analog traces
 # Note for the AUTO_TAPER_NDR_NETS variable:
-# OpenROAD needs to be recompiled with the following patch when the AUTO_TAPER_NDR_NETS variable is changed from true (default) to false:
-# https://github.com/FPGA-Research/heichips25-tapeout/blob/main/nix/disable_auto_taper.patch
+# OpenROAD needs to be recompiled with a patch when the AUTO_TAPER_NDR_NETS variable is changed from true (default) to false.
 # The AUTO_TAPER_NDR_NETS variable tells the detailed router whether it is allowed to automatically "shrink" those wide NDR wires to fit onto small pins.
 # When Enabled (1 or true - Default): The router will automatically taper the wide wire down to the minimum width of the pin's metal layer as it makes the final connection.
 # When Disabled (0 or false): The router will attempt to maintain the full NDR width all the way into the pin.
