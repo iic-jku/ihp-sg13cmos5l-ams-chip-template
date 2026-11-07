@@ -13,7 +13,7 @@ TOP = amplifier
 REQUIRED_PDK ?= ihp-sg13cmos5l
 
 # Goals that do not read the PDK
-PDK_FREE_GOALS = help clean check-unit-cell export-gds
+PDK_FREE_GOALS = help clean check-unit-cell
 
 ifneq ($(REQUIRED_PDK),)
 ifneq ($(filter-out $(PDK_FREE_GOALS),$(or $(MAKECMDGOALS),$(.DEFAULT_GOAL))),)
@@ -116,7 +116,7 @@ help: ## Show this help message
 	@echo 'TB selects the Xschem testbench for sim-xschem (default: <CELL>_tb_tran).'
 	@echo 'SCRIPT selects the plotting script for sim-view-xschem (default: plot_<CELL>).'
 	@echo 'OPEN_ARGS passes extra options to sak-open.py for the open target (e.g. --all).'
-	@echo 'REQUIRED_PDK defaults to $(REQUIRED_PDK). Every target except help, clean, check-unit-cell and export-gds aborts if $$PDK differs.'
+	@echo 'REQUIRED_PDK defaults to $(REQUIRED_PDK). Every target except help, clean and check-unit-cell aborts if $$PDK differs.'
 .PHONY: help
 # ================================================================================================
 
@@ -210,12 +210,6 @@ check-unit-cell: ## Check that the TOP cell layout holds the inverter cell as th
 .PHONY: check-unit-cell
 # ================================================================================================
 
-
-# Layout Export Target
-export-gds: ## Export layout/<TOP>.gds from layout/<TOP>.klay.gds in batch without the PDK, so that the PCells stay frozen
-	klayout -b -r $(SCRIPTS_DIR)/export_layout.py -rd layout=$(LAY_DIR)/$(TOP).klay.gds -rd out=$(LAY_DIR)/$(TOP).gds
-.PHONY: export-gds
-# ================================================================================================
 
 
 # LEF Target
