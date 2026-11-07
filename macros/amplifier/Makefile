@@ -13,7 +13,7 @@ TOP = amplifier
 REQUIRED_PDK ?= ihp-sg13cmos5l
 
 # Goals that do not read the PDK
-PDK_FREE_GOALS = help clean
+PDK_FREE_GOALS = help clean check-unit-cell
 
 ifneq ($(REQUIRED_PDK),)
 ifneq ($(filter-out $(PDK_FREE_GOALS),$(or $(MAKECMDGOALS),$(.DEFAULT_GOAL))),)
@@ -185,8 +185,9 @@ sim-all: ## Simulate the macro
 
 
 # Build Target
-build-top: ## Build TOP cell (check PR boundary, Verilog, LEF, LIB, copy GDS, and render images)
+build-top: ## Build TOP cell (check PR boundary and unit cell, Verilog, LEF, LIB, copy GDS, and render images)
 	$(MAKE) check-boundary
+	$(MAKE) check-unit-cell
 	$(MAKE) lef
 	$(MAKE) lib
 	$(MAKE) verilog
@@ -200,6 +201,13 @@ build-top: ## Build TOP cell (check PR boundary, Verilog, LEF, LIB, copy GDS, an
 check-boundary: ## Check that the TOP cell layout carries the PR boundary box on layer 189 that the chip flow needs
 	python3 $(SCRIPTS_DIR)/check_boundary.py $(LAY_DIR)/$(TOP).gds $(TOP)
 .PHONY: check-boundary
+# ================================================================================================
+
+
+# Unit Cell Check Target
+check-unit-cell: ## Check that the TOP cell layout holds the inverter cell as the inverter macro ships it, by name and geometry
+	python3 $(SCRIPTS_DIR)/check_unit_cell.py $(LAY_DIR)/$(TOP).gds ../inverter/$(LAY_DIR)/inverter_top.gds inverter
+.PHONY: check-unit-cell
 # ================================================================================================
 
 

@@ -32,8 +32,7 @@ The top cell `amplifier` is 35.38 µm × 18.24 µm and holds one `inverter` inst
 ├─ 📁 layout/
 │  ├─ amplifier.gds
 │  ├─ amplifier.klay.gds
-│  ├─ amplifier.klay.klib
-│  └─ inverter.gds
+│  └─ amplifier.klay.klib
 ├─ 📁 netlist/
 │  ├─ 📁 layout/
 │  │  ├─ amplifier_klayout.cir
@@ -59,6 +58,7 @@ The top cell `amplifier` is 35.38 µm × 18.24 µm and holds one `inverter` inst
 │     └─ xschemrc
 ├─ 📁 scripts/
 │  ├─ check_boundary.py
+│  ├─ check_unit_cell.py
 │  └─ check_pex_ports.py
 ├─ 📁 testbenches/
 │  └─ 📁 xschem/
@@ -168,12 +168,12 @@ At most 400 buttons are drawn at once, because each one is an X window, and what
 
 ### Layout Sources and the Exported Tapeout GDS
 
-`layout/<TOP>.klay.gds` is the source of truth. It is the KLayout editing source, which pulls the `inverter` cell in as a library through `layout/<TOP>.klay.klib`. `layout/<TOP>.gds` is exported from it with `File > Export Layout For Tapeout`, which resolves every PCell and library reference into a static cell, and it is what every build and sign-off target reads.
+`layout/<TOP>.klay.gds` is the source of truth. It is the KLayout editing source, which pulls the `inverter` cell of the [`inverter` macro](../inverter/) in as a library through `layout/<TOP>.klay.klib`, mapped to `../../inverter/layout/inverter.gds`. `layout/<TOP>.gds` is exported from it with `File > Export Layout For Tapeout`, which resolves every PCell and library reference into a static cell, and it is what every build and sign-off target reads.
 
 > [!IMPORTANT]
 > Re-export after every layout change and never hand-edit `layout/<TOP>.gds`. Keeping the two in step by editing both is how they drift apart, and the drift is invisible because the sign-off targets only look at the exported file.
 
-The export re-evaluates the PCells against the **installed** PDK, so device geometry can change even though nobody touched the editing source, see the [`inverter` macro](../inverter/README.md#layout-sources-and-the-exported-tapeout-gds). The `inverter` instance of this layout carries the tighter `NWell` revision (`31/0`, x from 0.11 µm to 33.27 µm), while `layout/inverter.gds`, the `inverter` macro and the `ringosc` macro carry the wider one (x from 0 µm to 33.38 µm), so a chip that places them together holds two different cells named `inverter`. Re-run DRC, LVS and PEX after every export.
+The export re-evaluates the PCells against the **installed** PDK, so device geometry can change even though nobody touched the editing source, see the [`inverter` macro](../inverter/README.md#layout-sources-and-the-exported-tapeout-gds). The `inverter` instance of this layout carries the `NWell` revision of the `inverter` macro (`31/0`, x from 0 µm to 33.38 µm), and `make check-unit-cell` stops `build-top` when an export changes that. Re-run DRC, LVS and PEX after every export.
 
 
 ### Layout File Extension Usage
@@ -191,6 +191,7 @@ The Makefile defines a `_GDS_EXT` variable that auto-selects the layout file ext
 
 - Build targets always use `layout/<name>.gds`:
   - `check-boundary`
+  - `check-unit-cell`
   - `lef`
   - `copy-gds`
   - `render-gds`
@@ -313,6 +314,17 @@ make check-boundary
 ```
 
 The chip flow derives the bounding box of every macro from this layer: Magic maps all datatypes of layer 189 to its boundary, and LibreLane's `Magic.StreamOut` runs `get_bbox.tcl` on every macro it places. A layout without the box fails the whole chip build with `Failed to extract PR boundary from GDSII view of macro '<TOP>'`, two flows away from the layout that caused it. Treat the box as part of the layout: never delete it as clutter, keep it in the KLayout editing source (`<TOP>.klay.gds`) so every re-export carries it, and hide it at render time with `sak-render.py -x` if it spoils a chip shot. The check runs [`scripts/check_boundary.py`](scripts/check_boundary.py), which also warns when the drawn geometry extends beyond the boundary box.
+
+
+### Unit Cell Check
+
+Checks that `layout/<TOP>.gds` holds the `inverter` cell and every cell below it as the [`inverter` macro](../inverter/) ships them in `layout/inverter_top.gds`, by name and by geometry on every layer:
+
+```sh
+make check-unit-cell
+```
+
+Cells of one name merge at the chip top-level, so a macro with its own revision of `inverter` or `pmos` would change its neighbors without any error. `build-top` runs this target right after `check-boundary`.
 
 
 ### Export LEF
