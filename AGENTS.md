@@ -14,7 +14,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 - `macros/inverter/` (template, analog): `schematic/xschem/`, `layout/`, `testbenches/xschem/`, `verification/cace/`, verified with KLayout and Magic.
 - `macros/vco/` (template, RF, under construction): `schematic/xschem/`, `testbenches/xschem/` with ngspice and VACASK benches (a `_vacask` in the testbench name selects VACASK), the KLayout Python scripts in `scripts/layout/` that write every layout, the coil included (`make klayout-script-all`, edit the script, never the GDS), the Palace EM simulation of the coil in `verification/em/` (`make sim-em`, its stackup from the ihp-sg13g2 Palace workflow, about three hours at third order, so on a compute host), and its snp2le model in `netlist/spice/` and `netlist/spectre/` (`make snp2le`). `make sim-corners` runs the start-up transient over corners, and `vco_top_tb_tran_lpe` is the post-layout bench, on one KPEX netlist of the macro without the coil and the varactor array (`make klayout-pex-leads`). Magic reads the `cap_cmomf` combs as plain metal: `LEADS_CUT` cuts the buffer's coupling caps out (`LEADS_CUT_GEOS`) and puts the PDK device back with the parasitics of `make sim-em-momf`, an EM run that needs a compute host, so `LEADS_CUT` stays empty until its table exists. The MoM caps are `cap_cmomf`: `make check-mom` checks their size and stack, which LVS does not, and `make check-coil-tap` checks the coil's center tap, which no LVS sees. Two supplies: `VDD` and the core's own `vdd_core`. Not built by the chip yet.
 - `macros/Makefile`: one job, `make macro FROM=<macro> NAME=<name>` starts a new macro as a renamed copy of an existing one.
-- `ip/`: bondpad `sg13cmos5l_ip__bondpad_70x70` and the logos `sg13cmos5l_ip__jku` and `sg13cmos5l_ip__jku_names` (template), each with a `Makefile`. `ip/sg13cmos5l_io_custom/` is third-party IHP IO cell data.
+- `ip/`: bondpad `sg13cmos5l_ip__bondpad_70x70`, RF pad `sg13cmos5l_ip__rfpad_70x70` and the logos `sg13cmos5l_ip__jku` and `sg13cmos5l_ip__jku_names` (template), each with a `Makefile`. `ip/sg13cmos5l_io_custom/` is third-party IHP IO cell data.
 - `schematic/xschem/`, `testbenches/xschem/`, `testbenches/cocotb/`: chip schematic, symbols and testbenches. Every folder holding schematics has its own `xschemrc`, see "Xschem Configuration" in `README.md`.
 - `layout/`, `netlist/`, `verification/`, `render/img/`: build outputs, committed. `packaging/` holds `config.yaml` and `scripts/run_bondplan.py` for `make bondplan` plus their committed outputs. `release/v.<VERSION>/` holds published versions.
 - `doc/`: hand-maintained `specifications.md`, `pinout.md` and `floorplan.md` plus tool and PDK notes. A number changed in `flow/librelane/config.yaml`, `rtl/` or `packaging/config.yaml` is mirrored there.
@@ -35,7 +35,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 ```sh
 make help                          # targets and variables
 make all                           # build-all, regular KLayout and gdscheck DRC of chip_top_logo_fill, sim-all, bondplan
-make build-all                     # submodules, bondpad, logos, macros, build-top
+make build-all                     # submodules, bondpad, RF pad, logos, macros, build-top
 make build-top                     # librelane-nodrc, copy reports/GDS/netlists/render, add-logo-fill, render-gds
 make sim-rtl-cocotb                # chip RTL simulation (cocotb on Icarus Verilog)
 make sim-all                       # RTL and gate-level cocotb, gate-level Xschem/ngspice
