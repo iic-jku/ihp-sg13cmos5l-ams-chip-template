@@ -55,8 +55,7 @@ The top cell `amplifier` is 35.38 µm × 18.24 µm and holds one `inverter` inst
 │     └─ xschemrc
 ├─ 📁 scripts/
 │  ├─ check_boundary.py
-│  ├─ check_pex_ports.py
-│  └─ check_unit_cell.py
+│  └─ check_pex_ports.py
 ├─ 📁 testbenches/
 │  └─ 📁 xschem/
 │     ├─ 📁 plot_simulations/
@@ -109,14 +108,14 @@ make <target> [CELL=<cellname>] [EXT_MODE=<1|2|3>] [THRESHOLD=<mOhm>] [MINRES=<m
 
 ### PDK Guard
 
-Every target except `help`, `clean` and `check-unit-cell` needs the `ihp-sg13cmos5l` PDK. The container starts with `ihp-sg13g2` selected, so the wrong PDK is the default state here, and it silently mixes technologies: DRC and LVS run against the wrong rule deck, Magic reads the wrong `magicrc`, and the results look valid. The Makefile therefore compares `$PDK` against `REQUIRED_PDK` once when it is parsed, before any target runs:
+Every target except `help` and `clean` needs the `ihp-sg13cmos5l` PDK. The container starts with `ihp-sg13g2` selected, so the wrong PDK is the default state here, and it silently mixes technologies: DRC and LVS run against the wrong rule deck, Magic reads the wrong `magicrc`, and the results look valid. The Makefile therefore compares `$PDK` against `REQUIRED_PDK` once when it is parsed, before any target runs:
 
 ```sh
 $ make klayout-drc
 Makefile:21: *** PDK is "ihp-sg13g2", but this macro needs "ihp-sg13cmos5l". Run `sak-pdk ihp-sg13cmos5l` in this shell and retry, or pass REQUIRED_PDK= to skip this check.  Stop.
 ```
 
-The check is a parse-time conditional at the top of the Makefile, not a prerequisite of each target, so it costs nothing and cannot be forgotten when a target is added. `help`, `clean` and `check-unit-cell` are exempt, so the usage text, the cleanup and this layout check still work under any PDK. `open` is not exempt: it launches Xschem, KLayout and Magic, which all read the selected PDK.
+The check is a parse-time conditional at the top of the Makefile, not a prerequisite of each target, so it costs nothing and cannot be forgotten when a target is added. `help` and `clean` are exempt, so the usage text and the cleanup still work under any PDK. `open` is not exempt: it launches Xschem, KLayout and Magic, which all read the selected PDK.
 
 Switch the PDK with `sak-pdk ihp-sg13cmos5l`, which also sets `PDKPATH`, `KLAYOUT_PATH`, `SPICE_USERINIT_DIR` and `STD_CELL_LIBRARY`. To run a single target against another PDK anyway, pass an empty `REQUIRED_PDK`:
 
@@ -170,7 +169,7 @@ At most 400 buttons are drawn at once, because each one is an X window, and what
 > [!IMPORTANT]
 > Re-export after every layout change and never hand-edit `layout/<TOP>.gds`. Keeping the two in step by editing both is how they drift apart, and the drift is invisible because the sign-off targets only look at the exported file.
 
-The export re-evaluates the PCells against the **installed** PDK, so device geometry can change even though nobody touched the editing source, see the [`inverter` macro](../inverter/README.md#layout-sources-and-the-exported-tapeout-gds). The `inverter` macro ships an older `pmos`, frozen in its `layout/inverter.gds`, whose `NWell` (`31/0`) is 0.11 µm wider on every side than what the installed PDK draws, and this layout carries the revision of the macro. `make check-unit-cell` stops `build-top` when an export changes that. Re-run DRC, LVS and PEX after every export.
+The export re-evaluates the PCells against the **installed** PDK, so device geometry can change even though nobody touched the editing source, see the [`inverter` macro](../inverter/README.md#layout-sources-and-the-exported-tapeout-gds). The `inverter` macro ships an older `pmos`, frozen in its `layout/inverter.gds`, whose `NWell` (`31/0`) is 0.11 µm wider on every side than what the installed PDK draws, and this layout carries the revision of the macro. An export that re-evaluates the PCells leaves this macro with another `inverter` than the `inverter` macro, so compare that cell against `../inverter/layout/inverter_top.gds` after an export. Re-run DRC, LVS and PEX after every export.
 
 
 ### Layout File Extension Usage
@@ -188,7 +187,6 @@ The Makefile defines a `_GDS_EXT` variable that auto-selects the layout file ext
 
 - Build targets always use `layout/<name>.gds`:
   - `check-boundary`
-  - `check-unit-cell`
   - `lef`
   - `copy-gds`
   - `render-gds`
@@ -311,17 +309,6 @@ make check-boundary
 ```
 
 The chip flow derives the bounding box of every macro from this layer: Magic maps all datatypes of layer 189 to its boundary, and LibreLane's `Magic.StreamOut` runs `get_bbox.tcl` on every macro it places. A layout without the box fails the whole chip build with `Failed to extract PR boundary from GDSII view of macro '<TOP>'`, two flows away from the layout that caused it. Treat the box as part of the layout: never delete it as clutter, keep it in the KLayout editing source (`<TOP>.klay.gds`) so every re-export carries it, and hide it at render time with `sak-render.py -x` if it spoils a chip shot. The check runs [`scripts/check_boundary.py`](scripts/check_boundary.py), which also warns when the drawn geometry extends beyond the boundary box.
-
-
-### Unit Cell Check
-
-Checks that `layout/<TOP>.gds` holds the `inverter` cell as the [`inverter` macro](../inverter/) ships it in `layout/inverter_top.gds`, and that every other cell name the two files share has the same geometry on every layer and the same texts:
-
-```sh
-make check-unit-cell
-```
-
-Cells of one name merge at the chip top-level, so a macro with its own revision of `inverter` or `pmos` would change its neighbors without any error. The numbers in names like `via_stack$3` are per layout, so the check compares what a shared name holds, not the lists of names. `build-top` runs this target right after `check-boundary`.
 
 
 ### Export LEF
