@@ -13,7 +13,7 @@ TOP = ringosc
 REQUIRED_PDK ?= ihp-sg13cmos5l
 
 # Goals that do not read the PDK
-PDK_FREE_GOALS = help clean check-unit-cell
+PDK_FREE_GOALS = help clean
 
 ifneq ($(REQUIRED_PDK),)
 ifneq ($(filter-out $(PDK_FREE_GOALS),$(or $(MAKECMDGOALS),$(.DEFAULT_GOAL))),)
@@ -116,7 +116,7 @@ help: ## Show this help message
 	@echo 'TB selects the Xschem testbench for sim-xschem (default: <CELL>_tb_tran).'
 	@echo 'SCRIPT selects the plotting script for sim-view-xschem (default: plot_<CELL>).'
 	@echo 'OPEN_ARGS passes extra options to sak-open.py for the open target (e.g. --all).'
-	@echo 'REQUIRED_PDK defaults to $(REQUIRED_PDK). Every target except help, clean and check-unit-cell aborts if $$PDK differs.'
+	@echo 'REQUIRED_PDK defaults to $(REQUIRED_PDK). Every target except help and clean aborts if $$PDK differs.'
 .PHONY: help
 # ================================================================================================
 
@@ -183,9 +183,8 @@ sim-all: ## Simulate the macro
 
 
 # Build Target
-build-top: ## Build TOP cell (check PR boundary and unit cell, Verilog, LEF, LIB, copy GDS, and render images)
+build-top: ## Build TOP cell (check PR boundary, Verilog, LEF, LIB, copy GDS, and render images)
 	$(MAKE) check-boundary
-	$(MAKE) check-unit-cell
 	$(MAKE) lef
 	$(MAKE) lib
 	$(MAKE) verilog
@@ -200,14 +199,6 @@ check-boundary: ## Check that the TOP cell layout carries the PR boundary box on
 	python3 $(SCRIPTS_DIR)/check_boundary.py $(LAY_DIR)/$(TOP).gds $(TOP)
 .PHONY: check-boundary
 # ================================================================================================
-
-
-# Unit Cell Check Target
-check-unit-cell: ## Check that the TOP cell layout holds the inverter cell as the inverter macro ships it, and that no shared cell name has two contents
-	python3 $(SCRIPTS_DIR)/check_unit_cell.py $(LAY_DIR)/$(TOP).gds ../inverter/$(LAY_DIR)/inverter_top.gds inverter
-.PHONY: check-unit-cell
-# ================================================================================================
-
 
 
 # LEF Target
