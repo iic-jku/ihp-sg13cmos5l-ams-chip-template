@@ -1,0 +1,676 @@
+<?xml version="1.0" encoding="utf-8"?>
+<report-database>
+ <description>Main DRC Run Report at</description>
+ <original-file/>
+ <generator>drc: script='/mnt/c/Users/si150/eda/designs/heichips26-analog-workshop/IHP-Open-PDK/ihp-sg13cmos5l/libs.tech/klayout/tech/drc/ihp-sg13cmos5l.drc'</generator>
+ <top-cell>ringosc</top-cell>
+ <tags>
+ </tags>
+ <categories>
+  <category>
+   <name>activ_drw_Acute</name>
+   <description>3.2 activ_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_pin_Acute</name>
+   <description>3.2 activ_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_mask_Acute</name>
+   <description>3.2 activ_mask_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_filler_Acute</name>
+   <description>3.2 activ_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_nofill_Acute</name>
+   <description>3.2 activ_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_opc_Acute</name>
+   <description>3.2 activ_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_iopc_Acute</name>
+   <description>3.2 activ_iopc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_noqrc_Acute</name>
+   <description>3.2 activ_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_drw_Acute</name>
+   <description>3.2 gatpoly_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_pin_Acute</name>
+   <description>3.2 gatpoly_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_filler_Acute</name>
+   <description>3.2 gatpoly_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_nofill_Acute</name>
+   <description>3.2 gatpoly_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_opc_Acute</name>
+   <description>3.2 gatpoly_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_iopc_Acute</name>
+   <description>3.2 gatpoly_iopc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_noqrc_Acute</name>
+   <description>3.2 gatpoly_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>cont_drw_Acute</name>
+   <description>3.2 cont_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>cont_opc_Acute</name>
+   <description>3.2 cont_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsd_drw_Acute</name>
+   <description>3.2 nsd_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nsd_block_Acute</name>
+   <description>3.2 nsd_block_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_drw_Acute</name>
+   <description>3.2 metal1_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_pin_Acute</name>
+   <description>3.2 metal1_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_mask_Acute</name>
+   <description>3.2 metal1_mask_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_filler_Acute</name>
+   <description>3.2 metal1_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_nofill_Acute</name>
+   <description>3.2 metal1_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_slit_Acute</name>
+   <description>3.2 metal1_slit_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_opc_Acute</name>
+   <description>3.2 metal1_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_noqrc_Acute</name>
+   <description>3.2 metal1_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_res_Acute</name>
+   <description>3.2 metal1_res_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_iprobe_Acute</name>
+   <description>3.2 metal1_iprobe_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_diffprb_Acute</name>
+   <description>3.2 metal1_diffprb_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>passiv_drw_Acute</name>
+   <description>3.2 passiv_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>passiv_pin_Acute</name>
+   <description>3.2 passiv_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>passiv_pillar_Acute</name>
+   <description>3.2 passiv_pillar_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>passiv_sbump_Acute</name>
+   <description>3.2 passiv_sbump_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>passiv_pdl_Acute</name>
+   <description>3.2 passiv_pdl_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_drw_Acute</name>
+   <description>3.2 metal2_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_pin_Acute</name>
+   <description>3.2 metal2_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_mask_Acute</name>
+   <description>3.2 metal2_mask_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_filler_Acute</name>
+   <description>3.2 metal2_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_nofill_Acute</name>
+   <description>3.2 metal2_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_slit_Acute</name>
+   <description>3.2 metal2_slit_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_opc_Acute</name>
+   <description>3.2 metal2_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_noqrc_Acute</name>
+   <description>3.2 metal2_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_res_Acute</name>
+   <description>3.2 metal2_res_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_iprobe_Acute</name>
+   <description>3.2 metal2_iprobe_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_diffprb_Acute</name>
+   <description>3.2 metal2_diffprb_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>psd_drw_Acute</name>
+   <description>3.2 psd_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via1_drw_Acute</name>
+   <description>3.2 via1_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>salblock_drw_Acute</name>
+   <description>3.2 salblock_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2_drw_Acute</name>
+   <description>3.2 via2_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_drw_Acute</name>
+   <description>3.2 metal3_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_pin_Acute</name>
+   <description>3.2 metal3_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_mask_Acute</name>
+   <description>3.2 metal3_mask_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_filler_Acute</name>
+   <description>3.2 metal3_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_nofill_Acute</name>
+   <description>3.2 metal3_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_slit_Acute</name>
+   <description>3.2 metal3_slit_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_opc_Acute</name>
+   <description>3.2 metal3_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_noqrc_Acute</name>
+   <description>3.2 metal3_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_res_Acute</name>
+   <description>3.2 metal3_res_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_iprobe_Acute</name>
+   <description>3.2 metal3_iprobe_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_diffprb_Acute</name>
+   <description>3.2 metal3_diffprb_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell_drw_Acute</name>
+   <description>3.2 nwell_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>nwell_pin_Acute</name>
+   <description>3.2 nwell_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwell_drw_Acute</name>
+   <description>3.2 pwell_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwell_pin_Acute</name>
+   <description>3.2 pwell_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>pwell_block_Acute</name>
+   <description>3.2 pwell_block_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>substrate_drw_Acute</name>
+   <description>3.2 substrate_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3_drw_Acute</name>
+   <description>3.2 via3_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_drw_Acute</name>
+   <description>3.2 metal4_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_pin_Acute</name>
+   <description>3.2 metal4_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_mask_Acute</name>
+   <description>3.2 metal4_mask_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_filler_Acute</name>
+   <description>3.2 metal4_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_nofill_Acute</name>
+   <description>3.2 metal4_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_slit_Acute</name>
+   <description>3.2 metal4_slit_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_opc_Acute</name>
+   <description>3.2 metal4_opc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_noqrc_Acute</name>
+   <description>3.2 metal4_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_res_Acute</name>
+   <description>3.2 metal4_res_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_iprobe_Acute</name>
+   <description>3.2 metal4_iprobe_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_diffprb_Acute</name>
+   <description>3.2 metal4_diffprb_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topvia1_drw_Acute</name>
+   <description>3.2 topvia1_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_drw_Acute</name>
+   <description>3.2 topmetal1_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_pin_Acute</name>
+   <description>3.2 topmetal1_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_mask_Acute</name>
+   <description>3.2 topmetal1_mask_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_filler_Acute</name>
+   <description>3.2 topmetal1_filler_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_nofill_Acute</name>
+   <description>3.2 topmetal1_nofill_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_slit_Acute</name>
+   <description>3.2 topmetal1_slit_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_noqrc_Acute</name>
+   <description>3.2 topmetal1_noqrc_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_res_Acute</name>
+   <description>3.2 topmetal1_res_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_iprobe_Acute</name>
+   <description>3.2 topmetal1_iprobe_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_diffprb_Acute</name>
+   <description>3.2 topmetal1_diffprb_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>thickgateox_drw_Acute</name>
+   <description>3.2 thickgateox_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>polyres_drw_Acute</name>
+   <description>3.2 polyres_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>polyres_pin_Acute</name>
+   <description>3.2 polyres_pin_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>antmetal1_drw_Acute</name>
+   <description>3.2 antmetal1_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>thinfilmres_drw_Acute</name>
+   <description>3.2 thinfilmres_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>lbe_drw_Acute</name>
+   <description>3.2 lbe_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>prboundary_drw_Acute</name>
+   <description>3.2 prboundary_drw_Acute: acute corner angle below 87.0 degree is not allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>cont_drw_Angle90</name>
+   <description>3.2 cont_drw_Angle90: only orthogonal edges (0/90 degree) are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via1_drw_Angle90</name>
+   <description>3.2 via1_drw_Angle90: only orthogonal edges (0/90 degree) are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via2_drw_Angle90</name>
+   <description>3.2 via2_drw_Angle90: only orthogonal edges (0/90 degree) are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>via3_drw_Angle90</name>
+   <description>3.2 via3_drw_Angle90: only orthogonal edges (0/90 degree) are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topvia1_drw_Angle90</name>
+   <description>3.2 topvia1_drw_Angle90: only orthogonal edges (0/90 degree) are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>gatpoly_drw_Angle45</name>
+   <description>3.2 gatpoly_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>activ_drw_Angle45</name>
+   <description>3.2 activ_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal1_drw_Angle45</name>
+   <description>3.2 metal1_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal2_drw_Angle45</name>
+   <description>3.2 metal2_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal3_drw_Angle45</name>
+   <description>3.2 metal3_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>metal4_drw_Angle45</name>
+   <description>3.2 metal4_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>topmetal1_drw_Angle45</name>
+   <description>3.2 topmetal1_drw_Angle45: only 0/45/90 degree edges are allowed.</description>
+   <categories>
+   </categories>
+  </category>
+ </categories>
+ <cells>
+  <cell>
+   <name>ringosc</name>
+   <variant/>
+   <layout-name/>
+   <references>
+   </references>
+  </cell>
+ </cells>
+ <items>
+ </items>
+</report-database>

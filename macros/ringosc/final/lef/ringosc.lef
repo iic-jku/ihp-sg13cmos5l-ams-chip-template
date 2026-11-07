@@ -1,0 +1,51 @@
+VERSION 5.7 ;
+  NOWIREEXTENSIONATPIN ON ;
+  DIVIDERCHAR "/" ;
+  BUSBITCHARS "[]" ;
+MACRO ringosc
+  CLASS BLOCK ;
+  FOREIGN ringosc ;
+  ORIGIN 0.000 0.000 ;
+  SIZE 133.520 BY 15.280 ;
+  PIN vout
+    ANTENNADIFFAREA 26.599998 ;
+    PORT
+      LAYER Metal3 ;
+        RECT 103.910 4.480 133.000 5.980 ;
+    END
+  END vout
+  PIN VSS
+    USE GROUND ;
+    PORT
+      LAYER Metal3 ;
+        RECT 65.955 0.000 67.565 1.500 ;
+    END
+  END VSS
+  PIN VDD
+    USE POWER ;
+    PORT
+      LAYER Metal3 ;
+        RECT 65.955 13.780 67.565 15.280 ;
+    END
+  END VDD
+  OBS
+      LAYER GatPoly ;
+        RECT 0.350 1.500 133.170 13.780 ;
+      LAYER Metal1 ;
+        RECT 0.350 0.000 133.170 15.280 ;
+      LAYER Metal2 ;
+        RECT 0.350 0.000 133.170 15.280 ;
+      LAYER Metal3 ;
+        RECT 0.350 13.570 65.745 15.280 ;
+        RECT 67.775 13.570 133.170 15.280 ;
+        RECT 0.350 6.190 133.170 13.570 ;
+        RECT 0.350 4.270 103.700 6.190 ;
+        RECT 0.350 1.710 133.170 4.270 ;
+        RECT 0.350 0.000 65.745 1.710 ;
+        RECT 67.775 0.000 133.170 1.710 ;
+      LAYER Metal4 ;
+        RECT 2.140 4.880 96.275 5.580 ;
+  END
+END ringosc
+END LIBRARY
+
