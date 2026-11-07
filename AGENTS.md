@@ -24,7 +24,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 
 ## Environment and PDK
 
-- Run every target inside the IIC-OSIC-TOOLS container, tag `2026.10` or later. CI uses `hpretl/iic-osic-tools:latest`.
+- Run every target inside the IIC-OSIC-TOOLS container, tag `2026.11` or later. CI uses `hpretl/iic-osic-tools:latest`.
 - The PDK is `ihp-sg13cmos5l`. A fresh container starts on `ihp-sg13g2`, so select the PDK before any target runs.
 - `sak-pdk ihp-sg13cmos5l` selects it for the current shell only. `.designinit` exports the same variables (`PDK`, `PDKPATH`, `STD_CELL_LIBRARY`, `SPICE_USERINIT_DIR`, `KLAYOUT_PATH`), and copied into the container's `designs/` folder it selects the PDK at every start. In a shell that does not keep state between commands, select the PDK in the same command line as `make`.
 - PDK guard: the top-level, `macros/`, macro and IP Makefiles compare `$PDK` with `REQUIRED_PDK` (default `ihp-sg13cmos5l`) when parsed and stop with an error that names the `sak-pdk` call to run. Exempt goals are `help` and `clean` (`macros/Makefile`: `help` only), plus `clean-all` at the top level. Fix the PDK instead of passing `REQUIRED_PDK=`: a wrong PDK runs the wrong rule decks, LEFs and cells, and the results still look valid.
@@ -34,7 +34,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 
 ```sh
 make help                          # targets and variables
-make all                           # build-all, Magic and gdscheck DRC of chip_top and chip_top_logo_fill, sim-all, bondplan
+make all                           # build-all, gdscheck DRC of chip_top and chip_top_logo_fill, sim-all, bondplan
 make build-all                     # submodules, bondpad, logos, macros, build-top
 make build-top                     # librelane-nodrc, copy reports/GDS/netlists/render, add-logo-fill, render-gds
 make sim-rtl-cocotb                # chip RTL simulation (cocotb on Icarus Verilog)
@@ -47,7 +47,8 @@ make regression                    # the CI smoke test
 make -C macros/counter lint-verilog-all     # Verilator lint (template macro)
 make -C macros/counter sim-rtl-verilog      # Icarus Verilog testbench
 make -C macros/counter sim-rtl-cocotb       # cocotb testbench
-make -C macros/counter all                  # lint, FPGA build, LibreLane, Magic PEX, simulations
+make -C macros/counter lec                  # prove the final netlist equivalent to the RTL (EQY)
+make -C macros/counter all                  # lint, FPGA build, LibreLane, LEC, Magic PEX, simulations
 make -C macros/inverter sim-xschem TB=<tb>  # one Xschem testbench in batch mode (template macro)
 make -C macros/inverter all                 # KLayout DRC/LVS, Magic DRC/LVS/PEX, LEF/LIB/Verilog stub, simulations, CACE
 ```
@@ -58,7 +59,7 @@ make -C macros/inverter all                 # KLayout DRC/LVS, Magic DRC/LVS/PEX
 - The top-level `sim-gl-xschem` includes `macros/counter/netlist/xspice/counter_top.xspice` (template), which `clean-all` deletes. Run `make build-counter` before it.
 - `kpex` does not support `ihp-sg13cmos5l` yet, so `klayout-pex` fails and `klayout-verify` leaves it out. Use `magic-pex` for parasitic extraction.
 - `build-top` runs `librelane-nodrc` on purpose until IHP fixes the `metal1_pin_offgrid` errors (see the comment in `Makefile`). Run DRC separately with `magic-drc`, `klayout-drc-minimum`, `klayout-drc-regular` or the matching `gdscheck-drc-*` targets. `DRC_JOBS=<n>` caps the KLayout processes and sets the gdscheck threads (default 4 and every CPU). More than 4 only pays off for the full chip on a server.
-- KLayout is the sign-off DRC. Magic flags IHP's own cells on the chip (the IO pads and the SRAM read hierarchically), so until the upstream fixes are in the image `make all` stops at the chip's Magic DRC. Fix such a report upstream, not with make's `-` prefix in a flow. Keep `-f` patterns for Magic away from the top cell: `sak-drc.sh` refuses one that matches it, because Magic would check an empty cell.
+- KLayout is the sign-off DRC. Magic flags IHP's own cells on the chip (the IO pads and the SRAM read hierarchically), so `make all` leaves the chip's Magic DRC out until the upstream fixes are in the image. Fix such a report upstream, not with make's `-` prefix in a flow. Keep `-f` patterns for Magic away from the top cell: `sak-drc.sh` refuses one that matches it, because Magic would check an empty cell.
 
 ## Conventions
 
