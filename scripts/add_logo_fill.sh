@@ -31,9 +31,9 @@ CORE_URX=1235  # Core upper-right X coordinate
 CORE_URY=1235  # Core upper-right Y coordinate
 
 # Logo placement relative to the core lower-left corner in um. The bottom margin lifts the logo above the
-# VCO macro: meerkat.py masks drawn TopMetal1 only, so it cannot see the coil keep-out.
+# VCO macro and the TopMetal1 rail pair over it: meerkat.py masks drawn TopMetal1 only, so it cannot see the coil keep-out.
 LOGO_CORE_MARGIN_LEFT=35
-LOGO_CORE_MARGIN_BOTTOM=187
+LOGO_CORE_MARGIN_BOTTOM=197
 
 # Fill distances in um between the generated filler shapes (smaller distance = higher fill density).
 # The global density windows of the regular KLayout DRC are 35 to 60 percent on Metal1 to Metal4,
@@ -78,14 +78,14 @@ LOGO_IMG="${IMG_DIR}/chip_logo_mono.png"
 #   die_margin_bottom = CORE_LLY + LOGO_CORE_MARGIN_BOTTOM
 #
 # For this chip (die = 1600 x 1600 µm, core LL = (365,365) µm,
-# logo core-relative margins = (35,187) µm):
+# logo core-relative margins = (35,197) µm):
 #
-#   die margins = (LOGO_MARGIN_LEFT, LOGO_MARGIN_BOTTOM) = (400,552) µm
+#   die margins = (LOGO_MARGIN_LEFT, LOGO_MARGIN_BOTTOM) = (400,562) µm
 #   max img_width  = (1600 - 2*400) / 2 = 400 px → 800 µm on-chip
 #
 # Current image (chip_logo_mono.png): 400x270 px → 800x540 µm on-chip
-#   placed 22 µm above center with die margins (left,right,bottom,top)
-#   = (400,400,552,508) µm
+#   placed 32 µm above center with die margins (left,right,bottom,top)
+#   = (400,400,562,498) µm
 # ─────────────────────────────────────────────────────────────────────────────
 
 echo "[INFO] Adding logo and fill to ${GDS_IN}"
