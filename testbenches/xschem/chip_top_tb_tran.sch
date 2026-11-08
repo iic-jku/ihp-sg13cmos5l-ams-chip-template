@@ -101,7 +101,7 @@ C {devices/gnd.sym} 460 -1040 0 0 {name=l33 lab=GND}
 C {devices/vsource.sym} 720 -1100 0 0 {name=Vrf value="\{VDDRF\}"}
 C {devices/lab_wire.sym} 720 -1170 0 0 {name=p34 sig_type=std_logic lab=vdd_rf}
 C {devices/gnd.sym} 720 -1040 0 0 {name=l35 lab=GND}
-C {devices/vsource.sym} 980 -1100 0 0 {name=Vro value="\{VDDRO\}"}
+C {devices/vsource.sym} 980 -1100 0 0 {name=Vro value="pwl(0 0 4.6u 0 4.601u \{VDDRO\})"}
 C {devices/lab_wire.sym} 980 -1170 0 0 {name=p36 sig_type=std_logic lab=vdd_ro}
 C {devices/gnd.sym} 980 -1040 0 0 {name=l37 lab=GND}
 C {devices/vsource.sym} 1240 -1100 0 0 {name=Vhv value="\{VDDHV\}"}
@@ -139,8 +139,9 @@ only_toplevel=true
 value="
 .include ../../../ip/sg13cmos5l_io_custom/spice/sg13cmos5l_io.spi
 .include ../../../macros/counter_lv_ihp/netlist/xspice/counter_lv_ihp_top.xspice
-.include ../../../macros/counter_lv_eth/netlist/xspice/counter_lv_eth_top.xspice
-* The XSPICE model of the HV counter is built for 3.3 V, so the bench uses its post-layout netlist
+* The XSPICE model of the HV counter is built for 3.3 V, and the one of the ETH counter keeps the unknown states that slow edges feed into it,
+* so the bench uses the post-layout netlists of these two
+.include ../../../macros/counter_lv_eth/netlist/pex/counter_lv_eth_top_magic_pex_3.spice
 .include ../../../macros/counter_hv_kvc/netlist/pex/counter_hv_kvc_top_magic_pex_3.spice
 .include ../../../macros/vco/netlist/spice/vco_ind_le.spice
 .param IOVDD=3.3
@@ -154,6 +155,7 @@ value="
 .csparam fclk=fclk
 .param Cload=10p
 .param Rload=1k
+* The ring oscillator sets the time step, so it only starts 400 ns before the end of the run
 * Package and instrument loads
 Cl0 count0 0 \{Cload\}
 Cl1 count1 0 \{Cload\}
@@ -171,7 +173,7 @@ Rl2 inv_vout 0 \{Rload*100\}
 Cl11 inv_vout 0 1p
 Rrfn rf_out_n 0 50
 Rrfp rf_out_p 0 50
-.options klu method=gear reltol=3e-3 vntol=1e-5 abstol=1e-11 chgtol=1e-11 cshunt=100f rshunt=1e15
+.options klu method=gear reltol=3e-3 vntol=1e-5 abstol=1e-11 chgtol=1e-11 rshunt=1e15
 .control
 
 set num_threads=16

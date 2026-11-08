@@ -565,7 +565,7 @@ C {lab_pin.sym} 160 -910 0 0 {name=p146 sig_type=std_logic lab=clk_lv_ihp}
 C {lab_pin.sym} 160 -790 0 0 {name=p147 sig_type=std_logic lab=rst_n}
 C {lab_pin.sym} 160 -850 0 0 {name=p148 sig_type=std_logic lab=sel_lv_ihp}
 C {lab_pin.sym} 440 -850 2 0 {name=p149 sig_type=std_logic lab=count_lv_ihp[0..7]}
-C {counter_lv_eth_top.sym} 1000 -850 0 0 {name=x_counter_lv_eth}
+C {counter_lv_eth_top_pex.sym} 1000 -850 0 0 {name=x_counter_lv_eth}
 C {lab_pin.sym} 1040 -950 2 0 {name=p150 sig_type=std_logic lab=VDD}
 C {lab_pin.sym} 1040 -750 2 0 {name=p151 sig_type=std_logic lab=VSS}
 C {lab_pin.sym} 860 -910 0 0 {name=p152 sig_type=std_logic lab=clk_lv_eth}

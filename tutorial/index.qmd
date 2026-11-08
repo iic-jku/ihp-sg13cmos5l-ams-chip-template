@@ -2465,7 +2465,7 @@ The cocotb testbench at top level is [`testbenches/cocotb/chip_top_tb.py`](https
 
 ![`chip_top` cocotb waveform in GTKWave, taken on an earlier version of the chip with two counters.](fig/chip_top/chip_top_cocotb_gtkwave.png){#fig-chip-top-cocotb-gtkwave}
 
-For mixed-signal simulation, the [`testbenches/xschem/chip_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/xschem/chip_top_tb_tran.sch) testbench can be opened in Xschem for interactive simulation, the same way as for the counter or the inverter, and is shown in @fig-chip-top-tb-tran-schematic. The IHP LV and ETH LV counters use their XSPICE models. The XSPICE model of the IHP HV counter is built for 3.3 V, so the testbench uses its post-layout netlist at the 1.2 V of the chip. The bench steps through the counter select with `rst_n` low at each step, while the amplifier, the analog inverter channel and the ring oscillator run.
+For mixed-signal simulation, the [`testbenches/xschem/chip_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/xschem/chip_top_tb_tran.sch) testbench can be opened in Xschem for interactive simulation, the same way as for the counter or the inverter, and is shown in @fig-chip-top-tb-tran-schematic. The IHP LV counter uses its XSPICE model, and the IHP HV and ETH LV counters use their post-layout netlists. The XSPICE model of the IHP HV counter is built for 3.3 V, and the one of the ETH LV counter keeps the unknown states that the analog edges of the chip feed through its input bridges. The bench steps through the counter select with `rst_n` low at each step while the amplifier and the analog inverter channel run. The ring oscillator sets the time step, so it only starts 400 ns before the end of the run.
 
 ```sh
 cd testbenches/xschem
@@ -2596,7 +2596,7 @@ For full-RC extraction (`EXT_MODE=3`), `magic-pex` also exposes the `sak-pex.sh`
 As in the macros, `magic-pex` starts by running `make symbol-pex`, which rebuilds [`schematic/xschem/chip_top_pex.sym`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/schematic/xschem/chip_top_pex.sym) from `chip_top.sym` with `type=subcircuit` changed into `type=primitive`, so the PEX symbol always matches the current chip symbol.
 
 ::: {.callout-warning}
-At the top level, PEX is only run on `chip_top` (without logo and filler), and the default `EXT_MODE=1` (C-decoupled) is used to keep the runtime manageable. However, the extracted netlist [`chip_top_magic_pex_1.spice`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/netlist/pex/chip_top_magic_pex_1.spice) is still huge (~75 MB, ~566k lines), and the post-layout simulation must be run on a powerful server.
+At the top level, PEX is only run on `chip_top` (without logo and filler), and the default `EXT_MODE=1` (C-decoupled) is used to keep the runtime manageable. However, the extracted netlist [`chip_top_magic_pex_1.spice`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/netlist/pex/chip_top_magic_pex_1.spice) is still large (16 MB, about 210k lines), and the post-layout simulation must be run on a powerful server.
 :::
 
 ## Packaging {#sec-packaging}
