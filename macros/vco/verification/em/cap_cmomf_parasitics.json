@@ -1,0 +1,18 @@
+[
+ {
+  "w": 10.0,
+  "l": 18.6,
+  "mmin": 2,
+  "mmax": 4,
+  "rs": 0.8976,
+  "ls": 4.899e-12,
+  "cs": 4.866e-15,
+  "rs_at_f1": 0.9465,
+  "c_em": 1.568e-13,
+  "cs_plates": [
+   4.601e-15,
+   5.131e-15
+  ],
+  "source": "Palace order 3 volume metal, open-short at 10 and 20 GHz, cs from Magic C-coupled"
+ }
+]

@@ -1,0 +1,45 @@
+{
+    "ports": [
+        {
+            "portnumber": 1,
+            "Z0": 50,
+            "direction": "Z",
+            "length": 3.9399999999999977,
+            "width": 4.0,
+            "xmin": -10.0,
+            "xmax": -6.0,
+            "ymin": -1.0,
+            "ymax": -0.9,
+            "zmin": 192.16,
+            "zmax": 196.1
+        },
+        {
+            "portnumber": 2,
+            "Z0": 50,
+            "direction": "Z",
+            "length": 3.9399999999999977,
+            "width": 4.0,
+            "xmin": 6.0,
+            "xmax": 10.0,
+            "ymin": -1.0,
+            "ymax": -0.9,
+            "zmin": 192.16,
+            "zmax": 196.1
+        },
+        {
+            "portnumber": 3,
+            "Z0": 50,
+            "direction": "Z",
+            "length": 3.9399999999999977,
+            "width": 4.0,
+            "xmin": -2.0,
+            "xmax": 2.0,
+            "ymin": -1.0,
+            "ymax": -0.9,
+            "zmin": 192.16,
+            "zmax": 196.1
+        }
+    ],
+    "unit": 1e-06,
+    "name": "vco_ind"
+}
