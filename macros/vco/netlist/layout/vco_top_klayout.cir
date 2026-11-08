@@ -1,4 +1,4 @@
-* Extracted by KLayout with SG13CMOS5L LVS runset on : 07/11/2026 21:42
+* Extracted by KLayout with SG13CMOS5L LVS runset on : 07/11/2026 22:24
 
 .SUBCKT vco_top VDD VSS di_en rf_out_n rf_out_p vtune
 X$1 VSS \$14 \$46 vtune \$47 vco_core
@@ -17,39 +17,39 @@ R$33 vdd_core \$7 VSS rppd w=17.3u l=8.8u ps=0u b=0 m=1
 .SUBCKT vco_bias vbn_buf VSS vbg_buf en_b di_en VDD
 M$1 VSS vbn_buf VSS VSS sg13_lv_nmos L=10u W=80u AS=17.6p AD=17.6p PS=100.4u
 + PD=100.4u rfmode=0
-M$11 VSS en_b \$29 VSS sg13_lv_nmos L=0.13u W=0.5u AS=0.17p AD=0.17p PS=1.68u
-+ PD=1.68u rfmode=0
-M$12 VSS VSS VSS VSS sg13_lv_nmos L=0.5u W=5u AS=1.7p AD=1.7p PS=11.36u
-+ PD=11.36u rfmode=0
-M$13 VSS \$22 \$31 VSS sg13_lv_nmos L=0.5u W=2.5u AS=0.85p AD=0.85p PS=5.68u
-+ PD=5.68u rfmode=0
-M$14 VSS en_b vbn_buf VSS sg13_lv_nmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
-+ PD=2.68u rfmode=0
-M$15 VSS \$24 \$24 VSS sg13_lv_nmos L=0.5u W=2.5u AS=0.85p AD=0.85p PS=5.68u
-+ PD=5.68u rfmode=0
-M$16 VSS vbg_buf VSS VSS sg13_lv_nmos L=10u W=80u AS=17.6p AD=17.6p PS=100.4u
+M$11 VSS vbg_buf VSS VSS sg13_lv_nmos L=10u W=80u AS=17.6p AD=17.6p PS=100.4u
 + PD=100.4u rfmode=0
-M$22 VSS en_b \$22 VSS sg13_lv_nmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
-+ PD=2.68u rfmode=0
-M$23 VSS di_en en_b VSS sg13_lv_nmos L=0.13u W=0.5u AS=0.17p AD=0.17p PS=1.68u
+M$16 VSS en_b \$29 VSS sg13_lv_nmos L=0.13u W=0.5u AS=0.17p AD=0.17p PS=1.68u
 + PD=1.68u rfmode=0
-M$24 VSS \$22 \$22 VSS sg13_lv_nmos L=0.5u W=2.5u AS=0.85p AD=0.85p PS=5.68u
+M$17 VSS di_en en_b VSS sg13_lv_nmos L=0.13u W=0.5u AS=0.17p AD=0.17p PS=1.68u
++ PD=1.68u rfmode=0
+M$18 VSS en_b \$22 VSS sg13_lv_nmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
++ PD=2.68u rfmode=0
+M$19 VSS \$22 \$31 VSS sg13_lv_nmos L=0.5u W=2.5u AS=0.85p AD=0.85p PS=5.68u
 + PD=5.68u rfmode=0
-M$30 VDD VDD VDD VDD sg13_lv_pmos L=0.5u W=10u AS=3.4p AD=3.4p PS=21.36u
+M$20 VSS en_b vbn_buf VSS sg13_lv_nmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
++ PD=2.68u rfmode=0
+M$26 VSS VSS VSS VSS sg13_lv_nmos L=0.5u W=5u AS=1.7p AD=1.7p PS=11.36u
++ PD=11.36u rfmode=0
+M$27 VSS \$24 \$24 VSS sg13_lv_nmos L=0.5u W=2.5u AS=0.85p AD=0.85p PS=5.68u
++ PD=5.68u rfmode=0
+M$29 VSS \$22 \$22 VSS sg13_lv_nmos L=0.5u W=2.5u AS=0.85p AD=0.85p PS=5.68u
++ PD=5.68u rfmode=0
+M$30 VDD \$31 \$31 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
++ PD=10.68u rfmode=0
+M$31 VDD VDD VDD VDD sg13_lv_pmos L=0.5u W=10u AS=3.4p AD=3.4p PS=21.36u
 + PD=21.36u rfmode=0
-M$31 VDD \$31 \$31 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
-+ PD=10.68u rfmode=0
-M$32 VDD en_b \$29 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
+M$33 VDD VDD VDD VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
 + PD=2.68u rfmode=0
-M$33 VDD \$31 \$49 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
-+ PD=10.68u rfmode=0
-M$34 VDD di_en en_b VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
-+ PD=2.68u rfmode=0
-M$35 VDD en_b \$48 VDD sg13_lv_pmos L=0.13u W=2u AS=0.68p AD=0.68p PS=4.68u
+M$34 VDD en_b \$48 VDD sg13_lv_pmos L=0.13u W=2u AS=0.68p AD=0.68p PS=4.68u
 + PD=4.68u rfmode=0
-M$36 VDD \$29 \$31 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
+M$35 VDD \$29 \$31 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
 + PD=2.68u rfmode=0
-M$37 VDD VDD VDD VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
+M$36 VDD \$31 \$49 VDD sg13_lv_pmos L=0.5u W=5u AS=1.7p AD=1.7p PS=10.68u
++ PD=10.68u rfmode=0
+M$37 VDD di_en en_b VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
++ PD=2.68u rfmode=0
+M$38 VDD en_b \$29 VDD sg13_lv_pmos L=0.13u W=1u AS=0.34p AD=0.34p PS=2.68u
 + PD=2.68u rfmode=0
 R$39 \$24 \$49 VSS rppd w=0.5u l=8.5u ps=0u b=0 m=1
 R$40 \$22 \$48 VSS rppd w=0.5u l=13.1u ps=0u b=0 m=1
@@ -62,15 +62,15 @@ C$44 VSS vbg_buf cap_cmomf w=20.55u l=18.7u A=0p P=0u m=1
 .SUBCKT vco_buf VSS rf_out_n vbn_buf rf_out_p VDD rf_p vbg_buf rf_n
 M$1 VSS vbn_buf \$5 VSS sg13_lv_nmos L=0.5u W=150u AS=29.25p AD=29.25p
 + PS=166.7u PD=166.7u rfmode=0
-M$31 \$5 \$15 rf_out_n VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
+M$31 \$5 \$14 rf_out_n VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
 + PS=30.86u PD=30.86u rfmode=0
 M$43 \$5 \$19 rf_out_p VSS sg13_lv_nmos L=0.13u W=24u AS=4.86p AD=4.86p
 + PS=30.86u PD=30.86u rfmode=0
 R$55 rf_out_n VDD VSS rppd w=10u l=1.65u ps=0u b=0 m=1
 R$56 rf_out_p VDD VSS rppd w=10u l=1.65u ps=0u b=0 m=1
-R$57 \$15 vbg_buf VSS rhigh w=0.5u l=8u ps=0u b=0 m=1
+R$57 \$14 vbg_buf VSS rhigh w=0.5u l=8u ps=0u b=0 m=1
 R$58 \$19 vbg_buf VSS rhigh w=0.5u l=8u ps=0u b=0 m=1
-C$59 rf_p \$15 cap_cmomf w=10u l=18.6u A=0p P=0u m=1
+C$59 rf_p \$14 cap_cmomf w=10u l=18.6u A=0p P=0u m=1
 C$60 \$19 rf_n cap_cmomf w=10u l=18.6u A=0p P=0u m=1
 .ENDS vco_buf
 
