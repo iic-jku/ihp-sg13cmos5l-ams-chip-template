@@ -1,0 +1,7 @@
+PASS ss   125 C VDD 1.20 V  50.0 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.40 T
+PASS tt    27 C VDD 1.20 V  50.0 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.28 T
+PASS ff   -40 C VDD 1.20 V  50.0 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.20 T
+PASS ss   125 C VDD 1.20 V  25.0 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.20 T
+PASS ss   125 C VDD 1.20 V  12.5 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.10 T
+PASS tt    27 C VDD 1.50 V  50.0 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.18 T
+PASS ff   -40 C VDD 1.65 V  50.0 MHz, edges 259, wrong 0, wrap 255->0 True, last output crossing 0.11 T

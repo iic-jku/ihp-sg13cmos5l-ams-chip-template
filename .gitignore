@@ -34,6 +34,7 @@ sim_build/
 /macros/*/verification/em/palace_model/**/*.msh
 /macros/*/schematic/xschem/simulations
 /macros/*/testbenches/xschem/simulations
+/macros/*/testbenches/ngspice/simulations
 /macros/*/flow/final
 /macros/*/flow/eqy
 /macros/*/fpga/*/build/
