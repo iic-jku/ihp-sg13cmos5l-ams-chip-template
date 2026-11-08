@@ -43,9 +43,18 @@ if {![llength [info commands append_xschem_library_path_unique]]} {
 append_xschem_library_path_unique [file dirname [info script]]
 append_xschem_library_path_unique [file join [file dirname [info script]] ../../testbenches/xschem]
 
+# The chip schematic instantiates standard cells, whose subcircuits come from the cell library
+set stdcell_sym_type primitive
+
 # Source project xschemrc
 source [file dirname [info script]]/../../macros/inverter/schematic/xschem/xschemrc
-source [file dirname [info script]]/../../macros/counter/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../macros/amplifier/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../macros/ringosc/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../macros/counter_lv_ihp/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../macros/counter_lv_eth/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../macros/counter_hv_kvc/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../macros/vco/schematic/xschem/xschemrc
+source [file dirname [info script]]/../../ip/sg13cmos5l_ip__rfpad_70x70/schematic/xschem/xschemrc
 
 # Pin the netlist directory to the simulations folder of the loaded schematic
 if {![llength [info commands pin_netlist_dir]]} {
