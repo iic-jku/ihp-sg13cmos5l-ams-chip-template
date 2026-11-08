@@ -116,8 +116,9 @@ _WAIVED_MARKERS = $(if $(filter precheck,$(DRC_LEVEL)),0,7)
 klayout-drc: ## Run KLayout DRC of the CELL cell, passes only with exactly the waived Pad.fR_M1 markers (usage: make klayout-drc [CELL=<cellname>] [DRC_LEVEL=<precheck|macro|regular>] [DRC_JOBS=<n>])
 	mkdir -p $(DRC_RPT_DIR)
 	find $(DRC_RPT_DIR) -path '*/$(CELL).klayout.drc/*' -name '*.lyrdb' -delete
-	sak-drc.sh -d -k -l $(DRC_LEVEL) $(_DRC_JOBS_OPT) -w $(DRC_RPT_DIR) $(GDS_DIR)/$(CELL).gds || true
-	@reports=$$(find $(DRC_RPT_DIR) -path '*/$(CELL).klayout.drc/*' -name '*.lyrdb'); \
+	@rc=0; sak-drc.sh -d -k -l $(DRC_LEVEL) $(_DRC_JOBS_OPT) -w $(DRC_RPT_DIR) $(GDS_DIR)/$(CELL).gds || rc=$$?; \
+	test "$$rc" -le 1 || { echo "klayout-drc: sak-drc.sh stopped with exit $$rc, a run that failed proves nothing"; exit 1; }; \
+	reports=$$(find $(DRC_RPT_DIR) -path '*/$(CELL).klayout.drc/*' -name '*.lyrdb'); \
 	test -n "$$reports" || { echo "klayout-drc: no report, the run failed"; exit 1; }; \
 	total=$$(cat $$reports | grep -c '<category>.*</category>'); \
 	waived=$$(cat $$reports | grep -c "<category>'Pad.fR_M1'</category>"); \
