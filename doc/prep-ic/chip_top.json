@@ -1,0 +1,729 @@
+{
+  "mode": "ccw",
+  "align": "center",
+  "square": true,
+  "cellh": 120.0,
+  "std": {
+    "pitch": 100,
+    "w": 60.0,
+    "h": 60.0
+  },
+  "rf": {
+    "pitch": 100,
+    "w": 70.0,
+    "h": 70.0
+  },
+  "fixed_die": true,
+  "die_w": 1600,
+  "die_h": 1600,
+  "pdk": "ihp-sg13cmos5l",
+  "package": "OP_QFN32_A4_FIT",
+  "fixed_core": false,
+  "core_w": 1500.0,
+  "core_h": 1200.0,
+  "grid": 10.0,
+  "halo": 20.0,
+  "spacing": 100.0,
+  "max_flyline": 900,
+  "max_supply_dist": 1000.0,
+  "format": 2,
+  "sides": {
+    "T": "count[7] [io] [16mA]\ncount[6] [out] [16mA]\ncount[5] [out] [16mA]\ncount[4] [out] [16mA]\ncount[3] [out] [16mA]\ncount[2] [out] [16mA]\ncount[1] [out] [16mA]\ncount[0] [out] [16mA]",
+    "R": "vin [analog]\namplifier_vout [analog]\nvin1 [analog]\nvout1 [analog]\nvout4 [out] [16mA]\nvdd_ro [analog]\nringosc_vout [analog]\nvdd_hv [analog]",
+    "B": "di_en [in]\nvtune [analog]\nVSS [vss]\nrf_out_n [analog]\nrf_out_p [analog]\nVSS [vss]\nvdd_rf [analog]\nVSS [vss]",
+    "L": "clk [in]\nrst_n [in]\nsel[1] [in]\nsel[0] [in]\nIOVDD [iovdd]\nIOVSS [iovss]\nVDD [vdd]\nVSS [vss]"
+  },
+  "floorplan": {
+    "macros": [
+      {
+        "name": "counter_lv_ihp",
+        "macro": "counter_lv_ihp_top",
+        "path": "../../macros/counter_lv_ihp",
+        "x": 75.0,
+        "y": 40.0,
+        "rot": 0,
+        "io": [],
+        "class": "noisy",
+        "domain": "",
+        "cache": {
+          "name": "counter_lv_ihp_top",
+          "w": 200.0,
+          "h": 100.0,
+          "pins": [
+            {
+              "name": "VDD",
+              "dir": "INOUT",
+              "use": "POWER",
+              "x": 15.760000000000002,
+              "y": 50.86
+            },
+            {
+              "name": "VSS",
+              "dir": "INOUT",
+              "use": "GROUND",
+              "x": 18.76,
+              "y": 50.86
+            },
+            {
+              "name": "clock_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 17.25999999999999
+            },
+            {
+              "name": "counter_value_o[0]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 12.0,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[1]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 36.959999999999994,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[2]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 61.92,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[3]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 86.88,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[4]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 111.84,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[5]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 136.8,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[6]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 161.76,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[7]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 186.72,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "enable_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 82.78
+            },
+            {
+              "name": "reset_n_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 50.019999999999996
+            }
+          ]
+        }
+      },
+      {
+        "name": "counter_lv_eth",
+        "macro": "counter_lv_eth_top",
+        "path": "../../macros/counter_lv_eth",
+        "x": 335.0,
+        "y": 40.0,
+        "rot": 0,
+        "io": [],
+        "class": "noisy",
+        "domain": "",
+        "cache": {
+          "name": "counter_lv_eth_top",
+          "w": 200.0,
+          "h": 100.0,
+          "pins": [
+            {
+              "name": "VDD",
+              "dir": "INOUT",
+              "use": "POWER",
+              "x": 15.04,
+              "y": 51.28
+            },
+            {
+              "name": "VSS",
+              "dir": "INOUT",
+              "use": "GROUND",
+              "x": 18.04,
+              "y": 51.28
+            },
+            {
+              "name": "clock_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 17.25999999999999
+            },
+            {
+              "name": "counter_value_o[0]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 14.489999999999998,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[1]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 38.849999999999994,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[2]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 63.209999999999994,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[3]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 87.57,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[4]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 111.93,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[5]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 136.29000000000002,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[6]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 160.64999999999998,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[7]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 185.01,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "enable_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 82.78
+            },
+            {
+              "name": "reset_n_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 50.019999999999996
+            }
+          ]
+        }
+      },
+      {
+        "name": "counter_hv_kvc",
+        "macro": "counter_hv_kvc_top",
+        "path": "../../macros/counter_hv_kvc",
+        "x": 595.0,
+        "y": 40.0,
+        "rot": 0,
+        "io": [],
+        "class": "noisy",
+        "domain": "",
+        "cache": {
+          "name": "counter_hv_kvc_top",
+          "w": 200.0,
+          "h": 100.0,
+          "pins": [
+            {
+              "name": "VDD",
+              "dir": "INOUT",
+              "use": "POWER",
+              "x": 15.760000000000002,
+              "y": 50.019999999999996
+            },
+            {
+              "name": "VSS",
+              "dir": "INOUT",
+              "use": "GROUND",
+              "x": 18.76,
+              "y": 50.019999999999996
+            },
+            {
+              "name": "clock_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 17.25999999999999
+            },
+            {
+              "name": "counter_value_o[0]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 12.0,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[1]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 36.959999999999994,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[2]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 61.92,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[3]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 86.88,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[4]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 111.84,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[5]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 136.8,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[6]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 161.76,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "counter_value_o[7]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 186.72,
+              "y": 0.20000000000000284
+            },
+            {
+              "name": "enable_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 82.78
+            },
+            {
+              "name": "reset_n_i",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.2,
+              "y": 50.019999999999996
+            }
+          ]
+        }
+      },
+      {
+        "name": "inverter",
+        "macro": "inverter_top",
+        "path": "../../macros/inverter",
+        "x": 715.0,
+        "y": 468.9000000000001,
+        "rot": 0,
+        "io": [
+          "vin1",
+          "vout1",
+          "vout4"
+        ],
+        "class": "normal",
+        "domain": "",
+        "cache": {
+          "name": "inverter_top",
+          "w": 54.18,
+          "h": 81.92,
+          "pins": [
+            {
+              "name": "vin1",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 19.8075,
+              "y": 66.29
+            },
+            {
+              "name": "vin2",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 19.8075,
+              "y": 46.190000000000005
+            },
+            {
+              "name": "vin3",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 19.8075,
+              "y": 35.730000000000004
+            },
+            {
+              "name": "vin4",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 19.8075,
+              "y": 15.629999999999995
+            },
+            {
+              "name": "VDD",
+              "dir": "",
+              "use": "POWER",
+              "x": 27.09,
+              "y": 5.299999999999997
+            },
+            {
+              "name": "VSS",
+              "dir": "",
+              "use": "GROUND",
+              "x": 27.09,
+              "y": 1.1000000000000085
+            },
+            {
+              "name": "vout1",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 34.175,
+              "y": 66.29
+            },
+            {
+              "name": "vout2",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 34.175,
+              "y": 46.190000000000005
+            },
+            {
+              "name": "vout3",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 34.175,
+              "y": 35.730000000000004
+            },
+            {
+              "name": "vout4",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 34.175,
+              "y": 15.629999999999995
+            }
+          ]
+        }
+      },
+      {
+        "name": "amplifier",
+        "macro": "amplifier",
+        "path": "../../macros/amplifier",
+        "x": 785.0,
+        "y": 726.76,
+        "rot": 0,
+        "io": [
+          "vin",
+          "vout"
+        ],
+        "class": "normal",
+        "domain": "",
+        "cache": {
+          "name": "amplifier",
+          "w": 35.38,
+          "h": 18.24,
+          "pins": [
+            {
+              "name": "vin",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": -0.8500000000000001,
+              "y": 16.365
+            },
+            {
+              "name": "VDD",
+              "dir": "",
+              "use": "POWER",
+              "x": 16.69,
+              "y": 3.709999999999999
+            },
+            {
+              "name": "VSS",
+              "dir": "",
+              "use": "GROUND",
+              "x": 0.8525,
+              "y": 17.49
+            },
+            {
+              "name": "vout",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": 34.03,
+              "y": 16.365
+            }
+          ]
+        }
+      },
+      {
+        "name": "ringosc",
+        "macro": "ringosc",
+        "path": "../../macros/ringosc",
+        "x": 710.0,
+        "y": 289.84000000000003,
+        "rot": 0,
+        "io": [
+          "vout"
+        ],
+        "class": "noisy",
+        "domain": "",
+        "cache": {
+          "name": "ringosc",
+          "w": 133.52,
+          "h": 15.28,
+          "pins": [
+            {
+              "name": "vout",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": 118.455,
+              "y": 10.049999999999999
+            },
+            {
+              "name": "VSS",
+              "dir": "",
+              "use": "GROUND",
+              "x": 66.75999999999999,
+              "y": 14.53
+            },
+            {
+              "name": "VDD",
+              "dir": "",
+              "use": "POWER",
+              "x": 66.75999999999999,
+              "y": 0.75
+            }
+          ]
+        }
+      },
+      {
+        "name": "vco",
+        "macro": "vco_top",
+        "path": "../../macros/vco",
+        "x": 363.64,
+        "y": 672.96,
+        "rot": 0,
+        "io": [
+          "rf_out_n",
+          "rf_out_p",
+          "vtune",
+          "di_en"
+        ],
+        "class": "sensitive",
+        "domain": "",
+        "cache": {
+          "name": "vco_top",
+          "w": 143.0,
+          "h": 176.9,
+          "pins": [
+            {
+              "name": "di_en",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": 15.175,
+              "y": 140.76
+            },
+            {
+              "name": "vtune",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": 71.5,
+              "y": 175.9325
+            },
+            {
+              "name": "rf_out_p",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": 83.5,
+              "y": 168.2825
+            },
+            {
+              "name": "rf_out_n",
+              "dir": "",
+              "use": "SIGNAL",
+              "x": 59.5,
+              "y": 168.2825
+            },
+            {
+              "name": "VSS",
+              "dir": "",
+              "use": "GROUND",
+              "x": 1.635,
+              "y": 172.8
+            },
+            {
+              "name": "VDD",
+              "dir": "",
+              "use": "POWER",
+              "x": 1.0,
+              "y": 176.08
+            }
+          ]
+        }
+      },
+      {
+        "name": "MUX",
+        "macro": "",
+        "path": "",
+        "x": 305.0,
+        "y": 180.0,
+        "rot": 0,
+        "io": [
+          "count[0]",
+          "count[1]",
+          "count[2]",
+          "count[3]",
+          "count[4]",
+          "count[5]",
+          "count[6]",
+          "count[7]",
+          "clk",
+          "rst_n",
+          "sel[1]",
+          "sel[0]"
+        ],
+        "class": "noisy",
+        "domain": "",
+        "cache": {
+          "name": "MUX",
+          "w": 260.0,
+          "h": 40.0,
+          "pins": [
+            {
+              "name": "count[0]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 10.0,
+              "y": 0.0
+            },
+            {
+              "name": "count[1]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 44.285714285714285,
+              "y": 0.0
+            },
+            {
+              "name": "count[2]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 78.57142857142857,
+              "y": 0.0
+            },
+            {
+              "name": "count[3]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 112.85714285714286,
+              "y": 0.0
+            },
+            {
+              "name": "count[4]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 147.14285714285714,
+              "y": 0.0
+            },
+            {
+              "name": "count[5]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 181.42857142857142,
+              "y": 0.0
+            },
+            {
+              "name": "count[6]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 215.71428571428572,
+              "y": 0.0
+            },
+            {
+              "name": "count[7]",
+              "dir": "OUTPUT",
+              "use": "SIGNAL",
+              "x": 250.0,
+              "y": 0.0
+            },
+            {
+              "name": "clk",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.0,
+              "y": 4.0
+            },
+            {
+              "name": "rst_n",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.0,
+              "y": 14.5
+            },
+            {
+              "name": "sel[1]",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.0,
+              "y": 25.0
+            },
+            {
+              "name": "sel[0]",
+              "dir": "INPUT",
+              "use": "SIGNAL",
+              "x": 0.0,
+              "y": 35.5
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

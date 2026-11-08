@@ -42,7 +42,7 @@ Seven hard macros are placed inside the core:
 | `i_chip_core.amplifier`      | `amplifier`          | 35.38 × 18.24 µm  | (1148.90, 487.04) | (1184.28, 505.28)  | N           |
 | `i_chip_core.vco`            | `vco_top`            | 143 × 176.90 µm   | (728.64, 385.14)  | (871.64, 562.04)   | N           |
 
-The values are kept in the `instances` blocks of [config.yaml](../flow/librelane/config.yaml). The counter row is x-centered on the die with 60 µm between the macros. The amplifier is placed by its cell origin at (1150, 490), its `rhigh` resistor reaches 1.1 µm left of and 2.96 µm below that origin. The ring oscillator's `y` of 929.88 µm is a row boundary.
+The values are kept in the `instances` blocks of [config.yaml](../flow/librelane/config.yaml). The counter row is x-centered on the die with 60 µm between the macros. The amplifier is placed by its cell origin at (1150, 490), its `rhigh` resistor reaches 1.1 µm left of and 2.96 µm below that origin. The ring oscillator's `y` of 929.88 µm is a row boundary. [prep-ic/chip_top.json](prep-ic/chip_top.json) holds the same floorplan as a PREP-IC project.
 
 
 ## Macro placement (top view)
