@@ -903,6 +903,8 @@ make klayout-lvs-chip            # the PDK runner on the finished GDS, a verdict
 make klayout-lvs-chip-controls   # the same run plus seven planted defects, each has to fail in its own circuit
 ```
 
+The controls run `LVS_JOBS` copies of the LVS at once (default 4), which needs more than 9 GiB of RAM, so use a server or a smaller `LVS_JOBS` on a laptop.
+
 The verdict comes from the run's `.lvsdb`, because the runner exits 0 on a mismatch too, and the target fails on anything but a match of every circuit. The reference starts with a list of every change it makes against those files, such as the joined substrate net `IOVSS,VSS`, and a new macro goes into the `LIBS` or `MODULES` list at the top of `mk_ref.py`. On the finished GDS the pad labels sit one level below the top cell, so this run uses `--ignore_top_ports_mismatch`. To also compare the top-level pin names, run `scripts/chip_lvs/run.py` on `layout/chip_top.gds.gz` with `--top chip_top --strict`.
 
 ### Build Xschem PEX Symbol
