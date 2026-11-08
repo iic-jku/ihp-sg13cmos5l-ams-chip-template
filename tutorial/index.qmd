@@ -58,10 +58,11 @@ This tutorial is a step-by-step walk-through of the open-source analog mixed-sig
 
 The example design used throughout the tutorial contains:
 
-- Two digital `counter_top` macros (8-bit synchronous up-counters)
-- Two `inverter_top` macros, one used as a 4-channel CMOS digital inverter, one as a 2-channel analog inverter
-- One `RM_IHPSG13_1P_1024x32_c2_bm_bist` single-port SRAM macro
-- A 32-pad padframe (8 pads per side) with I/O, power, analog, and bidirectional pads
+- Three digital 8-bit synchronous up-counters, one per standard cell library: `counter_lv_ihp_top` on IHP LV, `counter_lv_eth_top` on ETH LV and `counter_hv_kvc_top` on IHP HV
+- One `inverter_top` macro with four channels, channel 1 used as an analog inverter and channel 4 as a digital inverter
+- One `amplifier` macro and one `ringosc` ring oscillator macro
+- One `vco_top` RF macro with its two RF pads
+- A 32-pad padframe (8 pads per side) with I/O, power, analog, RF, and bidirectional pads
 - The top-level chip assembly with power distribution network (PDN), logos, and fill structures
 
 The tutorial ends with a set of exercises that apply the same flow to a modified counter, a ring oscillator using the inverters, a modified top-level floorplan and pinout, and the counter on another standard cell library. This way, all important steps of the flow are covered in a hands-on manner.
@@ -198,7 +199,7 @@ The repository is organised into the following top-level folders. The full listi
 | [`ip/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/) | External IP cells including bondpads, an RF pad, custom IO cells, and logos. |
 | [`layout/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/layout/) | Compressed GDS streams of the top-level chip, including chip_top.gds.gz and chip_top_logo_fill.gds.gz. |
 | [`LICENSES/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/LICENSES/) | License texts referenced by the SPDX headers and [REUSE.toml](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/REUSE.toml) annotations. |
-| [`macros/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/) | Recursive-style macros such as [counter/](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/), [inverter/](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/inverter/) and [vco/](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/vco/), each with its own Makefile and README. |
+| [`macros/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/) | Recursive-style macros such as [counter_lv_ihp/](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/), [inverter/](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/inverter/) and [vco/](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/vco/), each with its own Makefile and README. |
 | [`netlist/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/netlist/) | Synthesis, schematic, layout, and PEX netlists used for top-level LVS and simulation. |
 | [`packaging/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/packaging/) | Automated bondplan generation: config, flow script, package and bondplan GDS, bonding diagrams, and bond report (see @sec-packaging). |
 | [`release/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/release/) | Tapeout submission artifacts grouped by version. |
@@ -236,7 +237,7 @@ The colour scheme groups targets by the final deliverable they produce, so begin
 - **Yellow (bondpad IP)**: This branch includes `build-bondpad` and all targets inside [`ip/sg13cmos5l_ip__bondpad_70x70/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__bondpad_70x70/).
 - **Teal (RF pad IP)**: This branch includes `build-rfpad` and all targets inside [`ip/sg13cmos5l_ip__rfpad_70x70/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__rfpad_70x70/).
 - **Purple (logos IP)**: This branch includes `build-logos` and the two sub-Makefiles under [`ip/sg13cmos5l_ip__jku/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku/) and [`ip/sg13cmos5l_ip__jku_names/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__jku_names/).
-- **Blue (digital macro)**: This branch includes `build-counter` and the [`macros/counter/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/) Makefile.
+- **Blue (digital macro)**: This branch includes `build-counters` and the [`macros/counter_lv_ihp/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/) Makefile.
 - **Green (analog macro)**: This branch includes `build-inverter` and the [`macros/inverter/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/inverter/) Makefile.
 - **Red (packaging)**: This branch includes `bondplan` and the automated bondplan flow in [`packaging/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/packaging/) (see @sec-packaging).
 - **Grey (simulation and verification)**: This branch includes intermediate targets that feed the coloured deliverables (`sim-all`, `build-all`, `build-macros`, `init-submodules`, `sim-*-cocotb`).
@@ -260,7 +261,7 @@ The [top-level Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-temp
 | `make librelane` / `librelane-nodrc` | Run the LibreLane flow for the top-level (with / without DRC steps).                  |
 | `make copy-reports` / `copy-gds` / `copy-netlist` / `copy-render` | Copy the latest LibreLane artifacts back into the source tree. |
 | `make build-bondpad` / `build-rfpad` / `build-logos` | Build the bondpad, the RF pad and the logos under `ip/`.         |
-| `make build-counter` / `build-inverter` / `build-macros` | Build the digital and analog macros individually or together. |
+| `make build-counters` / `build-inverter` / `build-macros` | Build the digital and analog macros individually or together. |
 | `make build-top`    | Run LibreLane on the top-level, copy back all artifacts, add logos and fill structures, and render the final GDS. |
 | `make build-all`    | Init submodules, build bondpad, build RF pad, build logos, build macros, and build top-level.             |
 | `make klayout-verify` / `magic-verify` | Run DRC and LVS with KLayout, or LVS and PEX with Magic, for a given cell.   |
@@ -275,7 +276,7 @@ See the [top-level README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-te
 
 ### Digital macro targets
 
-The [counter Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/Makefile) provides:
+The [counter Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/Makefile) provides:
 
 | Target                                            | What it does                                                                |
 | ----------------------------------- | ----------------------------------------------------------------- |
@@ -297,7 +298,7 @@ The [counter Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-templa
 | `make all`                                        | Run lint, the FPGA build, the full macro build flow, the equivalence check, the parasitic extraction, and all simulations. |
 | `make clean`                                      | Delete all generated files and folders of the macro, including the FPGA outputs. |
 
-See the [counter README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/README.md) for more details and how to use the Makefile targets.
+See the [counter README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/README.md) for more details and how to use the Makefile targets.
 
 ### Analog macro targets
 
@@ -347,50 +348,50 @@ See the [vco README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template
 
 # Digital Macro Implementation {#sec-digital}
 
-The [`counter`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/) macro is the digital reference macro of the template. It is a parameterisable synchronous up-counter with synchronous active-high reset implemented with SystemVerilog in [`counter.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter.sv). The top-level wrapper [`counter_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter_top.sv) converts the chip's active-low reset to an active-high signal. The default width is 8 bits, so the counter wraps from 255 back to 0.
+The [`counter_lv_ihp`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/) macro is the digital reference macro of this chip. The same RTL is hardened three times, once per standard cell library: [`counter_lv_ihp`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/) on IHP LV (this section), [`counter_lv_eth`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_eth/) on ETH LV and [`counter_hv_kvc`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_hv_kvc/) on IHP HV. It is a parameterisable synchronous up-counter with synchronous active-high reset implemented with SystemVerilog in [`counter_lv_ihp.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp.sv). The top-level wrapper [`counter_lv_ihp_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp_top.sv) converts the chip's active-low reset to an active-high signal. The default width is 8 bits, so the counter wraps from 255 back to 0.
 
 ## Directory Structure
 
-The counter design files are located in [`macros/counter/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/), and the relevant folders are:
+The counter design files are located in [`macros/counter_lv_ihp/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/), and the relevant folders are:
 
 | Folder                                       | Content                                                                                  |
 | ---------------------------------------- | ---------------------------------------------------------------------------------------- |
-| [`rtl/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/rtl/)             | SystemVerilog sources: [`constants.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/constants.sv), [`counter.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter.sv), [`counter_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter_top.sv). |
-| [`testbenches/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/testbenches/) | `verilog/`, `cocotb/`, and `xschem/` testbenches with pre-configured GTKWave and Surfer view files. |
-| [`flow/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/flow/)           | LibreLane configuration (`config.yaml`, `pin_order.cfg`, `impl.sdc`, `signoff.sdc`). |
-| [`final/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/final/)         | Final deliverables (GDS, LEF, LIB per corner, NL, PNL, SPEF, VH) copied from the latest LibreLane run for top-level integration. |
-| [`fpga/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/fpga/)           | Optional FPGA emulation flow for three boards (pico-ice, iCEBreaker, ULX3S).    |
-| [`netlist/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/netlist/)     | `nl/`, `pnl/`, `spice/` and `xspice/` netlists (see [LibreLane cheatsheet](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/librelane/librelane_cheatsheet.md#3-netlists--circuit-views) for more details). |
-| [`schematic/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/schematic/) | Xschem symbol of the macro for use in mixed-signal Xschem testbenches.                                       |
-| [`scripts/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/scripts/)     | Helper scripts (XSPICE conversion, plotting, layout rendering).                        |
-| [`verification/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/verification/) | Yosys, antenna, STA, IR-drop, DRC, LVS, and manufacturability reports.            |
-| [`render/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/render/)       | Macro renders for documentation.                                                       |
+| [`rtl/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/rtl/)             | SystemVerilog sources: [`constants.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/constants.sv), [`counter_lv_ihp.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp.sv), [`counter_lv_ihp_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp_top.sv). |
+| [`testbenches/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/testbenches/) | `verilog/`, `cocotb/`, and `xschem/` testbenches with pre-configured GTKWave and Surfer view files. |
+| [`flow/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/flow/)           | LibreLane configuration (`config.yaml`, `pin_order.cfg`, `impl.sdc`, `signoff.sdc`). |
+| [`final/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/final/)         | Final deliverables (GDS, LEF, LIB per corner, NL, PNL, SPEF, VH) copied from the latest LibreLane run for top-level integration. |
+| [`fpga/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/fpga/)           | Optional FPGA emulation flow for three boards (pico-ice, iCEBreaker, ULX3S).    |
+| [`netlist/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/netlist/)     | `nl/`, `pnl/`, `spice/` and `xspice/` netlists (see [LibreLane cheatsheet](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/librelane/librelane_cheatsheet.md#3-netlists--circuit-views) for more details). |
+| [`schematic/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/schematic/) | Xschem symbol of the macro for use in mixed-signal Xschem testbenches.                                       |
+| [`scripts/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/scripts/)     | Helper scripts (XSPICE conversion, plotting, layout rendering).                        |
+| [`verification/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/verification/) | Yosys, antenna, STA, IR-drop, DRC, LVS, and manufacturability reports.            |
+| [`render/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/render/)       | Macro renders for documentation.                                                       |
 
 ::: {.callout-tip}
-Read the [counter README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/README.md) first to get familiar with the folder layout and the available Makefile targets. Most of the commands below are documented there as well.
+Read the [counter README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/README.md) first to get familiar with the folder layout and the available Makefile targets. Most of the commands below are documented there as well.
 :::
 
 ## Reading the RTL
 
 The macro is split into a parameterised counter and a top-level wrapper that converts the chip's active-low reset to the internal active-high reset of the counter.
 
-### `counter.sv`
+### `counter_lv_ihp.sv`
 
-The logic is implemented in [`counter.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter.sv). It is an $N$-bit synchronous up-counter with reset and enable, and it wraps at `CTR_MAX`. $N$ defaults to 8, so the counter counts from 0 to 255 and then wraps back to 0.
+The logic is implemented in [`counter_lv_ihp.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp.sv). It is an $N$-bit synchronous up-counter with reset and enable, and it wraps at `CTR_MAX`. $N$ defaults to 8, so the counter counts from 0 to 255 and then wraps back to 0.
 
-```{.systemverilog filename="macros/counter/rtl/counter.sv"}
-{{< include ../macros/counter/rtl/counter.sv >}}
+```{.systemverilog filename="macros/counter_lv_ihp/rtl/counter_lv_ihp.sv"}
+{{< include ../macros/counter_lv_ihp/rtl/counter_lv_ihp.sv >}}
 ```
 
-### `counter_top.sv`
+### `counter_lv_ihp_top.sv`
 
-[`counter_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter_top.sv) wraps the counter and converts the active-low reset (`reset_n_i`) to an active-high signal `reset`.
+[`counter_lv_ihp_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp_top.sv) wraps the counter and converts the active-low reset (`reset_n_i`) to an active-high signal `reset`.
 
-```{.systemverilog filename="macros/counter/rtl/counter_top.sv"}
-{{< include ../macros/counter/rtl/counter_top.sv >}}
+```{.systemverilog filename="macros/counter_lv_ihp/rtl/counter_lv_ihp_top.sv"}
+{{< include ../macros/counter_lv_ihp/rtl/counter_lv_ihp_top.sv >}}
 ```
 
-Shared defaults are defined in [`constants.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/constants.sv). For example, for the final implementation, the maximum counter value is defined in `constants.sv` with the variable `COUNTER_MAX_DEFAULT`. For the testbenches, `CLK_FREQ_DEFAULT` is defined there to set the default clock frequency (e.g. 50 MHz) for the simulations. They are exposed as `` `define `` macros instead of a SystemVerilog `package`, because Yosys 0.64 cannot parse `import pkg::*` in a module header.
+Shared defaults are defined in [`constants.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/constants.sv). For example, for the final implementation, the maximum counter value is defined in `constants.sv` with the variable `COUNTER_LV_IHP_MAX_DEFAULT`. For the testbenches, `CLK_FREQ_DEFAULT` is defined there to set the default clock frequency (e.g. 50 MHz) for the simulations. They are exposed as `` `define `` macros instead of a SystemVerilog `package`, because Yosys 0.64 cannot parse `import pkg::*` in a module header.
 
 ::: {.callout-note}
 Open the three RTL files (using `gedit` or `vim`), follow and understand the counter through reset, hold, increment, and wrap-around.
@@ -401,10 +402,10 @@ Open the three RTL files (using `gedit` or `vim`), follow and understand the cou
 [Linting](https://en.wikipedia.org/wiki/Lint_(software)) is done with [Verilator](https://www.veripool.org/verilator/) and can be executed with the following commands.
 
 ```sh
-cd macros/counter
-make lint-verilog                # lint the full counter_top design
-make lint-verilog CELL=counter   # lint only the standalone counter
-make lint-verilog-all            # lint counter and counter_top in sequence
+cd macros/counter_lv_ihp
+make lint-verilog                # lint the full counter_lv_ihp_top design
+make lint-verilog CELL=counter_lv_ihp   # lint only the standalone counter
+make lint-verilog-all            # lint counter_lv_ihp and counter_lv_ihp_top in sequence
 ```
 
 `make lint-verilog-all` is also the lint step called by `make all`.
@@ -413,7 +414,7 @@ make lint-verilog-all            # lint counter and counter_top in sequence
 
 ### RTL with SystemVerilog testbench (Icarus Verilog)
 
-A SystemVerilog testbench ([`counter_top_tb.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/testbenches/verilog/counter_top_tb.sv)) checks reset, hold, increment, and wrap-around. Run it with the following commands.
+A SystemVerilog testbench ([`counter_lv_ihp_top_tb.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/testbenches/verilog/counter_lv_ihp_top_tb.sv)) checks reset, hold, increment, and wrap-around. Run it with the following commands.
 
 ```sh
 make sim-rtl-verilog
@@ -421,11 +422,11 @@ make sim-view-verilog               # open in GTKWave (default)
 make sim-view-verilog WAVEFORM_VIEWER=surfer
 ```
 
-![RTL Verilog waveform of `counter_top` in GTKWave.](fig/counter_top/counter_top_verilog_gtkwave.png){#fig-counter-top-verilog-gtkwave}
+![RTL Verilog waveform of `counter_lv_ihp_top` in GTKWave, taken when the macro was still called `counter_top`.](fig/counter_top/counter_top_verilog_gtkwave.png){#fig-counter-top-verilog-gtkwave}
 
 ### RTL and gate-level with cocotb
 
-The [cocotb](https://www.cocotb.org/) testbench ([`counter_top_tb.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/testbenches/cocotb/counter_top_tb.py)) checks the same four cases (reset, hold, increment, and wrap-around) as the SystemVerilog testbench, but implements them in Python.
+The [cocotb](https://www.cocotb.org/) testbench ([`counter_lv_ihp_top_tb.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/testbenches/cocotb/counter_lv_ihp_top_tb.py)) checks the same four cases (reset, hold, increment, and wrap-around) as the SystemVerilog testbench, but implements them in Python.
 
 ```sh
 make sim-rtl-cocotb                # RTL simulation
@@ -434,9 +435,9 @@ make sim-view-cocotb               # view in GTKWave
 make sim-view-cocotb WAVEFORM_VIEWER=surfer
 ```
 
-![Gate-level cocotb waveform of `counter_top` in GTKWave.](fig/counter_top/counter_top_cocotb_gtkwave.png){#fig-counter-top-cocotb-gtkwave}
+![Gate-level cocotb waveform of `counter_lv_ihp_top` in GTKWave, taken when the macro was still called `counter_top`.](fig/counter_top/counter_top_cocotb_gtkwave.png){#fig-counter-top-cocotb-gtkwave}
 
-The gate-level cocotb run uses the gate-level Verilog netlist produced after synthesis: [`netlist/nl/counter_top.nl.v`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/netlist/nl/). In this tutorial, this netlist for the counter already exists. For new designs, run `make build-top` first to execute the LibreLane flow. It also copies the netlists from the latest LibreLane run back into the source tree with `make copy-netlist`.
+The gate-level cocotb run uses the gate-level Verilog netlist produced after synthesis: [`netlist/nl/counter_lv_ihp_top.nl.v`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/netlist/nl/). In this tutorial, this netlist for the counter already exists. For new designs, run `make build-top` first to execute the LibreLane flow. It also copies the netlists from the latest LibreLane run back into the source tree with `make copy-netlist`.
 
 ## LibreLane Hardening
 
@@ -447,14 +448,14 @@ make build-top
 ```
 
 ::: {.callout-tip}
-The macro can also be built as an FPGA bitstream ([`fpga/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/fpga/)) with `make build-fpga`. `counter_top` is synthesised straight onto board pins, without a board-top wrapper, and three boards are supported: pico-ice and iCEBreaker (Lattice iCE40) and ULX3S (Lattice ECP5). Pick one with `make build-fpga` for the default pico-ice, or `make -C fpga BOARD=ulx3s all` for another. IIC-OSIC-TOOLS carries the build chain for all three boards, so the bitstreams build inside the container, and only flashing needs the host, since the container has no USB access. Details are in [`fpga/README.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/fpga/README.md). The FPGA flow is not used in this tutorial and is only listed here for reference.
+The macro can also be built as an FPGA bitstream ([`fpga/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/fpga/)) with `make build-fpga`. `counter_lv_ihp_top` is synthesised straight onto board pins, without a board-top wrapper, and three boards are supported: pico-ice and iCEBreaker (Lattice iCE40) and ULX3S (Lattice ECP5). Pick one with `make build-fpga` for the default pico-ice, or `make -C fpga BOARD=ulx3s all` for another. IIC-OSIC-TOOLS carries the build chain for all three boards, so the bitstreams build inside the container, and only flashing needs the host, since the container has no USB access. Details are in [`fpga/README.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/fpga/README.md). The FPGA flow is not used in this tutorial and is only listed here for reference.
 :::
 
 ### Sizing the Macro {#sec-hardening-sizing}
 
-Three parameters in [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/flow/librelane/config.yaml) decide how compact and how fast the hardened macro is.
+Three parameters in [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/flow/librelane/config.yaml) decide how compact and how fast the hardened macro is.
 
-```{.yaml filename="macros/counter/flow/librelane/config.yaml (code snippet)"}
+```{.yaml filename="macros/counter_lv_ihp/flow/librelane/config.yaml (code snippet)"}
 # Layout / Floorplan Rules
 DIE_AREA: [0, 0, 200, 100]
 PL_TARGET_DENSITY_PCT: 40
@@ -465,13 +466,13 @@ PL_TARGET_DENSITY_PCT: 40
 SYNTH_STRATEGY: DELAY 4
 ```
 
-- **`DIE_AREA`** is the macro outline `[x0, y0, x1, y1]` in µm (`FP_SIZING: absolute`). The standard-cell rows fill a core area inside it, which is 188 µm × 68 µm for the counter. The aspect ratio matters as much as the area: the outline has to fit the slot of the macro in the top-level floorplan and leave room for the pins listed in [`pin_order.cfg`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/flow/librelane/pin_order.cfg).
+- **`DIE_AREA`** is the macro outline `[x0, y0, x1, y1]` in µm (`FP_SIZING: absolute`). The standard-cell rows fill a core area inside it, which is 188 µm × 68 µm for the counter. The aspect ratio matters as much as the area: the outline has to fit the slot of the macro in the top-level floorplan and leave room for the pins listed in [`pin_order.cfg`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/flow/librelane/pin_order.cfg).
 - **`PL_TARGET_DENSITY_PCT`** is the cell density that global placement aims for. At 40 %, the placer spreads the cells so that most of the core stays free for the clock tree, the buffers added during timing repair, and the routing. The target should stay above the utilisation (cell area divided by free core area), which global placement prints as `Utilization` in its log. A lower target triggers the warning `[GPL-0302] Target density 0.4000 is too low for the available free area`, and global placement then raises the target to the utilisation on its own.
 - **`SYNTH_STRATEGY`** selects the ABC script that Yosys uses for logic optimisation and technology mapping. The `AREA 0` to `AREA 3` scripts favour a small cell area, the `DELAY 0` to `DELAY 4` scripts favour short critical paths. `AREA 0` is the LibreLane default. `AREA 3` and `DELAY 4` always add buffering and gate sizing, so in the test runs below, the counter synthesised to 675 µm² with `AREA 0`, 704 µm² with `DELAY 0`, 720 µm² with `AREA 3`, and 742 µm² with `DELAY 4`. The best strategy for a design is found by trying.
 
 No formula gives the right values up front. They are found iteratively. A run of a small macro takes only a few minutes (`make librelane-nodrc` skips the DRC steps), and the following procedure converges within a handful of runs.
 
-1. **Start large and balanced.** Set a generous `DIE_AREA`, several times the cell area that Yosys reports in [`verification/stat.rpt`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/verification/stat.rpt), and a balanced strategy such as `AREA 0` or `DELAY 0`. This run finishes quickly and gives the reference values for cell area, utilisation, and timing slack.
+1. **Start large and balanced.** Set a generous `DIE_AREA`, several times the cell area that Yosys reports in [`verification/stat.rpt`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/verification/stat.rpt), and a balanced strategy such as `AREA 0` or `DELAY 0`. This run finishes quickly and gives the reference values for cell area, utilisation, and timing slack.
 2. **Shrink the die until placement complains.** Reduce `DIE_AREA` step by step and leave `PL_TARGET_DENSITY_PCT` unchanged. The first complaint is the `[GPL-0302]` warning, which means the die is now too small for the target density. The run can still finish, but shrinking further ends in a hard error, typically `[DPL-0036] Detailed placement failed` once the buffers added by design repair, clock tree synthesis, or timing repair no longer fit.
 3. **Step back.** Enlarge the die again until the warning is gone and run the full flow. The result places, routes, and meets timing at the configured density, and it is the starting point for the next step. A denser macro is possible by raising `PL_TARGET_DENSITY_PCT` on purpose, at the cost of less room for routing and timing repair.
 4. **Trade timing slack for area.** Read the worst setup slack in the slowest corner (`nom_slow_1p08V_125C`). If there is margin left, switch to a strategy with a smaller cell area (the `Chip area` line in `*-yosys-synthesis/reports/stat.rpt` of the run) and repeat steps 2 and 3, since a smaller cell area allows a smaller die. If setup fails, move towards `DELAY`, up to `DELAY 4`, or give the placer more room.
@@ -480,7 +481,7 @@ Each iteration changes only two values and reads back a few numbers, so the loop
 
 - `warning.log`: the `[GPL-0302]` warning, among others.
 - `final/metrics.csv`: `design__instance__utilization`, `timing__setup__ws`, `timing__hold__ws`, and `route__drc_errors`.
-- `*-openroad-stapostpnr/summary.rpt`: worst setup and hold slack and the violation counts in all six STA corners. `make copy-reports` copies it to [`verification/stapostpnr_summary.rpt`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/verification/stapostpnr_summary.rpt).
+- `*-openroad-stapostpnr/summary.rpt`: worst setup and hold slack and the violation counts in all six STA corners. `make copy-reports` copies it to [`verification/stapostpnr_summary.rpt`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/verification/stapostpnr_summary.rpt).
 
 The counter sits far from these limits. In test runs at the configured 200 µm × 100 µm, global placement reported a utilisation of 6.3 % against the target of 40 %, and the worst setup slack was 13.4 ns of the 20 ns clock period. At the same target density, the counter placed without the warning at 100 µm × 60 µm (34 % utilisation), warned but still routed and met timing at 60 µm × 60 µm (62 %), and failed detailed placement at 55 µm × 60 µm (70 %). The runs that finished kept 13.4 to 13.5 ns of setup slack. Switching to `AREA 0` was not enough to rescue the 55 µm × 60 µm die. Repeating these runs is a good first exercise.
 
@@ -530,7 +531,7 @@ IHP LV keeps a few cells that ETH LV lacks: the bus keeper `sg13cmos5l_sighold`,
 
 The drive digit is not comparable between the libraries. `BUFX3` has the `max_capacitance` of `sg13cmos5l_buf_1` (0.3 pF), `BUFX12` that of `sg13cmos5l_buf_4` and `BUFX48` that of `sg13cmos5l_buf_16`. A cell with the same drive is smaller by the ratio of the sites, (0.42 × 3.36) / (0.48 × 3.78) = 0.78, and the flip-flops shrink more than that. `INVX1`, `INVX2` and `INVX3` even share one footprint and differ only in transistor width, so a higher digit costs no area but more input capacitance.
 
-The library is selected in [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners of IHP LV. For IHP HV, replace the block from `# Define Standard Cells` to `DEFAULT_CORNER` with the following lines. The PDK configuration of the library supplies the rest.
+The library is selected in [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/flow/librelane/config.yaml). `STD_CELL_LIBRARY` alone is not enough, because the configuration also names the Liberty files and the corners of IHP LV. For IHP HV, replace the block from `# Define Standard Cells` to `DEFAULT_CORNER` with the following lines. The PDK configuration of the library supplies the rest.
 
 <details>
 <summary>Configuration for IHP HV</summary>
@@ -658,13 +659,13 @@ With these changes `make librelane` runs through on all three libraries with 0 D
 | `make sim-gl-cocotb` | passes with `SCL=sg13cmos5l_stdcell_hv` | fails with `SCL=ez130_8t`: the testbench looks in the tree of this PDK, and the library has no `sg13cmos5l_udp.v` and no Verilog models for `WELLTAP` and `FILLER*`. It passes after pointing the source to the `ihp-sg13g2` tree, dropping `sg13cmos5l_udp.v` and adding empty modules |
 
 ::: {.callout-warning}
-`make copy-reports` deletes `verification/` before it stops, and `make copy-final` and `make copy-netlist` overwrite committed files. Restore them with `git restore .` in `macros/counter/` after trying another library.
+`make copy-reports` deletes `verification/` before it stops, and `make copy-final` and `make copy-netlist` overwrite committed files. Restore them with `git restore .` in `macros/counter_lv_ihp/` after trying another library.
 :::
 
 ::: {.callout-important collapse="true"}
 ## Consequences at the chip top-level
 
-The library of a macro also has consequences at the chip top-level. The template chip runs its core at 1.5 V ([`doc/specifications.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md)), which is outside the 1.08 V to 1.32 V of ETH LV, so a chip with an ETH LV macro has to run its core at 1.2 V. A test run of the chip with the ETH LV counter routes with 0 errors and LVS matches, where LVS at the chip top-level compares the macro by its pins and its interior is checked in its own LibreLane run. It takes three changes in the top-level [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml): remove the three corners above 1.32 V from `STA_CORNERS` and from the `lib` list of `counter_top`, set `DEFAULT_CORNER: nom_typ_1p20V_25C`, and add `STA_MACRO_PRIORITIZE_NL: false`, which makes STA read the timing model in `final/lib/` of the macro and not its netlist. Without that line STA finds no Liberty for the ETH LV cells and turns them into black boxes, so all paths through the counter disappear, and only the `Creating black box` lines in `sta.log` give it away. With it, the worst setup slack through a counter is +10.67 ns against +10.76 ns with IHP LV in the same mode, while the worst path of the chip starts at the SRAM and reads +2.24 ns against +2.25 ns. The hold slack from `rst_n_PAD` into `counter2` drops to +0.14 ns against +0.39 ns in the fast corner at 1.32 V. The full-chip DRC was not part of that test. An IHP HV macro needs a 3.3 V domain and level shifters towards the core, which the template chip does not have.
+The library of a macro also has consequences at the chip top-level. This chip runs its core at 1.2 V ([`doc/specifications.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md)), because the 1.08 V to 1.32 V of ETH LV rules out the 1.5 V core of the other templates. A test run of the chip with the ETH LV counter routes with 0 errors and LVS matches, where LVS at the chip top-level compares the macro by its pins and its interior is checked in its own LibreLane run. It takes three changes in the top-level [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml): remove the three corners above 1.32 V from `STA_CORNERS` and from the `lib` list of `counter_lv_ihp_top`, set `DEFAULT_CORNER: nom_typ_1p20V_25C`, and add `STA_MACRO_PRIORITIZE_NL: false`, which makes STA read the timing model in `final/lib/` of the macro and not its netlist. Without that line STA finds no Liberty for the ETH LV cells and turns them into black boxes, so all paths through the counter disappear, and only the `Creating black box` lines in `sta.log` give it away. With it, the worst setup slack through a counter is +10.67 ns against +10.76 ns with IHP LV in the same mode, while the worst path of the chip starts at the SRAM and reads +2.24 ns against +2.25 ns. The hold slack from `rst_n_PAD` into `counter2` drops to +0.14 ns against +0.39 ns in the fast corner at 1.32 V. The full-chip DRC was not part of that test. An IHP HV macro needs a 3.3 V domain and level shifters towards the core, which the template chip does not have.
 :::
 
 ## Viewing the Macro
@@ -672,12 +673,12 @@ The library of a macro also has consequences at the chip top-level. The template
 After the flow finishes, the macro layout can be inspected with KLayout. The container provides the `ke` alias for `klayout -e` (edit mode). With the following command, the final GDS from the latest LibreLane run is opened in KLayout. With the keys `0`, `1`, `2`, ..., `9` you can view different layers as explained in the [KLayout cheatsheet](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/klayout/klayout_cheatsheet.md) or in the [klayout-layer-shortcuts](https://github.com/iic-jku/klayout-layer-shortcuts) plugin.
 
 ```sh
-ke final/gds/counter_top.gds
+ke final/gds/counter_lv_ihp_top.gds
 ```
 
-![`counter_top` layout in KLayout (200 µm × 100 µm).](fig/counter_top/counter_top_black.png){#fig-counter-top-layout}
+![`counter_lv_ihp_top` layout in KLayout (200 µm × 100 µm).](fig/counter_top/counter_top_black.png){#fig-counter-top-layout}
 
-The LibreLane render is copied to [`render/img/counter_top_librelane.png`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/render/img/), and the high-resolution renders from `sak-render.py` are saved as `counter_top_white.png` and `counter_top_black.png` in the same folder. The verification reports are written to [`verification/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/verification/).
+The LibreLane render is copied to [`render/img/counter_lv_ihp_top_librelane.png`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/render/img/), and the high-resolution renders from `sak-render.py` are saved as `counter_lv_ihp_top_white.png` and `counter_lv_ihp_top_black.png` in the same folder. The verification reports are written to [`verification/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/verification/).
 
 ## RTL Mixed-Signal Simulation with Xschem
 
@@ -692,7 +693,7 @@ make generate-xspice
 ```
 
 The conversion pipeline is `.spice → .xspice` (`spi2xspice.py`), followed by a pin-reorder pass with `sak-pin-reorder.py` (a SAK tool installed in the IIC-OSIC-TOOLS container) to match the Xschem symbol
-([`schematic/xschem/counter_top.sym`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/schematic/xschem/)).
+([`schematic/xschem/counter_lv_ihp_top.sym`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/schematic/xschem/)).
 
 ::: {.callout-note}
 The pins are matched **by name**: every pin in the Xschem symbol carries a `sim_pinname=<netlist_name>` property, so the alphabetically sorted ports of the extracted netlist are mapped correctly regardless of their order. Since `make build-top` regenerates the XSPICE model right after copying the netlists, the model always matches the current LibreLane run.
@@ -700,7 +701,7 @@ The pins are matched **by name**: every pin in the Xschem symbol carries a `sim_
 
 ### The symbol is a source file
 
-The macro is hardened, so it has no schematic, and Xschem's "make symbol from a schematic" (key `a`) has nothing to work from. `schematic/xschem/counter_top.sym` is drawn by hand, and everything downstream bends to it: the pin order of the XSPICE model and of the extracted PEX netlists is sorted to match it. It is therefore never regenerated by a build. The testbench wires to pin **coordinates**, and a pin one grid step off its wire floats without any error, so a build that moved pins would quietly break the simulation instead of failing it.
+The macro is hardened, so it has no schematic, and Xschem's "make symbol from a schematic" (key `a`) has nothing to work from. `schematic/xschem/counter_lv_ihp_top.sym` is drawn by hand, and everything downstream bends to it: the pin order of the XSPICE model and of the extracted PEX netlists is sorted to match it. It is therefore never regenerated by a build. The testbench wires to pin **coordinates**, and a pin one grid step off its wire floats without any error, so a build that moved pins would quietly break the simulation instead of failing it.
 
 Two targets support that arrangement without taking ownership of the file away from you.
 
@@ -719,14 +720,14 @@ For a new digital macro the order is: harden it once, `make copy-netlist`, `make
 
 ### Running the gate-level testbench
 
-The Xschem testbench ([`counter_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/testbenches/xschem/)) can be opened and simulated interactively.
+The Xschem testbench ([`counter_lv_ihp_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/testbenches/xschem/)) can be opened and simulated interactively.
 
 ```sh
 cd testbenches/xschem
-xschem counter_top_tb_tran.sch
+xschem counter_lv_ihp_top_tb_tran.sch
 ```
 
-![Xschem mixed-signal gate-level testbench `counter_top_tb_tran`.](fig/counter_top/counter_top_tb_tran_schematic.svg){#fig-counter-top-tb-tran-schematic}
+![Xschem mixed-signal gate-level testbench `counter_lv_ihp_top_tb_tran`.](fig/counter_top/counter_top_tb_tran_schematic.svg){#fig-counter-top-tb-tran-schematic}
 
 In Xschem, hold **`Ctrl`** and click the **Simulate** button in the schematic to launch the simulator. Once the simulation has finished, you can hold **`Ctrl`** and click the **Load waves** arrow to load the simulation results into the integrated waveform viewer.
 
@@ -742,16 +743,16 @@ The same simulation can also be run non-interactively from the Makefile, and the
 
 ```sh
 make sim-gl-xschem
-make sim-view-xschem SCRIPT=plot_counter_top
+make sim-view-xschem SCRIPT=plot_counter_lv_ihp_top
 ```
 
-`sim-gl-xschem` runs in batch mode: it netlists the testbench with `xschem netlist` and then calls `ngspice -b` directly, so `make` blocks until the run finishes and sees its exit status. The testbench is selected with `TB=<testbench_name>` (default: `<CELL>_tb_tran`). Since the run is headless, the `plot` commands in the testbench's `.control` block are a no-op. The testbench exports its results with `wrdata` to [`testbenches/xschem/plot_simulations/data/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/testbenches/xschem/plot_simulations/data), from where `sim-view-xschem` plots them with Matplotlib.
+`sim-gl-xschem` runs in batch mode: it netlists the testbench with `xschem netlist` and then calls `ngspice -b` directly, so `make` blocks until the run finishes and sees its exit status. The testbench is selected with `TB=<testbench_name>` (default: `<CELL>_tb_tran`). Since the run is headless, the `plot` commands in the testbench's `.control` block are a no-op. The testbench exports its results with `wrdata` to [`testbenches/xschem/plot_simulations/data/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/testbenches/xschem/plot_simulations/data), from where `sim-view-xschem` plots them with Matplotlib.
 
-![Plotted Xschem simulation results of `counter_top_tb_tran` from `testbenches/xschem/plot_simulations/plot_counter_top.py`.](fig/counter_top/counter_top_tb_tran_sim.svg){#fig-counter-top-tb-tran-sim}
+![Plotted Xschem simulation results of `counter_lv_ihp_top_tb_tran` from `testbenches/xschem/plot_simulations/plot_counter_lv_ihp_top.py`.](fig/counter_top/counter_top_tb_tran_sim.svg){#fig-counter-top-tb-tran-sim}
 
 ## Parasitic Extraction (PEX)
 
-The XSPICE model above is a *gate-level* view of the macro: every standard cell becomes an XSPICE primitive driven by its Liberty delay, and the wiring is ideal. Parasitic extraction gives the *transistor-level* view instead. It reads the hardened layout [`final/gds/counter_top.gds`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/final/gds/) and writes a SPICE netlist into [`netlist/pex/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/netlist/pex/) in which every standard cell is flattened to transistors and the wiring carries the resistances and capacitances measured from the layout.
+The XSPICE model above is a *gate-level* view of the macro: every standard cell becomes an XSPICE primitive driven by its Liberty delay, and the wiring is ideal. Parasitic extraction gives the *transistor-level* view instead. It reads the hardened layout [`final/gds/counter_lv_ihp_top.gds`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/final/gds/) and writes a SPICE netlist into [`netlist/pex/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/netlist/pex/) in which every standard cell is flattened to transistors and the wiring carries the resistances and capacitances measured from the layout.
 
 ```sh
 make magic-pex                            # full-RC, the default EXT_MODE=3
@@ -763,9 +764,9 @@ make magic-pex EXT_MODE=3 THRESHOLD=5000 MINRES=500 MINDELAY=2   # full-RC with 
 `make klayout-pex` runs [KLayout-PEX (KPEX)](https://github.com/iic-jku/klayout-pex), which does not support the `ihp-sg13cmos5l` PDK yet, so the target currently fails. Use `magic-pex` until KPEX gains SG13CMOS5L support.
 :::
 
-Both targets read `final/gds/<CELL>.gds`, so `make build-top` (or at least `make copy-final`) has to have run first, and both abort with a clear message if it is missing. They start by running `make symbol-pex`, which derives `schematic/xschem/counter_top_pex.sym` from `counter_top.sym` so the PEX symbol can never go stale, and they finish by reordering the extracted `.subckt` ports to that symbol's pin order with `sak-pin-reorder.py` and verifying them with `scripts/check_pex_ports.py`. For `counter_top`, the full-RC default extracts 4351 transistors and roughly 2100 capacitors and 4700 resistors. Magic's `extresist` step is not deterministic, so the exact R and C counts move slightly from run to run while the transistor count stays the same.
+Both targets read `final/gds/<CELL>.gds`, so `make build-top` (or at least `make copy-final`) has to have run first, and both abort with a clear message if it is missing. They start by running `make symbol-pex`, which derives `schematic/xschem/counter_lv_ihp_top_pex.sym` from `counter_lv_ihp_top.sym` so the PEX symbol can never go stale, and they finish by reordering the extracted `.subckt` ports to that symbol's pin order with `sak-pin-reorder.py` and verifying them with `scripts/check_pex_ports.py`. For `counter_lv_ihp_top`, the full-RC default extracts 4351 transistors and roughly 2100 capacitors and 4700 resistors. Magic's `extresist` step is not deterministic, so the exact R and C counts move slightly from run to run while the transistor count stays the same.
 
-The transient testbench already `.include`s the extracted netlist next to the XSPICE model, and it carries two spare DUT instances above the schematic, `x2` of `counter_top.sym` and `x3` of `counter_top_pex.sym`, both parked with `spice_ignore=true`. Swapping the wired-up `x1` for `x3` turns the run into a post-layout simulation.
+The transient testbench already `.include`s the extracted netlist next to the XSPICE model, and it carries two spare DUT instances above the schematic, `x2` of `counter_lv_ihp_top.sym` and `x3` of `counter_lv_ihp_top_pex.sym`, both parked with `spice_ignore=true`. Swapping the wired-up `x1` for `x3` turns the run into a post-layout simulation.
 
 ::: {.callout-warning}
 A post-layout run simulates every transistor of the macro. In the IIC-OSIC-TOOLS container, 60 ns of transient take about 80 s, while the full 10 µs gate-level XSPICE run of the same testbench finishes in under 2 s. The XSPICE model stays the right tool for functional runs. Use the extracted netlist on short, targeted stimuli to check timing and signal integrity.
@@ -780,20 +781,20 @@ The testbench uses looser Ngspice tolerances than the analog macro (`reltol=1e-3
 A gate-level simulation checks the netlist only for the stimuli of its testbench. A logic equivalence check (LEC) needs no testbench: a formal solver proves that the netlist does what the RTL does, for every input sequence. It catches a netlist that no longer matches the RTL, for example because the RTL was edited after the last `make build-top`, and any change of function by the flow.
 
 ```sh
-make lec                         # final/nl/counter_top.nl.v against the RTL
+make lec                         # final/nl/counter_lv_ihp_top.nl.v against the RTL
 make lec LEC_NETLIST=<netlist>   # another netlist, e.g. the synthesis netlist of a run
 make lec LEC_TIMEOUT=<seconds>   # another time limit per partition (default: 300)
 make lec-mutant                  # check that lec catches a difference
 ```
 
-`make lec` writes an [EQY](https://github.com/YosysHQ/eqy) script to `flow/eqy/counter_top.eqy` and runs it in `flow/eqy/work/`. EQY pairs the signals of both designs by name, splits the design into partitions, and proves each of them. On the counter, these are 8 partitions, one per bit of `counter_value_o`, and the target exits with 0 only when all of them are equivalent. The RTL is read with a different front end than synthesis used, so that a front end that misreads the RTL cannot make the same mistake on both sides. The standard cells get their function from the Liberty file of the PDK, and a cell without a function fails the run.
+`make lec` writes an [EQY](https://github.com/YosysHQ/eqy) script to `flow/eqy/counter_lv_ihp_top.eqy` and runs it in `flow/eqy/work/`. EQY pairs the signals of both designs by name, splits the design into partitions, and proves each of them. On the counter, these are 8 partitions, one per bit of `counter_value_o`, and the target exits with 0 only when all of them are equivalent. The RTL is read with a different front end than synthesis used, so that a front end that misreads the RTL cannot make the same mistake on both sides. The standard cells get their function from the Liberty file of the PDK, and a cell without a function fails the run.
 
 `make lec-mutant` changes two copies of the netlist, one with a `sg13cmos5l_nand2_1` swapped for a `sg13cmos5l_nor2_1` and one with a flop clocked by `enable_i`. It passes only if a partition of `lec` reports `FAIL` on each: a check that cannot fail proves nothing, and neither does a `lec` that never ran a proof.
 
 ::: {.callout-tip}
 ## See it fail
 
-Change `COUNTER_MAX_DEFAULT` in `rtl/constants.sv` from 255 to 199 and run `make lec` without rebuilding. The netlist is now stale, and EQY reports bits 3, 6 and 7 of `counter_value_o` as not equivalent. The counterexample is the waveform `trace.vcd` in `flow/eqy/work/strategies/<partition>/sby/<partition>/engine_0/`. It holds the counter at 199 with `enable_i` high: the RTL wraps to 0 and the netlist steps to 200, and these are the three bits that differ. Change the constant back afterwards.
+Change `COUNTER_LV_IHP_MAX_DEFAULT` in `rtl/constants.sv` from 255 to 199 and run `make lec` without rebuilding. The netlist is now stale, and EQY reports bits 3, 6 and 7 of `counter_value_o` as not equivalent. The counterexample is the waveform `trace.vcd` in `flow/eqy/work/strategies/<partition>/sby/<partition>/engine_0/`. It holds the counter at 199 with `enable_i` high: the RTL wraps to 0 and the netlist steps to 200, and these are the three bits that differ. Change the constant back afterwards.
 :::
 
 ::: {.callout-note}
@@ -819,7 +820,7 @@ The [`inverter`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tre
 - Parasitic Extraction ([PEX](https://en.wikipedia.org/wiki/Parasitic_extraction)) with Magic (KPEX, the KLayout extractor, does not support the PDK yet),
 - [Monte Carlo](https://en.wikipedia.org/wiki/Monte_Carlo_method) simulation of process and mismatch variations with CACE.
 
-Two instances are used in the chip core. One is used as a 4-channel digital inverter (`inverter1`), and the other as a 2-channel analog inverter (`inverter2`). See the [chip specifications](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md) for the full picture.
+One instance is used in the chip core. Channel 1 is the analog inverter, channel 4 is a digital inverter, and the inputs of the two unused channels are tied low. See the [chip specifications](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md) for the full picture.
 
 ::: {.callout-note}
 An inverter can act as a digital circuit (when the input is driven by a digital signal and the output is switching between the supply rails). Here, we characterise the inverter as an analog circuit, meaning that we are interested in its continuous voltage transfer characteristic and its small-signal voltage gain.
@@ -2187,11 +2188,12 @@ All three targets are part of `make build-all` (see @sec-top), so the IP cells a
 
 This section covers the top-level assembly and padframe generation. The top-level files that need to be understood and modified for a new chip are:
 
-- [`rtl/chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_top.sv), the padframe wrapper. It instantiates one I/O cell per pad and exposes the global `clk_PAD`, `rst_n_PAD`, `input_PAD`, `output_PAD`, `bidir_PAD`, and `analog_PAD` signals.
-- [`rtl/chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv), the core logic. It instantiates the digital and analog macros (`counter1`, `counter2`, `inverter1`, `inverter2`, `sram_0`) and wires them together and to the I/O pads.
+- [`rtl/chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_top.sv), the padframe wrapper. It instantiates one I/O cell per pad and exposes the global `clk_PAD`, `rst_n_PAD`, `input_PAD`, `output_PAD`, `bidir_PAD`, `analog_PAD`, and `rf_PAD` signals, plus the three supply pads `vdd_rf_PAD`, `vdd_ro_PAD`, and `vdd_hv_PAD`.
+- [`rtl/chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv), the core logic. It instantiates the digital and analog macros (`counter_lv_ihp`, `counter_lv_eth`, `counter_hv_kvc`, `inverter`, `amplifier`, `ringosc`, `vco`) and wires them together and to the I/O pads.
 - [`flow/librelane/config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml), the top-level LibreLane configuration. It defines the padframe order (`PAD_WEST`, `PAD_NORTH`, `PAD_SOUTH`, `PAD_EAST`), the chip area (`DIE_AREA`, `CORE_AREA`), the PDN core ring (`PDN_CORE_RING_VWIDTH`, `PDN_CORE_RING_HWIDTH`, `PDN_CORE_RING_VSPACING` and `PDN_CORE_RING_HSPACING`), the clock settings (`CLOCK_PORT`, `CLOCK_NET` and `CLOCK_PERIOD`), the macro list (`MACROS`), the bondpads, the logos, non-default routing rules (`NON_DEFAULT_RULES`, `DRT_ASSIGN_NDR`, and `RSZ_DONT_TOUCH_LIST`), STA corners, and references to `pdn_cfg.tcl` and `chip_top.sdc`.
-- [`flow/librelane/pdn_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pdn_cfg.tcl), the Tcl script that builds the OpenROAD PDN. The bottom of the file contains the custom PDN connects for `inverter1`, `inverter2`, and `sram_0`. This is the part that has to be touched when adding new macros.
-- [`flow/librelane/chip_top.sdc`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/chip_top.sdc), timing constraints (clock period, input/output delays).
+- [`flow/librelane/pdn_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pdn_cfg.tcl), the Tcl script that builds the OpenROAD PDN. The bottom of the file contains the custom PDN connects for `inverter` and `amplifier` and the straps drawn to the macros on their own supplies. This is the part that has to be touched when adding new macros.
+- [`flow/librelane/pad_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pad_cfg.tcl), the padring script. It is the script of LibreLane plus the placement of the RF pads, which carry their own bond pad.
+- [`flow/librelane/chip_top.sdc`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/chip_top.sdc), timing constraints (clock period, input/output delays, and the false paths of the static inputs).
 - Reference documentation for the chip, [specifications.md](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md), [pinout.md](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/pinout.md), and [floorplan.md](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/floorplan.md).
 
 For your own chip, `make project` renames these files and every reference to them in one step (@sec-new-chip), and their content is what you then adapt.
@@ -2278,21 +2280,22 @@ The padframe wrapper [`chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-a
 module chip_top #(
     // Power / ground pads for digital core / analog front-end
     parameter int unsigned NUM_VDD_PADS    = 1,
-    parameter int unsigned NUM_VSS_PADS    = 1,
+    parameter int unsigned NUM_VSS_PADS    = 4,
 
     // Power / ground pads for I/O
     parameter int unsigned NUM_IOVDD_PADS  = 1,
     parameter int unsigned NUM_IOVSS_PADS  = 1,
 
     // Signal pads
-    parameter int unsigned NUM_INPUT_PADS  = 1,  // excluding clock and reset pads
-    parameter int unsigned NUM_OUTPUT_PADS = 17,
-    parameter int unsigned NUM_BIDIR_PADS  = 4,
-    parameter int unsigned NUM_ANALOG_PADS = 4
+    parameter int unsigned NUM_INPUT_PADS  = 3,  // excluding clock and reset pads
+    parameter int unsigned NUM_OUTPUT_PADS = 8,
+    parameter int unsigned NUM_BIDIR_PADS  = 1,  // keep at least 1
+    parameter int unsigned NUM_ANALOG_PADS = 6,  // excluding the supply pads of the VCO, ring oscillator and IHP HV counter
+    parameter int unsigned NUM_RF_PADS     = 2
 ) ( ... );
 ```
 
-The remaining code does not need to be modified for a pinout change, since the `generate` blocks automatically instantiate the correct number of I/O cells based on the parameter values. One `generate` block per pad type (`g_vdd_pads`, `g_vss_pads`, `g_iovdd_pads`, `g_iovss_pads`, `g_inputs`, `g_outputs`, `g_bidirs`, `g_analogs`) instantiates the matching IHP I/O cell, plus single instances for the clock and reset pads. An example code snippet of the input pad generation with a `generate` block is shown below. The `input_PAD` signals are exposed as ports of the `chip_top` module and are connected to the pads of the I/O cell, while the `input_PAD2CORE` signals are connected to the internal core logic in `chip_core.sv`. The same structure, or a very similar one, applies to the other pad types.
+The remaining code does not need to be modified for a pinout change, since the `generate` blocks automatically instantiate the correct number of I/O cells based on the parameter values. One `generate` block per pad type (`g_vdd_pads`, `g_vss_pads`, `g_iovdd_pads`, `g_iovss_pads`, `g_inputs`, `g_outputs`, `g_bidirs`, `g_analogs`, `g_rf_pads`) instantiates the matching IHP I/O cell, plus single instances for the clock and reset pads. An example code snippet of the input pad generation with a `generate` block is shown below. The `input_PAD` signals are exposed as ports of the `chip_top` module and are connected to the pads of the I/O cell, while the `input_PAD2CORE` signals are connected to the internal core logic in `chip_core.sv`. The same structure, or a very similar one, applies to the other pad types.
 
 ::: {.callout-note}
 Normally, only the parameter counts need to be edited in `chip_top.sv`. Only multi-clock and multi-reset chips would require modifications to the clock and reset pad generation, since the current template supports only one clock and one reset pad.
@@ -2321,10 +2324,10 @@ The `sg13cmos5l_IOPadAnalog` cell exposes two internal core-side nodes per analo
 - `padres`: path through the pad's **secondary** ESD resistor
 - `padbare`: **direct** path to the pad metal (only primary ESD diodes)
 
-In this template, `inverter2` uses both paths:
+In this chip, the analog pads use both paths:
 
-- `vin1`/`vin2` are connected to `analog_PADRES[0:1]` (resistor-protected input path)
-- `vout1`/`vout2` are driven onto `analog_PADBARE[2:3]` (direct output path to avoid extra RC)
+- `vtune`, `amp_vin` and `inv_vin` are connected to `analog_PADRES[0]`, `analog_PADRES[1]` and `analog_PADRES[3]` (resistor-protected input path)
+- `amp_vout`, `inv_vout` and `ro_vout` are driven onto `analog_PADBARE[2]`, `analog_PADBARE[4]` and `analog_PADBARE[5]` (direct output path to avoid extra RC)
 
 Inside `chip_core.sv`, these nets appear as the corresponding lowercase core signals `analog_padres[*]` and `analog_padbare[*]`.
 
@@ -2350,86 +2353,50 @@ endgenerate
 
 ## Understanding `chip_core.sv`
 
-The core [`chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv) is where the macros are instantiated and wired to the chip's I/O pads. The `enable` signal is mapped to `input_PAD[0]`, the two `counter_top` instances share the clock and reset, the two `inverter_top` instances are wired up (one digital, one analog), and the SRAM output is XOR-reduced to a single bit on `output_PAD[16]`. The input and output assignments at the top and bottom of the file correspond to the bit-to-role mapping documented in [pinout.md](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/pinout.md). For improved clarity, every assignment is written on a separate line. Advanced designers can also use bus notation for more compact code.
+The core [`chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv) is where the macros are instantiated and wired to the chip's I/O pads. `input_PAD[1:0]` is the counter select `sel`, and only the selected counter gets a clock through an AND gate, so the supply current of each standard cell library can be measured alone. `count[6:0]` of the selected counter goes to `output_PAD[6:0]`. `count[7]` goes to the bidirectional pad, always driven and read back into the digital channel of the inverter, whose output is `output_PAD[7]`. `input_PAD[2]` is the VCO enable `di_en`, and three analog pads feed the VCO tuning voltage and the analog inputs of the amplifier and the inverter. The input and output assignments at the top and bottom of the file correspond to the bit-to-role mapping documented in [pinout.md](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/pinout.md).
 
 ```{.systemverilog filename="rtl/chip_core.sv (code snippet)"}
 // ======================================================
 // Input Assignments
 // ======================================================
-logic enable;
-assign enable = input_in[0];
+logic [1:0] sel;    // counter select: 00 none, 01 IHP LV, 10 IHP HV, 11 ETH LV
+logic       di_en;  // VCO enable (active high)
+assign sel   = input_in[1:0];
+assign di_en = input_in[2];
 
-// Inverter 1
-wire inv1_din1 = bidir_in[0];
-wire inv1_din2 = bidir_in[1];
-wire inv1_din3 = bidir_in[2];
-wire inv1_din4 = bidir_in[3];
-
-// Inverter 2
-wire inv2_vin1 = analog_padres[0];
-wire inv2_vin2 = analog_padres[1];
-// ======================================================
+// Analog inputs, through the secondary ESD protection of their pads
+wire vtune   = analog_padres[0];
+wire amp_vin = analog_padres[1];
+wire inv_vin = analog_padres[3];
 ```
 
 ```{.systemverilog filename="rtl/chip_core.sv (code snippet)"}
 // ======================================================
 // Output Assignments
 // ======================================================
-// Digital outputs
-// Counter 1
-assign output_out[0]  = counter1_value[0];
-assign output_out[1]  = counter1_value[1];
-assign output_out[2]  = counter1_value[2];
-assign output_out[3]  = counter1_value[3];
+// Digital outputs: count[6:0] of the selected counter and the digital inverter channel
+assign output_out[6:0] = count[6:0];
+assign output_out[7]   = inv_dout;
 
-// Counter 2
-assign output_out[4]  = counter2_value[0];
-assign output_out[5]  = counter2_value[1];
-assign output_out[6]  = counter2_value[2];
-assign output_out[7]  = counter2_value[3];
-assign output_out[8]  = counter2_value[4];
-assign output_out[9]  = counter2_value[5];
-assign output_out[10] = counter2_value[6];
-assign output_out[11] = counter2_value[7];
-
-// Inverter 1
-assign output_out[12] = inv1_dout1;
-assign output_out[13] = inv1_dout2;
-assign output_out[14] = inv1_dout3;
-assign output_out[15] = inv1_dout4;
-
-// SRAM
-// Reduce the 32-bit SRAM output to a single bit by computing the parity.
-// output_out[16] = 1 when an odd number of bits in sram_0_out are 1.
-// output_out[16] = 0 when an even number of bits in sram_0_out are 1.
-assign output_out[16] = ^sram_0_out;
-
-// Digital bidirectionals (output side)
-// Bidir output enable: drive when `enable` is high (counter visible),
-// float as input when low (so external stimuli can drive inverter1).
-assign bidir_out[0] = counter1_value[4];
-assign bidir_oe[0]  = enable;
-
-assign bidir_out[1] = counter1_value[5];
-assign bidir_oe[1]  = enable;
-
-assign bidir_out[2] = counter1_value[6];
-assign bidir_oe[2]  = enable;
-
-assign bidir_out[3] = counter1_value[7];
-assign bidir_oe[3]  = enable;
+// Digital bidirectional: count[7], always driven, read back into the digital inverter channel
+assign bidir_out[0] = count[7];
+assign bidir_oe[0]  = 1'b1;
 
 // Analog outputs
-assign analog_padbare[2] = inv2_vout1;
-assign analog_padbare[3] = inv2_vout2;
-// ======================================================
+assign analog_padbare[2] = amp_vout;
+assign analog_padbare[4] = inv_vout;
+assign analog_padbare[5] = ro_vout;
+
+// RF outputs
+assign rf_padbare[0] = rf_out_n;
+assign rf_padbare[1] = rf_out_p;
 ```
 
 ## Understanding `config.yaml`
 
 The top-level LibreLane configuration [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml) covers the following sections and references `pdn_cfg.tcl` and `chip_top.sdc`.
 
-1. **Padframe generation.** `PAD_WEST`, `PAD_NORTH`, `PAD_SOUTH`, and `PAD_EAST`, in the order documented in [`doc/pinout.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/pinout.md).
+1. **Padframe generation.** `PAD_WEST`, `PAD_NORTH`, `PAD_SOUTH`, and `PAD_EAST`, in the order documented in [`doc/pinout.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/pinout.md). `PAD_CFG` points to [`pad_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pad_cfg.tcl), which moves the RF pads outward by the depth of their own bond pad.
 2. **PDN core ring.** `PDN_CORE_RING`, `PDN_CORE_RING_VWIDTH`, `PDN_CORE_RING_HWIDTH`, `PDN_CORE_RING_VSPACING`, and `PDN_CORE_RING_HSPACING`.
 3. **Clock settings.** `CLOCK_PORT`, `CLOCK_NET`, and `CLOCK_PERIOD`.
 4. **STA corners.**
@@ -2441,11 +2408,12 @@ The top-level LibreLane configuration [`config.yaml`](https://github.com/iic-jku
    - `nom_typ_1p50V_25C`
 5. **Non-default routing rules.** `NON_DEFAULT_RULES`, `DRT_ASSIGN_NDR`, and `RSZ_DONT_TOUCH_LIST`.
 6. **Macro, bondpad, and logo placement.** `MACROS` with per-macro files and placement (`location`, `orientation`), plus top-level bondpad and logo placement settings, together with chip area and placement constraints (`DIE_AREA`, `CORE_AREA`, `FP_SIZING`, `PL_TARGET_DENSITY_PCT`).
+7. **Supplies of their own.** `PDN_MACRO_CONNECTIONS` puts the VCO, the ring oscillator and the IHP HV counter on `vdd_rf`, `vdd_ro` and `vdd_hv` instead of the `VDD` of the ring, and `PDN_OBSTRUCTIONS` keeps the stripes off the VCO coil and the strip below the VCO.
 
 ::: {.callout-note}
-The `NON_DEFAULT_RULES` section defines a dedicated routing rule for the analog traces of `inverter2` (`PADRES` and `PADBARE`). In this template, `NDR_analog` sets a wider wire width and larger spacing for the selected metals and vias, which helps reduce coupling and preserve analog signal quality.
+The `NON_DEFAULT_RULES` section defines a dedicated routing rule for the analog traces (`analog_PADRES` and `analog_PADBARE`). In this template, `NDR_analog` sets a wider wire width and larger spacing for the selected metals and vias, which helps reduce coupling and preserve analog signal quality.
 
-The `DRT_ASSIGN_NDR` section applies this rule during detailed routing by matching net names with regular expressions (`^.*PADRES.*$` and `^.*PADBARE.*$`). The `RSZ_DONT_TOUCH_LIST` then protects the same analog nets from resizing, buffering, or other optimization steps, so the routed analog paths remain unchanged.
+The `DRT_ASSIGN_NDR` section applies this rule during detailed routing by matching net names with regular expressions (`^.*analog_PADRES.*$` and `^.*analog_PADBARE.*$`). The `RSZ_DONT_TOUCH_LIST` then protects the same analog nets from resizing, buffering, or other optimization steps, so the routed analog paths remain unchanged.
 :::
 
 ## Understanding `pdn_cfg.tcl`
@@ -2454,22 +2422,25 @@ The `DRT_ASSIGN_NDR` section applies this rule during detailed routing by matchi
 
 For macro changes, the bottom of the file is the relevant part. It defines per-instance PDN grids and macro connections. The current chip provides the following.
 
-- A default macro grid (`Metal4` to `TopMetal1`, the vertical and the horizontal top-level PDN layer) used by the two counters.
-- A custom grid for `inverter1` and `inverter2` with the same `Metal4` to `TopMetal1` connect. Each inverter macro has its own internal power ring whose horizontal segments are on `Metal3` and whose vertical segments are on `Metal4`, so `TopMetal1` stays free: the top-level `TopMetal1` stripes cross the ring and feed it, while no top-level stripes are routed inside the ring. A ring that also occupied `TopMetal1` would make `pdngen` cut every top-level stripe at the macro and leave the ring unfed.
-- A custom grid for `sram_0` (a plain `Metal4` to `TopMetal1` connect, because the SRAM exposes its supplies as vertical `Metal4` stripes, which is already the top-level vertical PDN layer, so the top-level `TopMetal1` stripes drop via stacks onto every pin and no bridging stripes are needed).
+- A macro grid (`Metal4` to `TopMetal1`, the vertical and the horizontal top-level PDN layer) used by the three counters. The `TopMetal1` stripes cross the counters and drop `TopVia1` onto their `Metal4` supply stripes.
+- A custom grid for `inverter` with the same `Metal4` to `TopMetal1` connect. The inverter macro has its own internal power ring whose horizontal segments are on `Metal3` and whose vertical segments are on `Metal4`, so `TopMetal1` stays free: the top-level `TopMetal1` stripes cross the ring and feed it, while no top-level stripes are routed inside the ring. A ring that also occupied `TopMetal1` would make `pdngen` cut every top-level stripe at the macro and leave the ring unfed.
+- A custom grid for `amplifier` with a `Metal4` to `Metal3` connect. Its `VDD` and `VSS` pins are horizontal strips with no `Metal4` above, so the top-level `Metal4` stripes cross them.
+- No grid for `vco` and `ringosc`. Their pins sit off the stripe grid, and straps drawn by the script connect them.
 
-When new macros are added, the matching `define_pdn_grid` plus `add_pdn_connect` block at the bottom must be extended (or the default grid is used if the macro layers line up with the top-level grid). The custom grid for the inverters is shown below as an example. The comments explain the reasoning behind the layer choices and the connection structure.
+The VCO, the ring oscillator and the IHP HV counter run from supplies of their own, `vdd_rf`, `vdd_ro` and `vdd_hv`. Each comes from an analog pad whose `padbare` sits on a power net that `PDN_MACRO_CONNECTIONS` gives to the macro. The router leaves power nets alone, so `draw_straps` in the same file draws these connections, the `VSS` pins of the VCO and the ring oscillator, and the two RF lines. The coordinates follow from the pad pitch, the core area, the macro locations and the stripe grid, so they have to be rechecked when any of these move. `pdngen` cuts its stripes around shapes that already exist, so the script wraps it and draws the straps right after it.
+
+When new macros are added, the matching `define_pdn_grid` plus `add_pdn_connect` block at the bottom must be extended (or the default grid is used if the macro layers line up with the top-level grid). The custom grid for the inverter is shown below as an example. The comments explain the reasoning behind the layer choices and the connection structure.
 
 ```{.tcl filename="flow/librelane/pdn_cfg.tcl (code snippet)"}
-# Custom connect for the inverter macros (inverter1, inverter2).
+# Custom connect for the inverter macro.
 # The top-level PDN is on Metal4 (vertical) and TopMetal1 (horizontal).
-# Each inverter has its own power ring with the horizontal segments on Metal3 and the vertical segments on Metal4, so TopMetal1 stays free.
+# The inverter has its own power ring with the horizontal segments on Metal3 and the vertical segments on Metal4, so TopMetal1 stays free.
 # The top-level TopMetal1 stripes therefore cross the macro and one Metal4 to TopMetal1 connect feeds the ring.
 # A ring that occupied both PDN layers would make pdngen cut every top-level stripe at the macro and leave the ring unfed (PSM-0069).
-# Note: within an inverter's power ring no top-level Metal4 or TopMetal1 power rails are routed.
+# Note: within the inverter's power ring no top-level Metal4 or TopMetal1 power rails are routed.
 define_pdn_grid \
     -macro \
-    -instances "i_chip_core.inverter1 i_chip_core.inverter2" \
+    -instances "i_chip_core.inverter" \
     -name inverter_top \
     -starts_with POWER \
     -halo "$::env(PDN_HORIZONTAL_HALO) $::env(PDN_VERTICAL_HALO)"
@@ -2490,11 +2461,11 @@ make sim-view-cocotb                                # use GTKWave as waveform vi
 make sim-view-cocotb WAVEFORM_VIEWER=surfer         # use Surfer as waveform viewer
 ```
 
-The cocotb testbench at top level is [`testbenches/cocotb/chip_top_tb.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/cocotb/chip_top_tb.py), and it covers the global enable, reset, counters, and bidir behaviour documented in [`doc/specifications.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md). The result is shown in @fig-chip-top-cocotb-gtkwave.
+The cocotb testbench at top level is [`testbenches/cocotb/chip_top_tb.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/cocotb/chip_top_tb.py), and it covers the reset, each of the three counters behind the select, the wrap-around, the unselected counters, and the bidir read-back documented in [`doc/specifications.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md). The result is shown in @fig-chip-top-cocotb-gtkwave.
 
-![`chip_top` cocotb waveform in GTKWave.](fig/chip_top/chip_top_cocotb_gtkwave.png){#fig-chip-top-cocotb-gtkwave}
+![`chip_top` cocotb waveform in GTKWave, taken on an earlier version of the chip with two counters.](fig/chip_top/chip_top_cocotb_gtkwave.png){#fig-chip-top-cocotb-gtkwave}
 
-For mixed-signal simulation, the [`testbenches/xschem/chip_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/xschem/chip_top_tb_tran.sch) testbench can be opened in Xschem for interactive simulation, the same way as for the counter or the inverter, and is shown in @fig-chip-top-tb-tran-schematic.
+For mixed-signal simulation, the [`testbenches/xschem/chip_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/xschem/chip_top_tb_tran.sch) testbench can be opened in Xschem for interactive simulation, the same way as for the counter or the inverter, and is shown in @fig-chip-top-tb-tran-schematic. The IHP LV and ETH LV counters use their XSPICE models. The XSPICE model of the IHP HV counter is built for 3.3 V, so the testbench uses its post-layout netlist at the 1.2 V of the chip. The bench steps through the counter select with `rst_n` low at each step, while the amplifier, the analog inverter channel and the ring oscillator run.
 
 ```sh
 cd testbenches/xschem
@@ -2516,17 +2487,13 @@ make sim-view-xschem SCRIPT=plot_chip_top
 The top-level Xschem testbench converges, but it may take a long time depending on the hardware used. `make sim-gl-xschem` is part of `sim-all`, so a full `make sim-all` includes it. For this tutorial, the simulation data is already available in the repository in [`testbenches/xschem/plot_simulations/data/chip_top_tb_tran.txt`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/testbenches/xschem/plot_simulations/data/chip_top_tb_tran.txt), so `make sim-view-xschem SCRIPT=plot_chip_top` can be run without running the simulation first.
 :::
 
-The following plots show the results of the top-level transient simulation. The first plot shows the analog inverter response, while the other three plots show the digital outputs of the two counters, the digital inverter, and the bidirs.
+The following plots show the results of the top-level transient simulation. The first plot shows the counter select and the digital outputs, the second one shows the analog macros.
 
-![Plotted simulation result of `chip_top_tb_tran`: analog inverter 2 response.](fig/chip_top/chip_top_tb_tran_analog_inv_sim.svg){#fig-chip-top-tb-tran-analog-inv-sim width=75%}
+![Plotted simulation result of `chip_top_tb_tran`: counter select and digital outputs.](fig/chip_top/chip_top_tb_tran_digital_sim.svg){#fig-chip-top-tb-tran-digital-sim}
 
-![Plotted simulation result of `chip_top_tb_tran`: digital inverter 1 outputs.](fig/chip_top/chip_top_tb_tran_digital1_sim.svg){#fig-chip-top-tb-tran-digital1-sim}
+![Plotted simulation result of `chip_top_tb_tran`: inverter, amplifier and ring oscillator.](fig/chip_top/chip_top_tb_tran_analog_sim.svg){#fig-chip-top-tb-tran-analog-sim}
 
-![Plotted simulation result of `chip_top_tb_tran`: digital counter 2 outputs.](fig/chip_top/chip_top_tb_tran_digital2_sim.svg){#fig-chip-top-tb-tran-digital2-sim}
-
-![Plotted simulation result of `chip_top_tb_tran`: digital counter 1 / inverter 1 bidirs.](fig/chip_top/chip_top_tb_tran_digital3_sim.svg){#fig-chip-top-tb-tran-digital3-sim}
-
-When the testbench is opened in Xschem, the schematic of `chip_top` can be inspected with the shortcuts **`e`** / **`Ctrl + e`**, and the symbol can be shown with **`i`** / **`Ctrl + e`** as explained in @sec-analog. The symbol and schematic are shown in @fig-chip-top-symbol and @fig-chip-top-schematic, respectively. The schematic shows the connections between the padframe and the core macros, while the symbol shows the pinout of the chip. The SRAM is not included in the schematic, since IHP does not ship a SPICE model or an Xschem symbol for the `RM_IHPSG13_1P_1024x32_c2_bm_bist` macro.
+When the testbench is opened in Xschem, the schematic of `chip_top` can be inspected with the shortcuts **`e`** / **`Ctrl + e`**, and the symbol can be shown with **`i`** / **`Ctrl + e`** as explained in @sec-analog. The symbol and schematic are shown in @fig-chip-top-symbol and @fig-chip-top-schematic, respectively. The schematic shows the connections between the padframe and the core macros, while the symbol shows the pinout of the chip.
 
 ![Xschem symbol of `chip_top`, showing the pinout of the chip.](fig/chip_top/chip_top_symbol.svg){#fig-chip-top-symbol width=60%}
 
@@ -2605,12 +2572,14 @@ make gdscheck-drc-regular                 # gdscheck main suite on chip_top_logo
 The following LVS targets are available for the top-level.
 
 ```sh
-make klayout-lvs                          # top-level KLayout LVS
+make klayout-lvs                          # top-level KLayout LVS against the Xschem netlist
 make magic-lvs                            # top-level Magic + Netgen LVS
+make klayout-lvs-chip                     # every transistor of the finished GDS against a gate-level reference
+make klayout-lvs-chip-controls            # the same run plus seven planted defects, each has to fail
 ```
 
 ::: {.callout-warning}
-The top-level LVS is currently under construction. The flow is in place, but some issues and limitations in the ihp-sg13cmos5l PDK must be fixed before it can run successfully.
+`klayout-lvs` and `magic-lvs` are currently under construction at the top level, and the LVS inside the LibreLane run compares the macros and the I/O cells only by their pins. `klayout-lvs-chip` is the LVS of the finished chip. It compares every transistor of `chip_top_logo_fill` against a reference that [`scripts/chip_lvs/mk_ref.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/scripts/chip_lvs/mk_ref.py) builds from the powered gate netlists and the LVS netlists of the macros. Its verdict comes from the run's `.lvsdb`, because the runner exits 0 on a mismatch too.
 :::
 
 ### PEX
@@ -2683,7 +2652,7 @@ make project NAME=<name> DRY_RUN=1   # list the changes, touch nothing
 make project NAME=<name>             # start the chip <name>
 ```
 
-`NAME` is a lowercase letter followed by lowercase letters, digits or underscores, for example `mychip`. It must not be the name of a macro or an IP: with `NAME=counter`, the chip top `counter_top` would be the same cell as the top cell of the counter macro. The target needs no PDK.
+`NAME` is a lowercase letter followed by lowercase letters, digits or underscores, for example `mychip`. It must not be the name of a macro or an IP: with `NAME=inverter`, the chip top `inverter_top` would be the same cell as the top cell of the inverter macro. The target needs no PDK.
 
 ::: {.callout-tip}
 With the repository named `ihp-sg13cmos5l-<name>`, for example `ihp-sg13cmos5l-mychip`, `git clone` gives its folder the same name, and `make project` writes that name into the directory tree of the README. If your clone has another name, rename it before `make project`: rename the repository on GitHub (Settings > General, the old URLs redirect), point `origin` at the new URL with `git remote set-url origin <URL>`, close VS Code and every terminal in the folder, and rename the folder from its parent folder. `make project` lists the same steps when the folder name differs.
@@ -2730,7 +2699,7 @@ The first build writes the layout, the netlists, the renders and the reports und
 - **Your own blocks.** In `macros/`, start a digital or an analog macro as a renamed copy of an example (see @sec-digital, @sec-analog and @sec-exercise3):
 
   ```sh
-  make macro FROM=counter NAME=<macro>    # digital macro
+  make macro FROM=counter_lv_ihp NAME=<macro>    # digital macro
   make macro FROM=inverter NAME=<macro>   # analog macro
   ```
 
@@ -2759,11 +2728,11 @@ The following exercises repeat the corresponding sections of this tutorial with 
 
 Repeat @sec-digital for a 16-bit synchronous down-counter that wraps from 0 back to $2^{16} - 1 = 65535$. The recommended steps are:
 
-1. Update the RTL ([`counter.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter.sv), [`counter_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/counter_top.sv), [`constants.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter/rtl/constants.sv)). Change the bitwidth and turn the increment block into a decrement, with wrap-around from 0 to `CTR_MAX`.
-2. Update the testbenches in [`testbenches/verilog/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/testbenches/verilog/), [`testbenches/cocotb/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/testbenches/cocotb/), and [`testbenches/xschem/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/testbenches/xschem/) to cover the new behaviour. Adjust the bus width in the waveform view files (`*.gtkw`, `*.surf.ron`) as well.
+1. Update the RTL ([`counter_lv_ihp.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp.sv), [`counter_lv_ihp_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/counter_lv_ihp_top.sv), [`constants.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/counter_lv_ihp/rtl/constants.sv)). Change the bitwidth and turn the increment block into a decrement, with wrap-around from 0 to `CTR_MAX`.
+2. Update the testbenches in [`testbenches/verilog/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/testbenches/verilog/), [`testbenches/cocotb/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/testbenches/cocotb/), and [`testbenches/xschem/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/testbenches/xschem/) to cover the new behaviour. Adjust the bus width in the waveform view files (`*.gtkw`, `*.surf.ron`) as well.
 3. Run `make sim-all` to validate the new RTL.
 4. Re-run the LibreLane flow with `make build-top`. Check the timing reports. A 16-bit counter at 50 MHz must still pass timing constraints. Then run `make lec`, which proves the new netlist equivalent to the new RTL, now in 16 partitions (see @sec-lec).
-5. Update the bus range of the output pin in the Xschem symbol ([`counter_top.sym`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter/schematic/xschem/)), and re-run the gate-level Xschem simulation. The XSPICE model itself is regenerated automatically by `make build-top` (or manually with `make generate-xspice`), and the PEX symbol `counter_top_pex.sym` together with the extracted netlist by `make magic-pex`. Forgetting this step no longer costs you a debugging session: `make symbol-check` runs inside `generate-xspice` and names the eight ports the symbol is now missing. Run `make symbol-gl FORCE=1` in a scratch copy of the macro if you would rather read the widened pin off a fresh scaffold than edit the range by hand.
+5. Update the bus range of the output pin in the Xschem symbol ([`counter_lv_ihp_top.sym`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/counter_lv_ihp/schematic/xschem/)), and re-run the gate-level Xschem simulation. The XSPICE model itself is regenerated automatically by `make build-top` (or manually with `make generate-xspice`), and the PEX symbol `counter_lv_ihp_top_pex.sym` together with the extracted netlist by `make magic-pex`. Forgetting this step no longer costs you a debugging session: `make symbol-check` runs inside `generate-xspice` and names the eight ports the symbol is now missing. Run `make symbol-gl FORCE=1` in a scratch copy of the macro if you would rather read the widened pin off a fresh scaffold than edit the range by hand.
 
 ::: {.callout-tip}
 ## Bonus for advanced designers
@@ -2790,7 +2759,7 @@ Choose $R_\mathrm{f}$ carefully. Too small, and the loop loads the amplifier out
 
 Repeat @sec-analog for a three-stage ring oscillator with an output buffer, derived from the existing quad inverter. The recommended steps are:
 
-1. Start the new macro as a renamed copy of the [inverter](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/inverter/) with `make macro FROM=inverter NAME=ringosc` in `macros/`. The target renames the files, the cells inside the GDS files and every reference, see the [macros README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/README.md) for what it does and what is left.
+1. Start the new macro as a renamed copy of the [inverter](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/macros/inverter/) with `make macro FROM=inverter NAME=ringosc_buf` in `macros/`. The name `ringosc` is taken by the ring oscillator of this chip, which is worth a look once your own one works. The target renames the files, the cells inside the GDS files and every reference, see the [macros README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/README.md) for what it does and what is left.
 2. Update the schematic in Xschem. Connect three inverters in a ring, and tap the output of the last stage through a buffer. The fourth inverter of the quad inverter can naturally be used as the buffer.
 3. Update the symbol of the macro ([`schematic/xschem/inverter_top.sym`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/inverter/schematic/xschem/inverter_top.sym)) to expose a single output net, instead of `vin1..vin4` and `vout1..vout4`. The PEX symbol `inverter_top_pex.sym` is rebuilt from it by `make symbol-pex`, which the PEX targets run automatically.
 4. Update the transient testbench ([`testbenches/xschem/inverter_top_tb_tran.sch`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/inverter/testbenches/xschem/inverter_top_tb_tran.sch)) to measure the oscillation frequency. Remove the input source. Since the delay per stage is small, simulate a few hundred nanoseconds with a fine step, and measure the period between two consecutive rising crossings of $V_\mathrm{cm}$ on the output net:
@@ -2804,32 +2773,30 @@ Repeat @sec-analog for a three-stage ring oscillator with an output buffer, deri
    ```
 
    `Vcm` is visible inside the `.control` block only through a `.csparam Vcm=Vcm` line next to `.param Vcm=VDD/2`, as the dc testbench shows (see @sec-tb-ac). The expected relation is $f_\mathrm{osc} = 1/(2 \cdot N \cdot t_\mathrm{d})$ with $N = 3$ stages and $t_\mathrm{d}$ the effective stage delay. An ideal simulation can rest on the metastable point where all stages sit at $V_\mathrm{cm}$, so if the ring does not start, kick it with an initial condition on one ring node, for example `.ic v(osc)=0`. Delete testbenches that are no longer relevant.
-5. Resize the unit inverter and watch the frequency. Vary `w`, `l`, and the finger count `ng` of $M_1$ and $M_2$ in the unit cell schematic (`ringosc.sch`), and re-run the transient simulation for each variant. Predict the outcome before you simulate, and use @sec-tradeoffs as your guide.
+5. Resize the unit inverter and watch the frequency. Vary `w`, `l`, and the finger count `ng` of $M_1$ and $M_2$ in the unit cell schematic (`ringosc_buf.sch`), and re-run the transient simulation for each variant. Predict the outcome before you simulate, and use @sec-tradeoffs as your guide.
 6. [Optional] Adapt the CACE [`inverter.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/inverter/verification/cace/inverter.yaml) to characterise the oscillation frequency across PVT.
-7. Update the layout in KLayout. The existing `inverter_top.klay.gds` can be used as a starting point, but the internal routing has to be modified to form the ring and the buffer stage. After editing, export a clean `ringosc_top.gds`. Keep the box on the `prBoundary` layer (`189/0`) and resize it with the macro, otherwise the top-level flow cannot place it. `make check-boundary` verifies this.
+7. Update the layout in KLayout. The existing `inverter_top.klay.gds` can be used as a starting point, but the internal routing has to be modified to form the ring and the buffer stage. After editing, export a clean `ringosc_buf_top.gds`. Keep the box on the `prBoundary` layer (`189/0`) and resize it with the macro, otherwise the top-level flow cannot place it. `make check-boundary` verifies this.
 8. Re-run the verification chain, `make klayout-verify`, `make magic-verify`, and `make build-top`. Then compare the post-layout oscillation frequency against the schematic level as in @sec-postlayout. The parasitics add delay per stage, so the frequency drops.
 
 ## Exercise 4: Update Pinout and Floorplan of the Top-Level {#sec-exercise4}
 
-Building on @sec-exercise1 and @sec-exercise3, swap `inverter2` for the ring oscillator, delete `counter2`, and connect the now 16-bit `counter1` to the freed-up south-side pads. Try the new pad order and the macro positions in PREP-IC first (@sec-prep-ic). The recommended steps are:
+Building on @sec-exercise3, replace `ringosc` in the chip with your ring oscillator, delete `counter_hv_kvc`, and turn the freed pad `vdd_hv_PAD` into a VSS pad. Try the new pad order and the macro positions in PREP-IC first (@sec-prep-ic). The recommended steps are:
 
-1. Replace `inverter2` with the ring oscillator macro in [`chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv).
-2. Replace three of the four analog pads with VSS pads, and connect the ring oscillator's output to the fourth analog pad.
-3. Delete `counter2` and rewire all eight south-side pads to the new 16-bit `counter1` values.
-4. Update the parameters of [`chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_top.sv) so that `NUM_OUTPUT_PADS`, `NUM_BIDIR_PADS`, `NUM_ANALOG_PADS`, and `NUM_VSS_PADS` match the new pin count (see @sec-top).
-5. Update the macro instantiation and wiring in [`chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv).
-6. Update the placement coordinates in the `MACROS` block of [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml). Keep the [`doc/floorplan.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/floorplan.md) constraints in mind, namely stay in the core, no overlaps, and respect the routing-grid alignment of inverter-like macros (`X` a multiple of 0.48 µm, `Y` a multiple of 0.42 µm).
-7. Update the PAD lists (`PAD_WEST`, `PAD_NORTH`, `PAD_SOUTH`, `PAD_EAST`) in [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml) to match the new pinout.
-8. Update [`pdn_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pdn_cfg.tcl) so that the new macros are covered by the correct PDN grid (default for digital, `inverter_top`-style for analog).
-9. Rebuild the chip from scratch with `make build-all`, then verify with `make klayout-drc-regular` and `make gdscheck-drc-regular`.
+1. Replace `ringosc` with your ring oscillator in [`chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv), and connect its buffered output to `analog_PAD[5]`.
+2. Delete `counter_hv_kvc`, its clock gate and the `vdd_hv` port in [`chip_core.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_core.sv). The select code `10` then shows zeros.
+3. Update [`chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_top.sv): delete the `vdd_hv_pad` instance and the `vdd_hv_PAD` port, and raise `NUM_VSS_PADS` by one (see @sec-top).
+4. Update the placement coordinates in the `MACROS` block of [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml). Keep the [`doc/floorplan.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/floorplan.md) constraints in mind, namely stay in the core, no overlaps, and respect the routing-grid alignment of inverter-like macros.
+5. Update the PAD lists (`PAD_WEST`, `PAD_NORTH`, `PAD_SOUTH`, `PAD_EAST`) and `PDN_MACRO_CONNECTIONS` in [`config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/config.yaml) to match the new pinout.
+6. Update [`pdn_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pdn_cfg.tcl): delete `i_chip_core.counter_hv_kvc` from the `macro` grid and the `vdd_hv` strap in `draw_straps`, and recompute the straps of the ring oscillator if your macro moved its pins.
+7. Rebuild the chip from scratch with `make build-all`, then verify with `make klayout-drc-regular` and `make gdscheck-drc-regular`.
 
 ## Exercise 5: Update the Bondplan Configuration {#sec-exercise5}
 
-Building on @sec-exercise4, update the bondplan configuration in [`packaging/config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/packaging/config.yaml) so that the packaged chip matches the new pinout (ring oscillator instead of `inverter2`, 16-bit `counter1`, no `counter2`, three additional VSS pads). The recommended steps are:
+Building on @sec-exercise4, update the bondplan configuration in [`packaging/config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/packaging/config.yaml) so that the packaged chip matches the new pinout (no IHP HV counter, one additional VSS pad). The recommended steps are:
 
 1. Rebuild the final GDS of the modified chip (`make build-all` from @sec-exercise4), since the bondplan flow reads the die pads and their names directly from [`layout/chip_top_logo_fill.gds.gz`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/layout/chip_top_logo_fill.gds.gz).
-2. Update the `PINOUT` table in [`packaging/config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/packaging/config.yaml): the south-side pads now carry `counter1_value[15:8]`, three of the four east-side analog pads became VSS pads, and the fourth carries the ring-oscillator output. Keep the geometric order in mind (pins 1-8 left top→bottom, 9-16 bottom left→right, 17-24 right bottom→top, 25-32 top right→left) so that the bondwires do not cross.
-3. Connect the freed-up VSS pads as downbonds to the exposed pad by adding an `EPAD` list (e.g. `EPAD: ["VSS", "VSS", "VSS"]`) and marking their former leads as NC (`~`). The exposed pad of the QFN-32 is the package ground, and the die is attached with conductive epoxy, so ground downbonds are shorter and lower-inductance than wires to leads.
+2. Update the `PINOUT` table in [`packaging/config.yaml`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/packaging/config.yaml): the east-side pad that carried `vdd_hv_PAD` is now a VSS pad. Keep the geometric order in mind (pins 1-8 left top→bottom, 9-16 bottom left→right, 17-24 right bottom→top, 25-32 top right→left) so that the bondwires do not cross.
+3. Connect the freed-up VSS pad as a downbond to the exposed pad by adding an `EPAD` list (e.g. `EPAD: ["VSS"]`) and marking its former lead as NC (`~`). The exposed pad of the QFN-32 is the package ground, and the die is attached with conductive epoxy, so ground downbonds are shorter and lower-inductance than wires to leads.
 4. Re-run `make bondplan` and read the flow log and [`packaging/result.md`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/packaging/result.md) carefully: only the deliberately unbonded pads may appear as *unbonded named pads* (plus the seal-ring artifact), and there must be no wire-length, crossing, spacing, lead-skew, or guard-clearance warnings.
 5. Inspect the generated bonding diagram in [`packaging/render/`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/packaging/render/) and the bondplan GDS in KLayout (`ke packaging/layout/chip_top_bondplan.gds`). The title block of the A4 drawing sheet (die size, pad pitch, wire count, maximum wire length) is refilled automatically on every run.
 6. [Optional] Experiment with the die placement: rotate the die with `DIE_PLACEMENT.orientation` (e.g. `E`) or move it off-center with `DIE_PLACEMENT.location`, re-run the flow, and observe how the wire-length, spacing, and skew checks react. Restore a placement where all checks pass.
@@ -2838,18 +2805,18 @@ Building on @sec-exercise4, update the bondplan configuration in [`packaging/con
 
 Repeat the hardening of @sec-digital on another library and measure what it changes. The counter uses IHP LV by default, now re-harden it with IHP HV or ETH LV, keeping the RTL, the die, the constraints and `SYNTH_STRATEGY`. What differences can you see in area, speed, and power? The recommended steps are:
 
-1. Run `make librelane` in `macros/counter/` on the unchanged configuration and keep the run folder `flow/librelane/runs/<run>/` as the reference.
+1. Run `make librelane` in `macros/counter_lv_ihp/` on the unchanged configuration and keep the run folder `flow/librelane/runs/<run>/` as the reference.
 2. Switch the library as described in @sec-hardening-libraries. Stay with `make librelane`, since `make build-top` stops at `copy-reports` on another library.
 3. Run `make librelane` and confirm that the run finishes with 0 DRC, LVS and antenna errors (`final/metrics.csv`: `magic__drc_error__count`, `klayout__drc_error__count`, `design__lvs_error__count`, `antenna__violating__nets`).
 4. **Area.** Compare the `Chip area` line in `*-yosys-synthesis/reports/stat.rpt` and, after place and route, `design__instance__area__stdcell` and `design__instance__utilization` in `final/metrics.csv`. Which cells does Yosys choose for the flip-flops, and why does IHP LV need a `sg13cmos5l_tiehi` per bit? For ETH LV, subtract `design__instance__area__class:tap_cell`. For IHP HV, compare `design__core__area`: the core margins scale with the site, so the taller rows lose core area to the fixed die.
 5. **Speed.** Read `timing__setup__ws` in `final/metrics.csv`, then shorten `CLOCK_PERIOD` step by step (for example 5, 3, 2.5, 2, 1.8 and 1.6 ns) with `make librelane-nodrc` until `timing__setup__ws` turns negative, and compare the shortest period that closes. Read the metric and do not wait for the flow to stop: on IHP LV and ETH LV, `TIMING_VIOLATION_CORNERS` of the PDK only checks the typical corners, so the flow keeps going with violations in the slow corner. Note in which corner each library is slowest: the corners of IHP LV and ETH LV end at 1.08 V, those of IHP HV at 3.0 V.
-6. **Power.** Read `*-openroad-stapostpnr/nom_typ_1p20V_25C/power.rpt` for IHP LV and ETH LV, and `nom_typ_3p30V_25C/power.rpt` for IHP HV. `power__total` in `final/metrics.csv` is the value of the last entry of `STA_CORNERS`, which is 1.5 V for IHP LV and 1.2 V for ETH LV, so it does not compare the two. The report of IHP HV shows 0 W of internal and switching power, because its Liberty has no dynamic power data. Why does the leakage of ETH LV come out larger than that of IHP LV, although its logic is smaller? Count the decap cells in `final/nl/counter_top.nl.v` and look up their `cell_leakage_power` in the Liberty files.
-7. Restore the macro with `git restore .` in `macros/counter/` and delete `tracks_ez130.info`.
+6. **Power.** Read `*-openroad-stapostpnr/nom_typ_1p20V_25C/power.rpt` for IHP LV and ETH LV, and `nom_typ_3p30V_25C/power.rpt` for IHP HV. `power__total` in `final/metrics.csv` is the value of the last entry of `STA_CORNERS`, which is 1.5 V for IHP LV and 1.2 V for ETH LV, so it does not compare the two. The report of IHP HV shows 0 W of internal and switching power, because its Liberty has no dynamic power data. Why does the leakage of ETH LV come out larger than that of IHP LV, although its logic is smaller? Count the decap cells in `final/nl/counter_lv_ihp_top.nl.v` and look up their `cell_leakage_power` in the Liberty files.
+7. Restore the macro with `git restore .` in `macros/counter_lv_ihp/` and delete `tracks_ez130.info`.
 
 ::: {.callout-tip}
 ## Bonus for advanced designers
 
-The clock tree of IHP LV uses `sg13cmos5l_buf_8` as root buffer, far more than eight flip-flops need. Set `CTS_ROOT_BUFFER` and `CTS_CLK_BUFFERS` to smaller cells in both libraries, for example `sg13cmos5l_buf_4` and `BUFX12`, and repeat the power comparison. Then measure the supply current at transistor level, the only way to get a dynamic power number for IHP HV: `make copy-final` and `make magic-pex EXT_MODE=2` write `netlist/pex/counter_top_magic_pex_2.spice`. Include it in an ngspice deck with the nominal supply, 6 fF on each output and a 50 MHz clock, and average `i(vdd)` over 16 counting cycles with `meas tran`. A run takes 15 to 45 minutes, so it is not part of the routine flow.
+The clock tree of IHP LV uses `sg13cmos5l_buf_8` as root buffer, far more than eight flip-flops need. Set `CTS_ROOT_BUFFER` and `CTS_CLK_BUFFERS` to smaller cells in both libraries, for example `sg13cmos5l_buf_4` and `BUFX12`, and repeat the power comparison. Then measure the supply current at transistor level, the only way to get a dynamic power number for IHP HV: `make copy-final` and `make magic-pex EXT_MODE=2` write `netlist/pex/counter_lv_ihp_top_magic_pex_2.spice`. Include it in an ngspice deck with the nominal supply, 6 fF on each output and a 50 MHz clock, and average `i(vdd)` over 16 counting cycles with `meas tran`. A run takes 15 to 45 minutes, so it is not part of the routine flow.
 :::
 
 ::: {.callout-note collapse="true"}
