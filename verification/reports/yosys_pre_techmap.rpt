@@ -1,41 +1,52 @@
-96. Printing statistics.
+107. Printing statistics.
 
 === chip_top ===
 
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
         |        | 
-       57        - wires
-      146        - wire bits
-       27        - public wires
-      116        - public wire bits
-        6        - ports
-       28        - port bits
-       70   460800 cells
-       20        -   $_XNOR_
-       11        -   $_XOR_
-        1        -   RM_IHPSG13_1P_1024x32_c2_bm_bist
-        2        -   counter_top
-        2        -   inverter_top
-        4    57600   sg13cmos5l_IOPadAnalog
+       72        - wires
+      127        - wire bits
+       40        - public wires
+       95        - public wire bits
+       10        - ports
+       25        - port bits
+       87   472000 cells
+        2        -   $_ANDNOT_
+       12        -   $_AND_
+       32        -   $_NAND_
+        1        -   amplifier
+        1        -   counter_hv_kvc_top
+        1        -   counter_lv_eth_top
+        1        -   counter_lv_ihp_top
+        1        -   inverter_top
+        1        -   ringosc
+        9   129600   sg13cmos5l_IOPadAnalog
         1    14400   sg13cmos5l_IOPadIOVdd
         1    14400   sg13cmos5l_IOPadIOVss
-        3    43200   sg13cmos5l_IOPadIn
-        4    57600   sg13cmos5l_IOPadInOut30mA
-       17   244800   sg13cmos5l_IOPadOut30mA
+        5    72000   sg13cmos5l_IOPadIn
+        1    14400   sg13cmos5l_IOPadInOut16mA
+        8   115200   sg13cmos5l_IOPadOut16mA
         1    14400   sg13cmos5l_IOPadVdd
-        1    14400   sg13cmos5l_IOPadVss
+        4    57600   sg13cmos5l_IOPadVss
         1        -   sg13cmos5l_ip__jku
         1        -   sg13cmos5l_ip__jku_names
+        2    40000   sg13cmos5l_ip__rfpad_70x70
+        1        -   vco_top
 
-   Area for cell type $_XNOR_ is unknown!
-   Area for cell type $_XOR_ is unknown!
-   Area for cell type \RM_IHPSG13_1P_1024x32_c2_bm_bist is unknown!
+   Area for cell type $_ANDNOT_ is unknown!
+   Area for cell type $_AND_ is unknown!
+   Area for cell type $_NAND_ is unknown!
    Area for cell type \inverter_top is unknown!
+   Area for cell type \amplifier is unknown!
+   Area for cell type \ringosc is unknown!
+   Area for cell type \vco_top is unknown!
    Area for cell type \sg13cmos5l_ip__jku is unknown!
    Area for cell type \sg13cmos5l_ip__jku_names is unknown!
-   Area for cell type \counter_top is unknown!
+   Area for cell type \counter_lv_ihp_top is unknown!
+   Area for cell type \counter_lv_eth_top is unknown!
+   Area for cell type \counter_hv_kvc_top is unknown!
 
-   Chip area for module '\chip_top': 460800.000000
+   Chip area for module '\chip_top': 472000.000000
      of which used for sequential elements: 0.000000 (0.00%)
 
