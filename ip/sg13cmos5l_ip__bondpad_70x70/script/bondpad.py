@@ -36,13 +36,14 @@ Examples (single-line, copy-paste friendly):
 
 LEF output features:
     - MACRO with CLASS COVER (identifies the cell as a cover/pad macro)
-    - PIN ``pad`` exposed on Metal2 through TopMetal1 (multi-layer port)
+    - PIN ``pad`` on every metal the PCell draws, from ``bottom_metal`` up to TopMetal1
     - OBS (obstructions) on every metal from ``bottom_metal`` up to TopMetal1,
       blocking the router from using those layers under the pad
     - Layer names matching the IHP SG13CMOS5L tech.lef
 """
 # pylint: disable=import-error
 import pathlib
+import re
 import sys
 import pya
 import klayout.db
@@ -54,6 +55,10 @@ PCELL = 'bondpad'
 # Full IHP SG13CMOS5L metal stack from bottom to top (indices 0-4). There is no
 # Metal5 and no TopMetal2 in this process, the pad surface is TopMetal1.
 METAL_LAYERS = ['Metal1', 'Metal2', 'Metal3', 'Metal4', 'TopMetal1']
+
+# GDS drawing layer of each metal, read by the LEF pin check.
+METAL_GDS = {'Metal1': (8, 0), 'Metal2': (10, 0), 'Metal3': (30, 0), 'Metal4': (50, 0),
+             'TopMetal1': (126, 0)}
 
 # Mapping from the wrapper's int bottom_metal (1..4) to the value the
 # SG13_dev ``bondpad`` PCell expects on its ``bottomMetal`` parameter
@@ -71,7 +76,7 @@ def generate_bondpad_lef(size: float, shape: str, output: str,
     dot), e.g. ``lef/bondpad_70x70.lef`` -> macro name ``bondpad_70x70``.
 
     The generated LEF follows the same conventions as the hand-crafted reference:
-    - PIN ``pad`` exposed on Metal2 through TopMetal1 (multi-layer port)
+    - PIN ``pad`` on every metal the PCell draws, from ``bottom_metal`` up to TopMetal1
     - OBS covering the full pad area on every metal from ``bottom_metal``
       (default Metal1) up to TopMetal1
     - SYMMETRY X Y R90 and SITE sg13cmos5l_ioSite for padring placement
@@ -101,15 +106,15 @@ def generate_bondpad_lef(size: float, shape: str, output: str,
         f.write("  SYMMETRY X Y R90 ;\n")
         f.write("  SITE sg13cmos5l_ioSite ;\n")
 
-        # --- PIN pad – exposed on Metal2 through TopMetal1 so the router can
-        #     connect at any upper-metal level.  Uses lowercase ``pad`` to
-        #     match the Verilog module port name. ---
+        # --- PIN pad on every metal the PCell draws, from bottom_metal up: the
+        #     top one is the plate, the others are rings at the pad edge.
+        #     LibreLane's LVS builds the pad from this LEF and joins it to the
+        #     IO cell through these pins.  Uses lowercase ``pad`` to match the
+        #     Verilog module port name. ---
         f.write("  PIN pad\n")
         f.write("    USE SIGNAL ;\n")
         f.write("    PORT\n")
-        # Expose pin on Metal2 up to TopMetal1 (skip Metal1 – typically not
-        # routed to for a bondpad connection).
-        for layer in METAL_LAYERS[1:]:  # Metal2 .. TopMetal1
+        for layer in METAL_LAYERS[bottom_metal - 1:]:
             f.write(f"      LAYER {layer} ;\n")
             f.write(f"        RECT 0 0 {size:.1f} {size:.1f} ;\n")
         f.write("    END\n")
@@ -169,6 +174,21 @@ def generate_bondpad_gds(diameter: float, shape: str, output: str,
     print(f"GDS written to: {output}")
 
 
+def check_lef_pin(gds: str, lef: str):
+    """Stop if the LEF puts the ``pad`` pin on a metal the GDS leaves empty."""
+    layout = klayout.db.Layout()
+    layout.read(gds)
+    top = layout.top_cell()
+    text = pathlib.Path(lef).read_text(encoding='utf-8')
+    layers = re.findall(r'LAYER (\w+) ;', text[text.index('  PIN pad'):text.index('  END pad')])
+    for layer in layers:
+        li = layout.find_layer(*METAL_GDS[layer])
+        if li is None or klayout.db.Region(top.begin_shapes_rec(li)).is_empty():
+            print(f"LEF pin on {layer}, where {gds} draws no metal")
+            sys.exit(1)
+    print(f"LEF pin on {', '.join(layers)} checked against the GDS")
+
+
 # ---------------------------------------------------------------------------
 # CLI entry point – parse arguments injected by ``klayout -rd key=value``
 # ---------------------------------------------------------------------------
@@ -225,3 +245,6 @@ if gds_output:
 if lef_output:
     generate_bondpad_lef(float(diameter), shape, lef_output,  # pylint: disable=undefined-variable
                          bottom_metal=bottom_metal)
+
+if gds_output and lef_output:
+    check_lef_pin(gds_output, lef_output)
