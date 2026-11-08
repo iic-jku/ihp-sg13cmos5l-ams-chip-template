@@ -724,7 +724,8 @@ class Clamp:
 
     def resistor(self):
         """25 rppd in series, a serpentine closed by Metal1 bars on the heads, vdd at the upper tier's left end, the RC node at the lower tier's."""
-        var = self.g._variant('rppd', {'w': '1u', 'l': '%gu' % RES_L})
+        # Calculate=w&l keeps the l given here, as the default does on this PDK. The G2 PCell's default recomputes l from R.
+        var = self.g._variant('rppd', {'w': '1u', 'l': '%gu' % RES_L, 'Calculate': 'w&l'})
         xs1 = [RES_X0 + k * RES_PITCH for k in range(RES_N[0])]
         xs2 = [xs1[-1] - j * RES_PITCH for j in range(RES_N[1])]
         insts = []
