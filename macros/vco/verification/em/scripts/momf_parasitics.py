@@ -40,7 +40,7 @@ def s11(name):
     if len(hits) != 1:
         sys.exit(f"momf_parasitics.py: {len(hits)} port-S.csv for {name}, run make sim-em-momf")
     out = {}
-    with open(hits[0]) as f:
+    with open(hits[0], encoding="utf-8") as f:
         rows = list(csv.reader(f))
     for r in rows[1:]:
         f_ghz, mag_db, ang = float(r[0]), float(r[1]), float(r[2])
@@ -82,7 +82,7 @@ def extract_caps(ly, top, mk, work, comb):
                     "--out_dir", work, "--out_spice", spice], check=True, capture_output=True)
     caps = {"A": 0.0, "B": 0.0}
     mult = {"a": 1e-18, "f": 1e-15, "p": 1e-12}
-    for line in open(spice):
+    for line in open(spice, encoding="utf-8"):
         t = line.split()
         if t and t[0][0] in "Cc" and len(t) >= 4:
             v = t[3].lower()

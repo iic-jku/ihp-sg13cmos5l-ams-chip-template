@@ -189,9 +189,9 @@ def build_palace_model(gds_file, palace_dir, name, direction):
                      "model_basename": name})
     config, _ = simulation_setup.create_palace(ports.all_active_excitations(), settings)
     # point solves instead of a sweep
-    cfg = json.load(open(config))
+    cfg = json.load(open(config, encoding="utf-8"))
     cfg["Solver"]["Driven"] = {"Samples": [{"Type": "Point", "Freq": FREQS, "SaveStep": 0}], "AdaptiveTol": 0.0}
-    json.dump(cfg, open(config, "w"), indent=2)
+    json.dump(cfg, open(config, "w", encoding="utf-8"), indent=2)
     print(f"palace_momf.py: wrote {os.path.normpath(config)}")
 
 
