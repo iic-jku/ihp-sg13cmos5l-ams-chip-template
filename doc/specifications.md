@@ -96,7 +96,7 @@ The three counters are 8-bit (`CTR_MAX = 255`) and share `clk_PAD` through their
 
 `count[6:0]` drives `output_PAD[6:0]` and `count[7]` drives `bidir_PAD`, whose output enable is tied high.
 
-Chip STA covers the LV counter with its own Liberty in all six corners. The ETH library has Liberty up to 1.32 V only, so its 1.35 V to 1.65 V corners reuse the nearest one. The HV library has Liberty at 3.0 V and above only, so chip STA cannot judge the HV counter at 1.2 V to 1.65 V.
+Chip STA covers the LV counter with its own Liberty in all six corners. The ETH library has Liberty up to 1.32 V only, so its 1.35 V to 1.65 V corners reuse the nearest one. The HV library has Liberty at 3.0 V and above only, so chip STA cannot judge the HV counter at 1.2 V to 1.65 V. Its post-layout netlist in ngspice counted 259 clock edges through the wrap without an error at 50 MHz in seven cases from ss 125 °C at 1.2 V to ff -40 °C at 1.65 V, with the inputs at 1.2 V, see [macros/counter_hv_kvc/README.md](../macros/counter_hv_kvc/README.md).
 
 ### Inverter
 
@@ -124,7 +124,7 @@ See [macros/inverter/README.md](../macros/inverter/README.md) for its own build 
 
 ### VCO
 
-`vco_top` runs from `vdd_rf` at 1.5 V. `di_en` on `input_PAD[2]` enables it, `vtune` on `analog_PAD[0]` tunes it through `padres`, and its differential output `rf_out_n` and `rf_out_p` reaches the two RF pads through `padbare`. The pads are arranged ground, signal, signal, ground. See [macros/vco/README.md](../macros/vco/README.md).
+`vco_top` runs from `vdd_rf` at 1.5 V. `di_en` on `input_PAD[2]` enables it at the level of `VDD`, so run `VDD` at 1.5 V too to measure the VCO. `vtune` on `analog_PAD[0]` tunes it through `padres`, and its differential output `rf_out_n` and `rf_out_p` reaches the two RF pads through `padbare`. The pads are arranged ground, signal, signal, ground. See [macros/vco/README.md](../macros/vco/README.md).
 
 20 GHz is for on-wafer measurement: the bond wires of the package are 1.3 mm to 1.7 mm long.
 

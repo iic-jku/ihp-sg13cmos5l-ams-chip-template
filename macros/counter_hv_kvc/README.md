@@ -652,6 +652,8 @@ The testbench runs with `.options savecurrents klu method=gear reltol=1e-3 absto
 > [!WARNING]
 > A post-layout run simulates every transistor of the macro in ngspice. In the IIC-OSIC-TOOLS container, 60 ns of transient take about 80 s, while the full 10 µs gate-level XSPICE run of the same testbench finishes in under 2 s. Use the XSPICE model for functional runs, and the PEX netlist on short, targeted stimuli to check timing and signal integrity.
 
+On the chip the macro runs from `vdd_hv` at 1.2 V to 1.65 V, below the 3.0 V of its Liberty files, so STA does not cover it. `netlist/pex/counter_hv_kvc_top_magic_pex_3.spice` in ngspice, with the inputs at 1.2 V and sampled at 0.9 T after each clock edge, counted 259 edges through the wrap from 255 to 0 without an error in these cases: 50 MHz, 25 MHz and 12.5 MHz at ss 125 °C and 1.2 V, 50 MHz at tt 27 °C for 1.2 V and 1.5 V, and 50 MHz at ff -40 °C for 1.2 V and 1.65 V. The latest output transition came 8 ns after the clock edge, at ss 125 °C and 1.2 V.
+
 
 ### Logic Equivalence Check
 
