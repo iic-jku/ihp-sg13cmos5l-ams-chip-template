@@ -12,17 +12,18 @@
 module chip_top #(
     // Power / ground pads for digital core / analog front-end
     parameter int unsigned NUM_VDD_PADS    = 1,
-    parameter int unsigned NUM_VSS_PADS    = 1,
+    parameter int unsigned NUM_VSS_PADS    = 4,
 
     // Power / ground pads for I/O
     parameter int unsigned NUM_IOVDD_PADS  = 1,
     parameter int unsigned NUM_IOVSS_PADS  = 1,
 
     // Signal pads
-    parameter int unsigned NUM_INPUT_PADS  = 1,  // excluding clock and reset pads
-    parameter int unsigned NUM_OUTPUT_PADS = 17,
-    parameter int unsigned NUM_BIDIR_PADS  = 4,
-    parameter int unsigned NUM_ANALOG_PADS = 4
+    parameter int unsigned NUM_INPUT_PADS  = 3,  // excluding clock and reset pads
+    parameter int unsigned NUM_OUTPUT_PADS = 8,
+    parameter int unsigned NUM_BIDIR_PADS  = 1,  // keep at least 1, [NUM_BIDIR_PADS-1:0] would be [-1:0] for 0
+    parameter int unsigned NUM_ANALOG_PADS = 6,  // excluding the supply pads of the VCO, ring oscillator and IHP HV counter
+    parameter int unsigned NUM_RF_PADS     = 2
 ) (
     `ifdef USE_POWER_PINS
     inout wire IOVDD,
@@ -35,7 +36,11 @@ module chip_top #(
     inout wire [NUM_INPUT_PADS-1 :0] input_PAD,
     inout wire [NUM_OUTPUT_PADS-1:0] output_PAD,
     inout wire [NUM_BIDIR_PADS-1 :0] bidir_PAD,
-    inout wire [NUM_ANALOG_PADS-1:0] analog_PAD
+    inout wire [NUM_ANALOG_PADS-1:0] analog_PAD,
+    inout wire [NUM_RF_PADS-1    :0] rf_PAD,
+    inout wire                       vdd_rf_PAD,
+    inout wire                       vdd_ro_PAD,
+    inout wire                       vdd_hv_PAD
 );
 
     // ======================================================
@@ -61,6 +66,14 @@ module chip_top #(
     // Analog (must remain wire: connected to inout pad/macro ports)
     wire  [NUM_ANALOG_PADS-1:0] analog_PADRES;
     wire  [NUM_ANALOG_PADS-1:0] analog_PADBARE;
+    // RF (must remain wire: connected to inout pad/macro ports)
+    wire  [NUM_RF_PADS-1    :0] rf_PADBARE;
+
+    // Supplies of their own, from the padbare of their analog pads.
+    // Plain names: LibreLane connects the macro supply pins to the net the RTL names, see Odb.SetPowerConnections.
+    wire vdd_rf;    // VCO
+    wire vdd_ro;    // ring oscillator
+    wire vdd_hv;    // IHP HV counter
     // ======================================================
 
     // ======================================================
@@ -189,7 +202,7 @@ module chip_top #(
     // ======================================================
     generate
         for (genvar i = 0; i < NUM_OUTPUT_PADS; i++) begin : g_outputs
-            sg13cmos5l_IOPadOut30mA output_pad (
+            sg13cmos5l_IOPadOut16mA output_pad (
                 `ifdef USE_POWER_PINS
                 .iovdd (IOVDD),
                 .iovss (IOVSS),
@@ -208,7 +221,7 @@ module chip_top #(
     // ======================================================
     generate
         for (genvar i = 0; i < NUM_BIDIR_PADS; i++) begin : g_bidirs
-            sg13cmos5l_IOPadInOut30mA bidir_pad (
+            sg13cmos5l_IOPadInOut16mA bidir_pad (
                 `ifdef USE_POWER_PINS
                 .iovdd  (IOVDD),
                 .iovss  (IOVSS),
@@ -248,17 +261,86 @@ module chip_top #(
     // ======================================================
 
     // ======================================================
+    // SUPPLY ANALOG - PAD INSTANCES
+    // ======================================================
+    // Analog pads as supplies of their own: the ring keeps one VDD, and padbare feeds the macro directly.
+    (* keep *)
+    sg13cmos5l_IOPadAnalog vdd_rf_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd   (IOVDD),
+        .iovss   (IOVSS),
+        .vdd     (VDD),
+        .vss     (VSS),
+        `endif
+        .pad     (vdd_rf_PAD),
+        .padres  (),
+        .padbare (vdd_rf)
+    );
+
+    (* keep *)
+    sg13cmos5l_IOPadAnalog vdd_ro_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd   (IOVDD),
+        .iovss   (IOVSS),
+        .vdd     (VDD),
+        .vss     (VSS),
+        `endif
+        .pad     (vdd_ro_PAD),
+        .padres  (),
+        .padbare (vdd_ro)
+    );
+
+    (* keep *)
+    sg13cmos5l_IOPadAnalog vdd_hv_pad (
+        `ifdef USE_POWER_PINS
+        .iovdd   (IOVDD),
+        .iovss   (IOVSS),
+        .vdd     (VDD),
+        .vss     (VSS),
+        `endif
+        .pad     (vdd_hv_PAD),
+        .padres  (),
+        .padbare (vdd_hv)
+    );
+    // ======================================================
+
+    // ======================================================
+    // SIGNAL RF - PAD INSTANCES
+    // ======================================================
+    // RF pad of ip/sg13cmos5l_ip__rfpad_70x70: bondpad, shield and ESD in one cell, without padres.
+    generate
+        for (genvar i = 0; i < NUM_RF_PADS; i++) begin : g_rf_pads
+            (* keep *)
+            sg13cmos5l_ip__rfpad_70x70 rf_pad (
+                `ifdef USE_POWER_PINS
+                .iovdd   (IOVDD),
+                .iovss   (IOVSS),
+                .vdd     (VDD),
+                .vss     (VSS),
+                `endif
+                .pad     (rf_PAD[i]),
+                .padbare (rf_PADBARE[i])
+            );
+        end
+    endgenerate
+    // ======================================================
+
+    // ======================================================
     // CORE DESIGN
     // ======================================================
     chip_core #(
         .NUM_INPUT_PADS  (NUM_INPUT_PADS),
         .NUM_OUTPUT_PADS (NUM_OUTPUT_PADS),
         .NUM_BIDIR_PADS  (NUM_BIDIR_PADS),
-        .NUM_ANALOG_PADS (NUM_ANALOG_PADS)
+        .NUM_ANALOG_PADS (NUM_ANALOG_PADS),
+        .NUM_RF_PADS     (NUM_RF_PADS)
     ) i_chip_core (
         `ifdef USE_POWER_PINS
         .VDD            (VDD),
         .VSS            (VSS),
+        .vdd_rf         (vdd_rf),
+        .vdd_ro         (vdd_ro),
+        .vdd_hv         (vdd_hv),
         `endif
 
         .clk            (clk_PAD2CORE),
@@ -272,7 +354,8 @@ module chip_top #(
         .bidir_oe       (bidir_CORE2PAD_OE),
 
         .analog_padres  (analog_PADRES),
-        .analog_padbare (analog_PADBARE)
+        .analog_padbare (analog_PADBARE),
+        .rf_padbare     (rf_PADBARE)
     );
     // ======================================================
 

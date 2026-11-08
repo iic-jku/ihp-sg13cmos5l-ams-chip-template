@@ -213,6 +213,8 @@ lef: ## Export LEF from the TOP cell layout using Magic
 		'lef write $(LEF_DIR)/$(TOP).lef -hide -pinonly 2um' | \
 		magic -dnull -noconsole \
 		-rcfile $(PDK_ROOT)/$(PDK)/libs.tech/magic/ihp-sg13cmos5l.magicrc
+	# rhigh lies left of and below the cell origin, and the GDS streamout of the chip flow ignores an ORIGIN and puts the cell origin on the placement point
+	sed -i -E 's/^( *ORIGIN) .*/\1 0 0 ;/' $(LEF_DIR)/$(TOP).lef
 .PHONY: lef
 # ================================================================================================
 

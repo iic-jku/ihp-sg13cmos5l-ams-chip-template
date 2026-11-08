@@ -294,8 +294,8 @@ Xschem reads exactly one `xschemrc` at start-up, and that file decides which sym
 | [`macros/inverter/schematic/xschem/xschemrc`](macros/inverter/schematic/xschem/xschemrc) | inverter schematics |
 | [`macros/inverter/testbenches/xschem/xschemrc`](macros/inverter/testbenches/xschem/xschemrc) | inverter testbenches |
 | [`macros/inverter/verification/cace/templates/xschemrc`](macros/inverter/verification/cace/templates/xschemrc) | CACE testbench templates |
-| [`macros/counter/schematic/xschem/xschemrc`](macros/counter/schematic/xschem/xschemrc) | counter schematics |
-| [`macros/counter/testbenches/xschem/xschemrc`](macros/counter/testbenches/xschem/xschemrc) | counter testbenches |
+| [`macros/counter_lv_ihp/schematic/xschem/xschemrc`](macros/counter_lv_ihp/schematic/xschem/xschemrc) | counter schematics |
+| [`macros/counter_lv_ihp/testbenches/xschem/xschemrc`](macros/counter_lv_ihp/testbenches/xschem/xschemrc) | counter testbenches |
 | [`macros/vco/schematic/xschem/xschemrc`](macros/vco/schematic/xschem/xschemrc) | VCO schematics |
 | [`macros/vco/testbenches/xschem/xschemrc`](macros/vco/testbenches/xschem/xschemrc) | VCO testbenches |
 
@@ -320,7 +320,7 @@ The chip top-level pulls in everything below it:
 testbenches/xschem/xschemrc
 └─ source schematic/xschem/xschemrc
    ├─ source macros/inverter/schematic/xschem/xschemrc
-   └─ source macros/counter/schematic/xschem/xschemrc
+   └─ source macros/counter_lv_ihp/schematic/xschem/xschemrc
 
 macros/inverter/verification/cace/templates/xschemrc
 └─ source macros/inverter/schematic/xschem/xschemrc
@@ -381,7 +381,7 @@ Every component follows the same principle. The simulations always run last, so 
 
 | Makefile | `all` flow |
 | --- | --- |
-| [`macros/counter/`](macros/counter/) (digital) | lint -> build (FPGA and LibreLane, including the XSPICE model) -> extract (PEX of the hardened GDS) -> simulate. DRC and LVS run inside the LibreLane flow. |
+| [`macros/counter_lv_ihp/`](macros/counter_lv_ihp/) (digital) | lint -> build (FPGA and LibreLane, including the XSPICE model) -> extract (PEX of the hardened GDS) -> simulate. DRC and LVS run inside the LibreLane flow. |
 | [`macros/inverter/`](macros/inverter/) (analog) | verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate |
 | [`macros/vco/`](macros/vco/) (RF) | layouts (KLayout Python scripts) -> coil EM (Palace) -> lumped-element model (snp2le) -> verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate (ngspice and VACASK). Not part of the chip build yet. |
 | [`ip/*`](ip/) (bondpad, RF pad, logos) | build -> verify (DRC, and LVS on the RF pad) |
@@ -696,16 +696,16 @@ make build-macros
 The following command builds the `counter` digital macro:
 
 ```sh
-make build-counter
+make build-counters
 ```
 
 For each digital macro this dispatches to its in-tree `make all`, which runs the macro's full flow: lint, build (FPGA and LibreLane, including netlists and the XSPICE model), verify (DRC and LVS within the LibreLane flow, then `lec` and `lec-mutant` against the RTL), extract (`magic-pex` on the hardened GDS) and simulate. The simulations run after the build, so the gate-level simulations run on the netlists produced by this build.
 
-The FPGA part of that build emulates the macro on a board. It covers three boards across two FPGA architectures (Lattice iCE40 and Lattice ECP5), selected with `BOARD=`, and defaults to the pico-ice. See [macros/counter/fpga/README.md](macros/counter/fpga/README.md) for the board list, the toolchain notes, and how to add a further one.
+The FPGA part of that build emulates the macro on a board. It covers three boards across two FPGA architectures (Lattice iCE40 and Lattice ECP5), selected with `BOARD=`, and defaults to the pico-ice. See [macros/counter_lv_ihp/fpga/README.md](macros/counter_lv_ihp/fpga/README.md) for the board list, the toolchain notes, and how to add a further one.
 
 > [!TIP]
 > Each macro has its own `Makefile` and `README.md` with additional targets, such as linting, simulation, and verification.
-> For example, to lint the counter or run its simulation, refer to [macros/counter/README.md](macros/counter/README.md).
+> For example, to lint the counter or run its simulation, refer to [macros/counter_lv_ihp/README.md](macros/counter_lv_ihp/README.md).
 
 #### Build Analog Macros
 
@@ -916,7 +916,7 @@ The generated symbol is a copy of `<CELL>.sym` with two changes: `type=subcircui
 
 If `<CELL>.sym` does not exist, the target prints a note and does nothing, which leaves the PEX targets running without a pin reorder just as before. It fails only when `<CELL>.sym` declares neither `type=subcircuit` nor `type=primitive`.
 
-The cell symbol `<CELL>.sym` that this one is derived from is a hand-drawn source file at the chip top-level, because its pins are the pad ring and their placement is part of the drawing. The digital macro has two further targets for its own cell symbol, `symbol-gl` to scaffold one from the ports of a freshly hardened design and `symbol-check` to verify it on every build, see [Build the Xschem Symbol](macros/counter/README.md#build-the-xschem-symbol). They are macro targets only: they key on the `sim_pinname` property that the gate-level XSPICE flow needs, and `chip_top.sym` neither carries it nor has an XSPICE model to match.
+The cell symbol `<CELL>.sym` that this one is derived from is a hand-drawn source file at the chip top-level, because its pins are the pad ring and their placement is part of the drawing. The digital macro has two further targets for its own cell symbol, `symbol-gl` to scaffold one from the ports of a freshly hardened design and `symbol-check` to verify it on every build, see [Build the Xschem Symbol](macros/counter_lv_ihp/README.md#build-the-xschem-symbol). They are macro targets only: they key on the `sim_pinname` property that the gate-level XSPICE flow needs, and `chip_top.sym` neither carries it nor has an XSPICE model to match.
 
 > [!NOTE]
 > Every symbol in this project also carries `spectre_format="@name ( @pinlist ) @symname"`. Xschem writes that line itself whenever a symbol is built from a schematic's pin list (key `a`, `make_sym.awk`), and it is read **only** by the Spectre netlister, which is also the one that drives VACASK (`xschem.tcl` configures `vacask "$N"` as the default simulator for `netlist_type spectre`). The SPICE netlister used for ngspice ignores it, so it has no effect on any target in this Makefile.
@@ -1128,7 +1128,7 @@ To keep the runtime low while still covering the full toolchain, the regression 
 - Only **one** logo (`sg13cmos5l_ip__jku`) is regenerated. It is the only step that exercises the PNG to GDS flow. The second logo (`sg13cmos5l_ip__jku_names`) uses an identical toolchain and reuses its committed views.
 - Exactly **one** CACE parameter set is run (the AC VDD sweep `ac_params`, no Monte Carlo). Swap `ac_params` for `ac_mc_params` / `ac_mm_params` in the target to also exercise the Monte Carlo flow.
 
-The regression runs bottom-up: first the inverter and counter macros, then the top-level prerequisites (submodules, bondpad, RF pad, logo) and finally the chip top-level LibreLane run that integrates the freshly built macros and IP. After the counter is hardened, `copy-final` copies its fresh `flow/final/` views into `macros/counter/final/`, so that the logic equivalence check (`lec`), the gate-level simulation (`sim-gl-cocotb`) and the chip top-level integration use the freshly built outputs rather than the committed ones.
+The regression runs bottom-up: first the inverter and counter macros, then the top-level prerequisites (submodules, bondpad, RF pad, logo) and finally the chip top-level LibreLane run that integrates the freshly built macros and IP. After the counter is hardened, `copy-final` copies its fresh `flow/final/` views into `macros/counter_lv_ihp/final/`, so that the logic equivalence check (`lec`), the gate-level simulation (`sim-gl-cocotb`) and the chip top-level integration use the freshly built outputs rather than the committed ones.
 
 The following tools and flows are checked:
 
@@ -1186,7 +1186,7 @@ make all
 > Most of these outputs are committed in this repository, so `make clean` leaves a large deletion set in `git status`. Run `git restore .` to get the tracked ones back if you did not mean to remove them. The LibreLane run directories under `flow/librelane/runs/` are **not** tracked and cannot be restored that way.
 
 > [!NOTE]
-> The chip top-level testbench includes the counter XSPICE model `macros/counter/netlist/xspice/counter_top.xspice`, which `clean-all` removes. Run `make build-counter` (or the full `make all`) once before `make sim-gl-xschem`, otherwise the include fails.
+> The chip top-level testbench includes the counter XSPICE model `macros/counter_lv_ihp/netlist/xspice/counter_lv_ihp_top.xspice`, which `clean-all` removes. Run `make build-counters` (or the full `make all`) once before `make sim-gl-xschem`, otherwise the include fails.
 
 
 <!-- template-only -->

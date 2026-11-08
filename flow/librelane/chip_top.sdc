@@ -53,6 +53,10 @@ set clk_core_input_ports [get_ports {
 set_input_delay -min 0 -clock $clocks $clk_core_input_ports
 set_input_delay -max $input_delay_value -clock $clocks $clk_core_input_ports
 
+# sel[1:0] only changes with rst_n low or clk stopped, and di_en only reaches the VCO, so these inputs have no timing to check.
+# Without this, the clock gating check of the AND gates against the falling clock edge reports a false hold violation.
+set_false_path -from [get_ports { input_PAD[*] }]
+
 # Output-only pads
 set clk_core_output_ports [get_ports { 
 	output_PAD[*]
@@ -62,8 +66,8 @@ set_output_delay $output_delay_value -clock $clocks $clk_core_output_ports
 
 # Bidirectional pads
 set clk_core_inout_ports [get_ports { 
-	bidir_PAD[*]
-}] 
+	bidir_PAD*
+}]
 
 set_input_delay -min 0 -clock $clocks $clk_core_inout_ports
 set_input_delay -max $input_delay_value -clock $clocks $clk_core_inout_ports

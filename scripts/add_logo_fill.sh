@@ -37,9 +37,9 @@ LOGO_CORE_MARGIN_BOTTOM=165
 # Fill distances in um between the generated filler shapes (smaller distance = higher fill density).
 # The global density windows of the regular KLayout DRC are 35 to 60 percent on Metal1 to Metal4,
 # 35 to 55 percent on Activ and 25 to 70 percent on TopMetal1. Measured on this chip with the values
-# below: Activ 46, Metal1 55, Metal2 51, Metal3 56, Metal4 55, TopMetal1 45 percent. Metal3 carries
-# the horizontal routing and the pad-ring rails, so it gets a larger distance than the other thin
-# metals (0.75 um would put it at 60.5 percent).
+# below: Activ 47, Metal1 55, Metal2 53, Metal3 55, Metal4 56, TopMetal1 45 percent. Metal3 carries
+# the horizontal routing and the pad-ring rails, and Metal4 also fills under the logo, so both get
+# a larger distance than the other thin metals.
 # DRC limits: M1Fil.b-M4Fil.b min filler space = 0.42 um; TM1Fil.b min filler space = 3.0 um, so the
 # TopMetal1 distance stays at the PDK default (3.05, as exactly 3.0 causes random DRC violations);
 # TM1Fil.c (filler to drawn TopMetal1, 3.0 um) is unaffected as it is handled by the exclusion sizing
@@ -47,7 +47,7 @@ LOGO_CORE_MARGIN_BOTTOM=165
 FILL_DIST_M1=0.75
 FILL_DIST_M2=0.75
 FILL_DIST_M3=1.25
-FILL_DIST_M4=0.75
+FILL_DIST_M4=1.25
 FILL_DIST_TM1=3.05
 
 # meerkat.py expects die-relative margins from layout origin (0,0)
@@ -130,12 +130,11 @@ python3 "${SCRIPTS_DIR}/meerkat.py" \
 
 # Add rectangles around the logo on specified layers
 # RECT_LAYERx: layer/datatype tuple (the nofill datatype 23 keeps the filler out), RECT_MARGINx: extra space in um
+# Only TopMetal1: the logo spans the core, and a Metal4 keep-out there leaves 19 percent in the central window of M4Fil.h (minimum 25).
 RECT_LAYER1="126/23"
 RECT_MARGIN1=20
-RECT_LAYER2="50/23"
-RECT_MARGIN2=0
 
-for RECT_LAYER_VAR in 1 2; do
+for RECT_LAYER_VAR in 1; do
     eval "RECT_LAYER=\$RECT_LAYER${RECT_LAYER_VAR}"
     eval "RECT_MARGIN=\$RECT_MARGIN${RECT_LAYER_VAR}"
     klayout -zz \

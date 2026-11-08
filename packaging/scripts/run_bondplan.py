@@ -750,18 +750,39 @@ def assign_wires(cfg, pads, pkg, die_center):
                 pairs.append((math.hypot(pad["x"] - bp.x, pad["y"] - bp.y),
                               i, j))
         pairs.sort()
-        done_pins, done_pads = set(), set()
-        for dist, i, j in pairs:
+        done_pins, done_pads, chosen = set(), set(), {}
+        for _, i, j in pairs:
             if i in done_pins or j in done_pads:
                 continue
             done_pins.add(i)
             done_pads.add(j)
+            chosen[i] = j
+
+        def wire_length(i, j):
+            bp = pkg["bond_pts"][pin_list[i]]
+            return math.hypot(candidates[j]["x"] - bp.x,
+                              candidates[j]["y"] - bp.y)
+
+        # Greedy pairs can cross. Exchanging the pads of two crossing wires
+        # always shortens their sum, so exchange until no pair gains.
+        improved = True
+        while improved:
+            improved = False
+            for a in chosen:
+                for b in chosen:
+                    ja, jb = chosen[a], chosen[b]
+                    if (wire_length(a, jb) + wire_length(b, ja)
+                            < wire_length(a, ja) + wire_length(b, jb) - 1e-6):
+                        chosen[a], chosen[b] = jb, ja
+                        improved = True
+
+        for i, j in chosen.items():
             pad = candidates[j]
             pad["used"] = True
             bp = pkg["bond_pts"][pin_list[i]]
             wire = {"pin": pin_list[i], "name": name,
                     "p0": (pad["x"], pad["y"]), "p1": (bp.x, bp.y),
-                    "length": dist}
+                    "length": wire_length(i, j)}
             wire_geometry(wire, pkg["lead_dirs"].get(pin_list[i]))
             wires.append(wire)
 

@@ -333,17 +333,34 @@ build-logos: ## Build the logos in ip/sg13cmos5l_ip__jku/ and ip/sg13cmos5l_ip__
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku_names all
 .PHONY: build-logos
 
-build-counter: ## Build the counter macro
-	@$(MAKE) -C $(MACROS_DIR)/counter all
-.PHONY: build-counter
+build-counters: ## Build the three counter macros (IHP LV, IHP HV and ETH LV)
+	@$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp all
+	@$(MAKE) -C $(MACROS_DIR)/counter_hv_kvc all
+	@$(MAKE) -C $(MACROS_DIR)/counter_lv_eth all
+.PHONY: build-counters
 
 build-inverter: ## Build the inverter macro
 	@$(MAKE) -C $(MACROS_DIR)/inverter all
 .PHONY: build-inverter
 
-build-macros: ## Build all enabled macros (counter and inverter)
-	$(MAKE) build-counter
+build-amplifier: ## Build the amplifier macro
+	@$(MAKE) -C $(MACROS_DIR)/amplifier all
+.PHONY: build-amplifier
+
+build-ringosc: ## Build the ring oscillator macro
+	@$(MAKE) -C $(MACROS_DIR)/ringosc all
+.PHONY: build-ringosc
+
+build-vco: ## Build the VCO macro
+	@$(MAKE) -C $(MACROS_DIR)/vco all
+.PHONY: build-vco
+
+build-macros: ## Build all enabled macros (counters, inverter, amplifier, ring oscillator and VCO)
+	$(MAKE) build-counters
 	$(MAKE) build-inverter
+	$(MAKE) build-amplifier
+	$(MAKE) build-ringosc
+	$(MAKE) build-vco
 .PHONY: build-macros
 
 # Adds the chip logo and fill structures to the final GDS.
@@ -603,19 +620,19 @@ regression: ## Regression test target for IIC-OSIC-TOOLS
 	$(MAKE) -C $(MACROS_DIR)/inverter build-top
 
 # 	Digital macro: counter (Verilator, Icarus, cocotb, yosys/FPGA, LibreLane, xspice)
-	$(MAKE) -C $(MACROS_DIR)/counter lint-verilog-all
-	$(MAKE) -C $(MACROS_DIR)/counter sim-rtl-verilog
-	$(MAKE) -C $(MACROS_DIR)/counter sim-rtl-cocotb
-	$(MAKE) -C $(MACROS_DIR)/counter build-fpga
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp lint-verilog-all
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-rtl-verilog
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-rtl-cocotb
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp build-fpga
 # 	librelane-magicdrc: full RTL-to-GDS. KLayout DRC skipped for runtime.
-	$(MAKE) -C $(MACROS_DIR)/counter librelane-magicdrc
-	$(MAKE) -C $(MACROS_DIR)/counter copy-final
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp librelane-magicdrc
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp copy-final
 # 	Gate-level flows that depend on the LibreLane outputs above.
-	$(MAKE) -C $(MACROS_DIR)/counter lec
-	$(MAKE) -C $(MACROS_DIR)/counter lec-mutant
-	$(MAKE) -C $(MACROS_DIR)/counter sim-gl-cocotb
-	$(MAKE) -C $(MACROS_DIR)/counter generate-xspice
-	$(MAKE) -C $(MACROS_DIR)/counter sim-gl-xschem
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp lec
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp lec-mutant
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-gl-cocotb
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp generate-xspice
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-gl-xschem
 
 # 	Top-level assembly
 	$(MAKE) init-submodules
@@ -653,8 +670,13 @@ clean-all: ## Delete all generated files of the chip top-level, the IPs and the 
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__rfpad_70x70 clean
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku clean
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku_names clean
-	$(MAKE) -C $(MACROS_DIR)/counter clean
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp clean
+	$(MAKE) -C $(MACROS_DIR)/counter_hv_kvc clean
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_eth clean
 	$(MAKE) -C $(MACROS_DIR)/inverter clean
+	$(MAKE) -C $(MACROS_DIR)/amplifier clean
+	$(MAKE) -C $(MACROS_DIR)/ringosc clean
+	$(MAKE) -C $(MACROS_DIR)/vco clean
 .PHONY: clean-all
 # ================================================================================================
 # template-only

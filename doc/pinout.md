@@ -22,123 +22,138 @@ Defined in [chip_top.sv](../rtl/chip_top.sv):
 | ----------------- | --------- | --------------------- | ----------------------------------------------- |
 | `IOVDD`           | inout     | 1                     | I/O supply (3.3 V), under `USE_POWER_PINS`      |
 | `IOVSS`           | inout     | 1                     | I/O ground, under `USE_POWER_PINS`              |
-| `VDD`             | inout     | 1                     | Core supply (1.5 V), under `USE_POWER_PINS`     |
+| `VDD`             | inout     | 1                     | Core supply (1.2 V), under `USE_POWER_PINS`     |
 | `VSS`             | inout     | 1                     | Core ground, under `USE_POWER_PINS`             |
 | `clk_PAD`         | inout     | 1                     | main clock                                      |
 | `rst_n_PAD`       | inout     | 1                     | active-low reset                                |
-| `input_PAD[0]`    | inout     | `NUM_INPUT_PADS=1`    | global enable                                   |
-| `output_PAD[16:0]`| inout     | `NUM_OUTPUT_PADS=17`  | digital outputs (counters, inverter1, SRAM)     |
-| `bidir_PAD[3:0]`  | inout     | `NUM_BIDIR_PADS=4`    | counter1 MSB nibble / inverter1 vin1..vin4      |
-| `analog_PAD[3:0]` | inout     | `NUM_ANALOG_PADS=4`   | inverter2 analog channels 1 and 2               |
+| `input_PAD[2:0]`  | inout     | `NUM_INPUT_PADS=3`    | `sel[1:0]` counter select, `di_en` VCO enable   |
+| `output_PAD[7:0]` | inout     | `NUM_OUTPUT_PADS=8`   | `count[6:0]`, digital inverter channel          |
+| `bidir_PAD`       | inout     | `NUM_BIDIR_PADS=1`    | `count[7]`, read back into the inverter         |
+| `analog_PAD[5:0]` | inout     | `NUM_ANALOG_PADS=6`   | `vtune`, amplifier, inverter, ring oscillator   |
+| `rf_PAD[1:0]`     | inout     | `NUM_RF_PADS=2`       | VCO RF outputs                                  |
+| `vdd_rf_PAD`      | inout     | 1                     | VCO supply                                      |
+| `vdd_ro_PAD`      | inout     | 1                     | ring oscillator supply                          |
+| `vdd_hv_PAD`      | inout     | 1                     | IHP HV counter supply                           |
 
-The `output_PAD` bit-to-role mapping is fixed inside [chip_core.sv](../rtl/chip_core.sv):
+The bit-to-role mapping is fixed inside [chip_core.sv](../rtl/chip_core.sv):
 
-| `output_PAD` bit | Source signal                                            |
-| ---------------- | ---------------------------------------------------------|
-| `[3:0]`          | `counter1_value[3:0]` (counter1 LSB nibble)              |
-| `[11:4]`         | `counter2_value[7:0]` (full 8-bit counter2 value)        |
-| `[15:12]`        | `inverter1.vout1..vout4` (digital inverter outputs)      |
-| `[16]`           | `^sram_0_out` (parity / XOR-reduction of `A_DOUT[31:0]`) |
+| Port bit          | Signal                                                     |
+| ----------------- | ---------------------------------------------------------- |
+| `input_PAD[1:0]`  | `sel[1:0]`                                                 |
+| `input_PAD[2]`    | `di_en`                                                    |
+| `output_PAD[6:0]` | `count[6:0]` of the selected counter                       |
+| `output_PAD[7]`   | `inv_dout`, `inverter.vout4` (digital channel)             |
+| `bidir_PAD`       | `count[7]` of the selected counter, also `inverter.vin4`   |
+| `analog_PAD[0]`   | `vtune` (via `padres`)                                     |
+| `analog_PAD[1]`   | `amp_vin` (via `padres`)                                   |
+| `analog_PAD[2]`   | `amp_vout` (via `padbare`)                                 |
+| `analog_PAD[3]`   | `inv_vin`, `inverter.vin1` (via `padres`)                  |
+| `analog_PAD[4]`   | `inv_vout`, `inverter.vout1` (via `padbare`)               |
+| `analog_PAD[5]`   | `ro_vout` (via `padbare`)                                  |
+| `rf_PAD[0]`       | `rf_out_n` (via `padbare`)                                 |
+| `rf_PAD[1]`       | `rf_out_p` (via `padbare`)                                 |
 
 
 ## Pad-count overview
 
-| Category                | Count | Pads                                                                       |
-| ----------------------- | ----- | -------------------------------------------------------------------------- |
-| Clock                   | 1     | `clk_PAD`                                                                  |
-| Reset (active-low)      | 1     | `rst_n_PAD`                                                                |
-| Enable                  | 1     | `input_PAD[0]`                                                             |
-| I/O supply              | 1     | `IOVDD`                                                                    |
-| I/O ground              | 1     | `IOVSS`                                                                    |
-| Core supply             | 1     | `VDD`                                                                      |
-| Core ground             | 1     | `VSS`                                                                      |
-| Digital outputs         | 17    | 4 × counter1[3:0] + 8 × counter2[7:0] + 4 × inverter1.vout + 1 × SRAM XOR  |
-| Digital bidir           | 4     | counter1[7:4] / inverter1.vin1..vin4                                       |
-| Analog                  | 4     | inverter2.vin1, vin2 (padres) + inverter2.vout1, vout2 (padbare)           |
-| **Total**               | **32**|                                                                            |
+| Category                | Count | Pads                                                                 |
+| ----------------------- | ----- | -------------------------------------------------------------------- |
+| Clock                   | 1     | `clk_PAD`                                                            |
+| Reset (active-low)      | 1     | `rst_n_PAD`                                                          |
+| Digital inputs          | 3     | `sel[1:0]`, `di_en`                                                  |
+| I/O supply              | 1     | `IOVDD`                                                              |
+| I/O ground              | 1     | `IOVSS`                                                              |
+| Core supply             | 1     | `VDD`                                                                |
+| Core ground             | 4     | `VSS` on the west side and three times on the south side, around the RF pair |
+| Digital outputs         | 8     | `count[6:0]`, `inv_dout`                                             |
+| Digital bidir           | 1     | `count[7]`                                                           |
+| Analog                  | 6     | `vtune`, `amp_vin`, `amp_vout`, `inv_vin`, `inv_vout`, `ro_vout`     |
+| RF                      | 2     | `rf_out_n`, `rf_out_p`                                               |
+| Macro supplies          | 3     | `vdd_rf`, `vdd_ro`, `vdd_hv`                                         |
+| **Total**               | **32**|                                                                      |
 
 
 ## Location overview
 
-| Side  | Pad count | Function                                                                  |
-| ----- | --------- | ------------------------------------------------------------------------- |
-| West  | 8         | clk, rst_n, enable, IOVDD/IOVSS, VDD/VSS, SRAM output                     |
-| North | 8         | `counter1_value[3:0]` outputs + `counter1_value[7:4]` / inv1.vin bidir    |
-| South | 8         | `counter2_value[7:0]` outputs                                             |
-| East  | 8         | inverter2 analog ch1/ch2 (4 pads), inverter1 dout1..dout4 (4 pads)        |
+| Side  | Pad count | Function                                                                    |
+| ----- | --------- | --------------------------------------------------------------------------- |
+| West  | 8         | supplies, `sel[1:0]`, `rst_n`, `clk`                                        |
+| North | 8         | `count[7:0]` of the selected counter                                        |
+| South | 8         | VCO: `di_en`, `vtune`, RF pair in GSSG, `vdd_rf`                            |
+| East  | 8         | amplifier, inverter, ring oscillator, `vdd_hv`                              |
 
 
 ## West (bottom → top)
 
-| # | Top-level port      | Pad-cell instance         | Type            | Direction | Domain | Role                                            |
-| - | ------------------- | ------------------------- | --------------- | --------- | ------ | ----------------------------------------------- |
-| 1 | `output_PAD[16]`    | `g_outputs[16].output_pad`  | digital         | out       | 1.5 V  | XOR-reduced SRAM `A_DOUT[31:0]` (`sram_0_out`)  |
-| 2 | `VSS`               | `g_vss_pads[0].vss_pad`     | power           | inout     | gnd    | core ground (VSS)                               |
-| 3 | `VDD`               | `g_vdd_pads[0].vdd_pad`     | power           | inout     | 1.5 V  | core supply (VDD)                               |
-| 4 | `IOVSS`             | `g_iovss_pads[0].iovss_pad` | power           | inout     | gnd    | I/O ground (IOVSS / IOGND)                      |
-| 5 | `IOVDD`             | `g_iovdd_pads[0].iovdd_pad` | power           | inout     | 3.3 V  | I/O supply (IOVDD)                              |
-| 6 | `input_PAD[0]`      | `g_inputs[0].input_pad`     | digital         | in        | 1.5 V  | global `enable` (gates counters and bidir mode) |
-| 7 | `rst_n_PAD`         | `rst_n_pad`               | digital         | in        | 1.5 V  | active-low synchronous reset                    |
-| 8 | `clk_PAD`           | `clk_pad`                 | digital         | in        | 1.5 V  | main clock (50 MHz)                             |
+| # | Top-level port  | Pad-cell instance           | Type    | Direction | Domain | Role                          |
+| - | --------------- | --------------------------- | ------- | --------- | ------ | ----------------------------- |
+| 1 | `VSS`           | `g_vss_pads[0].vss_pad`     | power   | inout     | gnd    | core ground (VSS)             |
+| 2 | `VDD`           | `g_vdd_pads[0].vdd_pad`     | power   | inout     | 1.2 V  | core supply (VDD)             |
+| 3 | `IOVSS`         | `g_iovss_pads[0].iovss_pad` | power   | inout     | gnd    | I/O ground (IOVSS / IOGND)    |
+| 4 | `IOVDD`         | `g_iovdd_pads[0].iovdd_pad` | power   | inout     | 3.3 V  | I/O supply (IOVDD)            |
+| 5 | `input_PAD[0]`  | `g_inputs[0].input_pad`     | digital | in        | 1.2 V  | `sel[0]`                      |
+| 6 | `input_PAD[1]`  | `g_inputs[1].input_pad`     | digital | in        | 1.2 V  | `sel[1]`                      |
+| 7 | `rst_n_PAD`     | `rst_n_pad`                 | digital | in        | 1.2 V  | active-low synchronous reset  |
+| 8 | `clk_PAD`       | `clk_pad`                   | digital | in        | 1.2 V  | main clock (50 MHz)           |
 
 
 ## North (left → right)
 
-| # | Top-level port    | Pad-cell instance         | Type            | Direction | Role                                                                       |
-| - | ----------------- | ------------------------- | --------------- | --------- | -------------------------------------------------------------------------- |
-| 1 | `output_PAD[0]`   | `g_outputs[0].output_pad`   | digital         | out       | `counter1_value[0]` (LSB)                                                  |
-| 2 | `output_PAD[1]`   | `g_outputs[1].output_pad`   | digital         | out       | `counter1_value[1]`                                                        |
-| 3 | `output_PAD[2]`   | `g_outputs[2].output_pad`   | digital         | out       | `counter1_value[2]`                                                        |
-| 4 | `output_PAD[3]`   | `g_outputs[3].output_pad`   | digital         | out       | `counter1_value[3]`                                                        |
-| 5 | `bidir_PAD[0]`    | `g_bidirs[0].bidir_pad`     | digital         | bidir     | `counter1_value[4]` (out, when `enable=1`) / `inverter1.vin1` (in)         |
-| 6 | `bidir_PAD[1]`    | `g_bidirs[1].bidir_pad`     | digital         | bidir     | `counter1_value[5]` (out, when `enable=1`) / `inverter1.vin2` (in)         |
-| 7 | `bidir_PAD[2]`    | `g_bidirs[2].bidir_pad`     | digital         | bidir     | `counter1_value[6]` (out, when `enable=1`) / `inverter1.vin3` (in)         |
-| 8 | `bidir_PAD[3]`    | `g_bidirs[3].bidir_pad`     | digital         | bidir     | `counter1_value[7]` (MSB) (out, when `enable=1`) / `inverter1.vin4` (in)   |
+| # | Top-level port  | Pad-cell instance         | Type    | Direction | Role                                     |
+| - | --------------- | ------------------------- | ------- | --------- | ---------------------------------------- |
+| 1 | `output_PAD[0]` | `g_outputs[0].output_pad` | digital | out       | `count[0]` (LSB)                         |
+| 2 | `output_PAD[1]` | `g_outputs[1].output_pad` | digital | out       | `count[1]`                               |
+| 3 | `output_PAD[2]` | `g_outputs[2].output_pad` | digital | out       | `count[2]`                               |
+| 4 | `output_PAD[3]` | `g_outputs[3].output_pad` | digital | out       | `count[3]`                               |
+| 5 | `output_PAD[4]` | `g_outputs[4].output_pad` | digital | out       | `count[4]`                               |
+| 6 | `output_PAD[5]` | `g_outputs[5].output_pad` | digital | out       | `count[5]`                               |
+| 7 | `output_PAD[6]` | `g_outputs[6].output_pad` | digital | out       | `count[6]`                               |
+| 8 | `bidir_PAD`     | `g_bidirs[0].bidir_pad`   | digital | bidir     | `count[7]` (MSB), always driven, read back into `inverter.vin4` |
 
-`bidir_oe[i]` is wired to `input_PAD[0]`, i.e. the bidir pads are **outputs when `enable = 1`** (counter1's MSB nibble visible externally) and **inputs when `enable = 0`** (external stimuli drive inverter1's `vin1..vin4`).
+The output and bidir pads are the 16 mA cells. `bidir_oe` is tied high, so the pad cannot float and `count[7]` also drives the digital inverter channel.
 
 
 ## South (left → right)
 
-| # | Top-level port    | Pad-cell instance         | Type            | Direction | Role                                  |
-| - | ----------------- | ------------------------- | --------------- | --------- | ------------------------------------- |
-| 1 | `output_PAD[4]`   | `g_outputs[4].output_pad`   | digital         | out       | `counter2_value[0]` (LSB)             |
-| 2 | `output_PAD[5]`   | `g_outputs[5].output_pad`   | digital         | out       | `counter2_value[1]`                   |
-| 3 | `output_PAD[6]`   | `g_outputs[6].output_pad`   | digital         | out       | `counter2_value[2]`                   |
-| 4 | `output_PAD[7]`   | `g_outputs[7].output_pad`   | digital         | out       | `counter2_value[3]`                   |
-| 5 | `output_PAD[8]`   | `g_outputs[8].output_pad`   | digital         | out       | `counter2_value[4]`                   |
-| 6 | `output_PAD[9]`   | `g_outputs[9].output_pad`   | digital         | out       | `counter2_value[5]`                   |
-| 7 | `output_PAD[10]`  | `g_outputs[10].output_pad`  | digital         | out       | `counter2_value[6]`                   |
-| 8 | `output_PAD[11]`  | `g_outputs[11].output_pad`  | digital         | out       | `counter2_value[7]` (MSB)             |
+| # | Top-level port  | Pad-cell instance           | Type    | Direction | Role                                   |
+| - | --------------- | --------------------------- | ------- | --------- | -------------------------------------- |
+| 1 | `input_PAD[2]`  | `g_inputs[2].input_pad`     | digital | in        | `di_en`, VCO enable (active high)      |
+| 2 | `analog_PAD[0]` | `g_analogs[0].analog_pad`   | analog  | inout     | `vtune` (via `padres`)                 |
+| 3 | `VSS`           | `g_vss_pads[1].vss_pad`     | power   | inout     | ground of the RF pair                  |
+| 4 | `rf_PAD[0]`     | `g_rf_pads[0].rf_pad`       | RF      | inout     | `rf_out_n` (via `padbare`)             |
+| 5 | `rf_PAD[1]`     | `g_rf_pads[1].rf_pad`       | RF      | inout     | `rf_out_p` (via `padbare`)             |
+| 6 | `VSS`           | `g_vss_pads[2].vss_pad`     | power   | inout     | ground of the RF pair                  |
+| 7 | `vdd_rf_PAD`    | `vdd_rf_pad`                | analog  | inout     | VCO supply, 1.5 V (via `padbare`)      |
+| 8 | `VSS`           | `g_vss_pads[3].vss_pad`     | power   | inout     | core ground                            |
 
 
 ## East (bottom → top)
 
-| # | Top-level port    | Pad-cell instance         | Type            | Direction | Role                                                        |
-| - | ----------------- | ------------------------- | --------------- | --------- | ----------------------------------------------------------- |
-| 1 | `analog_PAD[0]`   | `g_analogs[0].analog_pad`   | analog          | inout     | `inverter2.vin1`  (channel 1 input,  routed via `padres`)   |
-| 2 | `analog_PAD[1]`   | `g_analogs[1].analog_pad`   | analog          | inout     | `inverter2.vin2`  (channel 2 input,  routed via `padres`)   |
-| 3 | `analog_PAD[2]`   | `g_analogs[2].analog_pad`   | analog          | inout     | `inverter2.vout1` (channel 1 output, routed via `padbare`)  |
-| 4 | `analog_PAD[3]`   | `g_analogs[3].analog_pad`   | analog          | inout     | `inverter2.vout2` (channel 2 output, routed via `padbare`)  |
-| 5 | `output_PAD[12]`  | `g_outputs[12].output_pad`  | digital         | out       | `inverter1.vout1`                                           |
-| 6 | `output_PAD[13]`  | `g_outputs[13].output_pad`  | digital         | out       | `inverter1.vout2`                                           |
-| 7 | `output_PAD[14]`  | `g_outputs[14].output_pad`  | digital         | out       | `inverter1.vout3`                                           |
-| 8 | `output_PAD[15]`  | `g_outputs[15].output_pad`  | digital         | out       | `inverter1.vout4`                                           |
+| # | Top-level port  | Pad-cell instance         | Type    | Direction | Role                                       |
+| - | --------------- | ------------------------- | ------- | --------- | ------------------------------------------ |
+| 1 | `analog_PAD[1]` | `g_analogs[1].analog_pad` | analog  | inout     | `amp_vin` (via `padres`)                   |
+| 2 | `analog_PAD[2]` | `g_analogs[2].analog_pad` | analog  | inout     | `amp_vout` (via `padbare`)                 |
+| 3 | `analog_PAD[3]` | `g_analogs[3].analog_pad` | analog  | inout     | `inv_vin`, `inverter.vin1` (via `padres`)  |
+| 4 | `analog_PAD[4]` | `g_analogs[4].analog_pad` | analog  | inout     | `inv_vout`, `inverter.vout1` (via `padbare`) |
+| 5 | `output_PAD[7]` | `g_outputs[7].output_pad` | digital | out       | `inv_dout`, `inverter.vout4`               |
+| 6 | `vdd_ro_PAD`    | `vdd_ro_pad`              | analog  | inout     | ring oscillator supply (via `padbare`)     |
+| 7 | `analog_PAD[5]` | `g_analogs[5].analog_pad` | analog  | inout     | `ro_vout` (via `padbare`)                  |
+| 8 | `vdd_hv_PAD`    | `vdd_hv_pad`              | analog  | inout     | IHP HV counter supply, 1.2 V to 1.65 V (via `padbare`) |
 
-`inverter2` has four channels in total. Only **channels 1 and 2** are exposed off-chip. Channels 3 and 4 have `vin3`, `vout3`, `vin4`, `vout4` tied to `VSS` inside [chip_core.sv](../rtl/chip_core.sv).
+`inverter` has four channels. Channel 1 is analog on its own two pads. Channel 4 is digital: `vin4` reads `count[7]` back from its bidir pad and `vout4` drives `inv_dout`. Channels 2 and 3 are not bonded out: `vin2` and `vin3` are tied to `VSS` and `vout2` and `vout3` stay open inside [chip_core.sv](../rtl/chip_core.sv), because an inverter with a low input drives its output high.
 
 The `sg13cmos5l_IOPadAnalog` cell exposes two internal nodes per pad:
 
 | Net      | Path through pad cell                          | Use case                                                  |
 | -------- | ---------------------------------------------- | --------------------------------------------------------- |
 | `padres` | Via the pad's **secondary** ESD resistor       | Input signals: the series resistor limits ESD current and protects sensitive gate oxides |
-| `padbare` | **Direct** connection to the pad metal (only primary ESD diodes present) | Output signals: bypasses the resistor to minimise parasitic RC and signal distortion |
-
-`inverter2.vin1/vin2` are connected to `analog_PADRES[0:1]` (through the resistor) and `inverter2.vout1/vout2` are driven onto `analog_PADBARE[2:3]` (direct connection). In [chip_core.sv](../rtl/chip_core.sv), these appear as the corresponding core nets `analog_padres[0:1]` and `analog_padbare[2:3]`.
+| `padbare` | **Direct** connection to the pad metal (only primary ESD diodes present) | Output signals and supplies: no series resistor |
 
 Two details of the pad cell are specific to this PDK instance:
 
-- `padbare` is not part of the IHP `sg13cmos5l_io` release. It is added by the repo's own copy of the library in [ip/sg13cmos5l_io_custom/](../ip/sg13cmos5l_io_custom/): a LEF pin, a Verilog port and a Liberty pin block in all seven `.lib` files. `PAD_LEFS` and `PAD_VERILOG_MODELS` in [config.yaml](../flow/librelane/config.yaml) point the flow at that copy rather than at the PDK.
+- `padbare` is not part of the IHP `sg13cmos5l_io` release. It is added by the repo's own copy of the library in [ip/sg13cmos5l_io_custom/](../ip/sg13cmos5l_io_custom/): a LEF pin, a Verilog port and a Liberty pin block.
 - `padres` and `padbare` are exposed on **Metal3 only**, at the top edge of the 80 × 180 µm pad cell. The `pad` pin itself is drawn on Metal2, Metal3, Metal4 and TopMetal1.
 
-The four analog nets are protected on the way from the pad to the macro: they are listed in `RSZ_DONT_TOUCH_LIST` so the resizer leaves them alone, and `DRT_ASSIGN_NDR` applies the `NDR_analog` non-default rule (0.5 µm width and spacing on Metal1 to Metal4) during detailed routing. There is no Metal5 entry in that rule because this stack has no Metal5.
+The analog nets are protected on the way from the pad to the macro: they are listed in `RSZ_DONT_TOUCH_LIST` so the resizer leaves them alone, and `DRT_ASSIGN_NDR` applies the `NDR_analog` non-default rule (0.5 µm width and spacing on Metal1 to Metal4) during detailed routing.
+
+The two RF lines and the three macro supplies are not router wires. [pdn_cfg.tcl](../flow/librelane/pdn_cfg.tcl) draws them, see [floorplan.md](floorplan.md).
