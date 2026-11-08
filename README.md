@@ -894,6 +894,17 @@ make magic-lvs CELL=chip_top
 ```
 
 
+### Whole-Chip LVS at Transistor Level
+
+`klayout-lvs` compares a cell against its Xschem netlist, and the LVS inside the LibreLane run compares the macros and the IO cells only by their pins. `klayout-lvs-chip` compares every transistor of the finished `chip_top_logo_fill` GDS against a reference that [`scripts/chip_lvs/mk_ref.py`](scripts/chip_lvs/mk_ref.py) builds from the powered gate netlists of the chip and the digital macros, the LVS netlists of the analog macros, the RF pad's netlist and the PDK's standard cell and IO cell CDLs:
+
+```sh
+make klayout-lvs-chip            # the PDK runner on the finished GDS, a verdict per circuit and the device counts on both sides
+make klayout-lvs-chip-controls   # the same run plus seven planted defects, each has to fail in its own circuit
+```
+
+The verdict comes from the run's `.lvsdb`, because the runner exits 0 on a mismatch too, and the target fails on anything but a match of every circuit. The reference starts with a list of every change it makes against those files, such as the joined substrate net `IOVSS,VSS`, and a new macro goes into the `LIBS` or `MODULES` list at the top of `mk_ref.py`. On the finished GDS the pad labels sit one level below the top cell, so this run uses `--ignore_top_ports_mismatch`. To also compare the top-level pin names, run `scripts/chip_lvs/run.py` on `layout/chip_top.gds.gz` with `--top chip_top --strict`.
+
 ### Build Xschem PEX Symbol
 
 Builds the Xschem symbol the PEX flow needs, `schematic/xschem/<CELL>_pex.sym`, from the regular cell symbol `schematic/xschem/<CELL>.sym`:

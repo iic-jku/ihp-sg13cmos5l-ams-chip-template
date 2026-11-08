@@ -453,6 +453,20 @@ klayout-lvs: ## Run KLayout LVS of the CELL cell (usage: make klayout-lvs [CELL=
 	mv $(LVS_RPT_DIR)/$(CELL).klayout.lvs/$(CELL)_extracted.cir $(NET_LAY_DIR)/$(CELL)_klayout.cir
 .PHONY: klayout-lvs
 
+# Parallel planted-defect runs of klayout-lvs-chip-controls
+# Override with: make klayout-lvs-chip-controls LVS_JOBS=<n>
+LVS_JOBS ?= 4
+
+klayout-lvs-chip: ## Run KLayout LVS of the finished chip at transistor level, against a reference built from the netlists (usage: make klayout-lvs-chip)
+	mkdir -p $(LVS_RPT_DIR)
+	python3 scripts/chip_lvs/run.py --gds $(LAY_DIR)/$(TOP)_logo_fill.gds.gz --top $(TOP)_logo_fill --gds-top $(TOP) --work $(LVS_RPT_DIR)/$(TOP)_logo_fill.chip_lvs
+.PHONY: klayout-lvs-chip
+
+klayout-lvs-chip-controls: ## Run klayout-lvs-chip and seven planted defects that each have to fail (usage: make klayout-lvs-chip-controls [LVS_JOBS=<n>])
+	mkdir -p $(LVS_RPT_DIR)
+	python3 scripts/chip_lvs/run.py --gds $(LAY_DIR)/$(TOP)_logo_fill.gds.gz --top $(TOP)_logo_fill --gds-top $(TOP) --work $(LVS_RPT_DIR)/$(TOP)_logo_fill.chip_lvs --negative --jobs $(LVS_JOBS)
+.PHONY: klayout-lvs-chip-controls
+
 magic-lvs-netlist: ## Export SPICE schematic netlist from Xschem for Magic + Netgen LVS (usage: make magic-lvs-netlist [CELL=<cellname>] [EV_PRECISION=<digits>])
 	mkdir -p $(NET_SCH_DIR)
 	xschem -s -r -x -q --rcfile $(XSCHEM_SCH_DIR)/xschemrc --command ' \

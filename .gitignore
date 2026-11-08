@@ -25,6 +25,7 @@ sim_build/
 /flow/final
 /schematic/xschem/simulations
 /testbenches/xschem/simulations
+/verification/lvs/*.chip_lvs
 /macros/*/verification/cace/_runs
 /macros/*/verification/cace/_docs
 /macros/*/verification/cace/netlist
