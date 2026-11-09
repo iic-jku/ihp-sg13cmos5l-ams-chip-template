@@ -470,6 +470,24 @@
    </categories>
   </category>
  <category>
+   <name>Pas.a</name>
+   <description>5.27. Pas.a:Min. Passiv width: 2.1 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Pas.b</name>
+   <description>5.27. Pas.b: Min. Passiv space or notch: 3.5 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Pas.c</name>
+   <description>5.27. Pas.c : Min. TopMetal1 enclosure of Passiv [Not checked outside of sealring (edge-seal-passive)] is 2.1 um </description>
+   <categories>
+   </categories>
+  </category>
+ <category>
    <name>M1.a</name>
    <description>5.16. M1.a: Min. Metal1 width: 0.16 μm.</description>
    <categories>
@@ -506,24 +524,6 @@
    </categories>
   </category>
  <category>
-   <name>Pas.a</name>
-   <description>5.27. Pas.a:Min. Passiv width: 2.1 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>Pas.b</name>
-   <description>5.27. Pas.b: Min. Passiv space or notch: 3.5 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>Pas.c</name>
-   <description>5.27. Pas.c : Min. TopMetal1 enclosure of Passiv [Not checked outside of sealring (edge-seal-passive)] is 2.1 um </description>
-   <categories>
-   </categories>
-  </category>
- <category>
    <name>Slt.e1_M1</name>
    <description>7.3. Slt.e1_M1 : No M1:slit required on MIM</description>
    <categories>
@@ -550,42 +550,6 @@
   <category>
    <name>Slt.e1_TM1</name>
    <description>7.3. Slt.e1_TM1 : No TM1:slit required on MIM</description>
-   <categories>
-   </categories>
-  </category>
- <category>
-   <name>LBE.a</name>
-   <description>9.1. LBE.a: Min. LBE width: 100.0 µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LBE.b</name>
-   <description>9.1. LBE.b: Max. LBE width: 1500.0 µm.</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LBE.b1</name>
-   <description>9.1. LBE.b1: Max. LBE area (µm²): 250000.0 .um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LBE.c</name>
-   <description>9.1. LBE.c: Min. LBE space or notch: 100.0 µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LBE.d</name>
-   <description>9.1. LBE.d: Min. LBE space to inner edge of EdgeSeal: 150.0 µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LBE.h</name>
-   <description>9.1. LBE.h: No LBE ring allowed.</description>
    <categories>
    </categories>
   </category>
@@ -632,32 +596,38 @@
    </categories>
   </category>
  <category>
-   <name>Slt.i_M1</name>
-   <description>Min. metal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.a</name>
+   <description>9.1. LBE.a: Min. LBE width: 100.0 µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_M2</name>
-   <description>Min. metal2:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.b</name>
+   <description>9.1. LBE.b: Max. LBE width: 1500.0 µm.</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_M3</name>
-   <description>Min. metal3:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.b1</name>
+   <description>9.1. LBE.b1: Max. LBE area (µm²): 250000.0 .um</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_M4</name>
-   <description>Min. metal4:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.c</name>
+   <description>9.1. LBE.c: Min. LBE space or notch: 100.0 µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_TM1</name>
-   <description>Min. topmetal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.d</name>
+   <description>9.1. LBE.d: Min. LBE space to inner edge of EdgeSeal: 150.0 µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>LBE.h</name>
+   <description>9.1. LBE.h: No LBE ring allowed.</description>
    <categories>
    </categories>
   </category>
@@ -844,6 +814,36 @@
   <category>
    <name>CMOS5L.FORB.Vmim</name>
    <description>CMOS5L.FORB.Vmim : 3.2. Vmim layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+ <category>
+   <name>Slt.i_M1</name>
+   <description>Min. metal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Slt.i_M2</name>
+   <description>Min. metal2:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Slt.i_M3</name>
+   <description>Min. metal3:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Slt.i_M4</name>
+   <description>Min. metal4:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Slt.i_TM1</name>
+   <description>Min. topmetal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
    <categories>
    </categories>
   </category>
@@ -4172,126 +4172,6 @@
    </values>
   </item>
  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1140.24,476.74;1140.24,476.67)/(1140.24,476.43;1140.436,476.43)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1195.44,476.67;1195.44,476.74)/(1195.244,476.43;1195.44,476.43)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1144.08,673.23;1144.08,673.3)/(1143.884,672.99;1144.08,672.99)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1140.24,521.25;1140.24,521.18)/(1140.436,521.49;1140.24,521.49)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1070.16,778.29;1070.16,778.22)/(1070.356,778.53;1070.16,778.53)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (718.8,574.17;718.8,574.1)/(718.996,574.41;718.8,574.41)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1070.16,673.3;1070.16,673.23)/(1070.16,672.99;1070.356,672.99)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1195.44,521.18;1195.44,521.25)/(1195.44,521.49;1195.244,521.49)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (881.52,574.1;881.52,574.17)/(881.52,574.41;881.324,574.41)</value>
-   </values>
-  </item>
-  <item>
-   <tags />
-   <category>'NW.d'</category>
-   <cell>chip_top</cell>
-   <visited>false</visited>
-   <multiplicity>1</multiplicity>
-   <comment />
-   <image />
-   <values>
-    <value>edge-pair: (1144.08,778.22;1144.08,778.29)/(1144.08,778.53;1143.884,778.53)</value>
-   </values>
-  </item>
-  <item>
    <tags />
    <category>'Pad.d1R'</category>
    <cell>bondpad:m0</cell>
