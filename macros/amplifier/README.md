@@ -313,7 +313,7 @@ The chip flow derives the bounding box of every macro from this layer: Magic map
 
 ### Export LEF
 
-Exports a LEF file (`final/lef/<TOP>.lef`) from the top-level layout GDS in `layout/` using Magic with the `-hide` option:
+Exports a LEF file (`final/lef/<TOP>.lef`) from the top-level layout GDS in `layout/` using Magic with the `-hide` option. It then sets `ORIGIN` to 0, because the `rhigh` resistor lies left of and below the cell origin, and the GDS streamout of the chip flow puts the cell origin on the placement point and ignores an `ORIGIN`:
 
 ```sh
 make lef

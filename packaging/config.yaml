@@ -76,7 +76,7 @@ EPAD_WIRE_LENGTH: 500             # um; length of exposed-pad downbond stubs
 # Guarded (sensitive) wires: warn if any other wire comes closer than
 # GUARD_SPACING. Entries are pins or [groups]; wires within one group
 # (e.g. a differential quad) are exempt from each other's check.
-GUARDED_PINS: [[17, 18, 19, 20]]  # analog_PAD[0..3] = inverter2 ch1/ch2
+GUARDED_PINS: [[12, 13], [17, 18, 19, 20]]  # RF pair; amplifier and inverter analog pins
 GUARD_SPACING: 60                 # um; see result.md for the actual gaps
 
 # --- Output ------------------------------------------------------------------
@@ -148,39 +148,39 @@ PINOUT:
   # Left side, top to bottom (pins 1-8) -> die west pads (top to bottom)
   1:  "clk_PAD"                   # clk (50 MHz)
   2:  "rst_n_PAD"                 # rst_n (active low)
-  3:  "input_PAD"                 # enable
-  4:  "IOVDD"                     # I/O supply (3.3 V)
-  5:  "IOVSS"                     # I/O ground
-  6:  "VDD"                       # core supply (1.5 V)
-  7:  "VSS"                       # core ground
-  8:  "output_PAD[16]"            # sram_0_out (XOR-reduced SRAM data)
+  3:  "input_PAD[1]"              # sel[1]
+  4:  "input_PAD[0]"              # sel[0]
+  5:  "IOVDD"                     # I/O supply (3.3 V)
+  6:  "IOVSS"                     # I/O ground
+  7:  "VDD"                       # core supply (1.2 V)
+  8:  "VSS"                       # core ground
 
   # Bottom side, left to right (pins 9-16) -> die south pads (left to right)
-  9:  "output_PAD[4]"             # counter2_value[0] (LSB)
-  10: "output_PAD[5]"             # counter2_value[1]
-  11: "output_PAD[6]"             # counter2_value[2]
-  12: "output_PAD[7]"             # counter2_value[3]
-  13: "output_PAD[8]"             # counter2_value[4]
-  14: "output_PAD[9]"             # counter2_value[5]
-  15: "output_PAD[10]"            # counter2_value[6]
-  16: "output_PAD[11]"            # counter2_value[7] (MSB)
+  9:  "input_PAD[2]"              # di_en (VCO enable)
+  10: "analog_PAD[0]"             # vtune (via padres)
+  11: "VSS"                       # RF ground
+  12: "rf_PAD[0]"                 # rf_out_n (RF pad)
+  13: "rf_PAD[1]"                 # rf_out_p (RF pad)
+  14: "VSS"                       # RF ground
+  15: "vdd_rf_PAD"                # VCO supply (1.5 V)
+  16: "VSS"                       # RF ground
 
   # Right side, bottom to top (pins 17-24) -> die east pads (bottom to top)
-  17: "analog_PAD[0]"             # inverter2.vin1  (via padres)
-  18: "analog_PAD[1]"             # inverter2.vin2  (via padres)
-  19: "analog_PAD[2]"             # inverter2.vout1 (via padbare)
-  20: "analog_PAD[3]"             # inverter2.vout2 (via padbare)
-  21: "output_PAD[12]"            # inverter1.vout1
-  22: "output_PAD[13]"            # inverter1.vout2
-  23: "output_PAD[14]"            # inverter1.vout3
-  24: "output_PAD[15]"            # inverter1.vout4
+  17: "analog_PAD[1]"             # amplifier.vin (via padres)
+  18: "analog_PAD[2]"             # amplifier.vout (via padbare)
+  19: "analog_PAD[3]"             # inverter.vin1 (via padres)
+  20: "analog_PAD[4]"             # inverter.vout1 (via padbare)
+  21: "output_PAD[7]"             # inverter.vout4 (digital channel)
+  22: "vdd_ro_PAD"                # ring oscillator supply
+  23: "analog_PAD[5]"             # ringosc.vout (via padbare)
+  24: "vdd_hv_PAD"                # IHP HV counter supply (1.2 V to 1.65 V)
 
   # Top side, right to left (pins 25-32) -> die north pads (right to left)
-  25: "bidir_PAD[3]"              # counter1_value[7] (MSB) / inverter1.vin4
-  26: "bidir_PAD[2]"              # counter1_value[6] / inverter1.vin3
-  27: "bidir_PAD[1]"              # counter1_value[5] / inverter1.vin2
-  28: "bidir_PAD[0]"              # counter1_value[4] / inverter1.vin1
-  29: "output_PAD[3]"             # counter1_value[3]
-  30: "output_PAD[2]"             # counter1_value[2]
-  31: "output_PAD[1]"             # counter1_value[1]
-  32: "output_PAD[0]"             # counter1_value[0] (LSB)
+  25: "bidir_PAD"                 # count[7] (MSB) / inverter.vin4
+  26: "output_PAD[6]"             # count[6]
+  27: "output_PAD[5]"             # count[5]
+  28: "output_PAD[4]"             # count[4]
+  29: "output_PAD[3]"             # count[3]
+  30: "output_PAD[2]"             # count[2]
+  31: "output_PAD[1]"             # count[1]
+  32: "output_PAD[0]"             # count[0] (LSB)

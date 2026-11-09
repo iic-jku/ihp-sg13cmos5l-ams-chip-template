@@ -206,6 +206,10 @@ sim-gl-xschem: ## Run gate-level simulation of CELL cell with Xschem in batch mo
 	cd $(XSCHEM_TB_DIR)/simulations && ngspice -b $(TB).spice
 .PHONY: sim-gl-xschem
 
+sim-pex-low-vdd: ## Simulate the post-layout netlist at the 1.2 V to 1.65 V of the chip, seven cases of about 1 h on a server (usage: make sim-pex-low-vdd)
+	python3 testbenches/ngspice/counter_hv_kvc_top_tb_low_vdd.py
+.PHONY: sim-pex-low-vdd
+
 sim-view-xschem: ## Plot Xschem simulation results (usage: make sim-view-xschem [SCRIPT=<scriptname>])
 	SHOW_PLOTS=1 python3 $(SIM_PLOT_DIR)/$(SCRIPT).py
 .PHONY: sim-view-xschem

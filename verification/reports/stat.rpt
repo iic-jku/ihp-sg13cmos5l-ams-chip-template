@@ -1,41 +1,58 @@
-110. Printing statistics.
+121. Printing statistics.
 
 === chip_top ===
 
         +----------Local Count, excluding submodules.
         |        +-Local Area, excluding submodules.
         |        | 
-      265        - wires
-      287        - wire bits
-       74        - public wires
-       96        - public wire bits
-        6        - ports
-       28        - port bits
-      231 4.62E+05 cells
-        1        -   RM_IHPSG13_1P_1024x32_c2_bm_bist
-        2        -   counter_top
-        2        -   inverter_top
-        4    57600   sg13cmos5l_IOPadAnalog
+       95        - wires
+      110        - wire bits
+       72        - public wires
+       87        - public wire bits
+       10        - ports
+       25        - port bits
+       78 4.73E+05 cells
+        1        -   amplifier
+        1        -   counter_hv_kvc_top
+        1        -   counter_lv_eth_top
+        1        -   counter_lv_ihp_top
+        1        -   inverter_top
+        1        -   ringosc
+        9   129600   sg13cmos5l_IOPadAnalog
         1    14400   sg13cmos5l_IOPadIOVdd
         1    14400   sg13cmos5l_IOPadIOVss
-        3    43200   sg13cmos5l_IOPadIn
-        4    57600   sg13cmos5l_IOPadInOut30mA
-       17   244800   sg13cmos5l_IOPadOut30mA
+        5    72000   sg13cmos5l_IOPadIn
+        1    14400   sg13cmos5l_IOPadInOut16mA
+        8   115200   sg13cmos5l_IOPadOut16mA
         1    14400   sg13cmos5l_IOPadVdd
-        1    14400   sg13cmos5l_IOPadVss
+        4    57600   sg13cmos5l_IOPadVss
+       10    90.72   sg13cmos5l_and2_1
+        1   12.701   sg13cmos5l_and3_1
+        1    45.36   sg13cmos5l_buf_16
+        1    9.072   sg13cmos5l_buf_2
+        1   23.587   sg13cmos5l_buf_8
         1        -   sg13cmos5l_ip__jku
         1        -   sg13cmos5l_ip__jku_names
-        3   21.773   sg13cmos5l_tiehi
-      158 1.15E+03   sg13cmos5l_tielo
-       20  290.304   sg13cmos5l_xnor2_1
-       11  159.667   sg13cmos5l_xor2_1
+        2    40000   sg13cmos5l_ip__rfpad_70x70
+       15   272.16   sg13cmos5l_mux2_1
+        1   19.958   sg13cmos5l_mux2_2
+        1    7.258   sg13cmos5l_nand2_1
+        1    7.258   sg13cmos5l_nor2_1
+        2   18.144   sg13cmos5l_nor2b_1
+        1    7.258   sg13cmos5l_tiehi
+        2   14.515   sg13cmos5l_tielo
+        1        -   vco_top
 
-   Area for cell type \RM_IHPSG13_1P_1024x32_c2_bm_bist is unknown!
    Area for cell type \inverter_top is unknown!
+   Area for cell type \amplifier is unknown!
+   Area for cell type \ringosc is unknown!
+   Area for cell type \vco_top is unknown!
    Area for cell type \sg13cmos5l_ip__jku is unknown!
    Area for cell type \sg13cmos5l_ip__jku_names is unknown!
-   Area for cell type \counter_top is unknown!
+   Area for cell type \counter_lv_ihp_top is unknown!
+   Area for cell type \counter_lv_eth_top is unknown!
+   Area for cell type \counter_hv_kvc_top is unknown!
 
-   Chip area for module '\chip_top': 462418.444800
+   Chip area for module '\chip_top': 472527.990400
      of which used for sequential elements: 0.000000 (0.00%)
 

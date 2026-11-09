@@ -25,6 +25,7 @@ sim_build/
 /flow/final
 /schematic/xschem/simulations
 /testbenches/xschem/simulations
+/verification/lvs/*.chip_lvs
 /macros/*/verification/cace/_runs
 /macros/*/verification/cace/_docs
 /macros/*/verification/cace/netlist
@@ -33,6 +34,7 @@ sim_build/
 /macros/*/verification/em/palace_model/**/*.msh
 /macros/*/schematic/xschem/simulations
 /macros/*/testbenches/xschem/simulations
+/macros/*/testbenches/ngspice/simulations
 /macros/*/flow/final
 /macros/*/flow/eqy
 /macros/*/fpga/*/build/

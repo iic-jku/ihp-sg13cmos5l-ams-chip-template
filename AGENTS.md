@@ -10,14 +10,14 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 - `rtl/chip_top.sv` (pad ring) and `rtl/chip_core.sv` (macro instances and glue logic).
 - `flow/librelane/`: `config.yaml`, `chip_top.sdc` and `pdn_cfg.tcl` of the chip LibreLane run. `flow/artistic` is a git submodule (ArtistIC logo tool), fetched by `make init-submodules`.
 - `macros/<name>/`: one hard macro per folder with its own `Makefile` (`help`, `all`, `clean`, PDK guard) and `README.md`. The chip reads the committed views in `macros/<name>/final/`.
-- `macros/counter/` (template, digital): `rtl/`, `flow/librelane/`, `fpga/`, `testbenches/{verilog,cocotb,xschem}/`, hardened with LibreLane.
+- `macros/counter_lv_ihp/` (template, digital): `rtl/`, `flow/librelane/`, `fpga/`, `testbenches/{verilog,cocotb,xschem}/`, hardened with LibreLane.
 - `macros/inverter/` (template, analog): `schematic/xschem/`, `layout/`, `testbenches/xschem/`, `verification/cace/`, verified with KLayout and Magic.
 - `macros/vco/` (template, RF): `schematic/xschem/`, `testbenches/xschem/` with ngspice and VACASK benches (a `_vacask` in the testbench name selects VACASK), the KLayout Python scripts in `scripts/layout/` that write every layout, the coil included (`make klayout-script-all`, edit the script, never the GDS), the Palace EM simulation of the coil in `verification/em/` (`make sim-em`, its stackup from the ihp-sg13g2 Palace workflow, about three hours at third order, so on a compute host), and its snp2le model in `netlist/spice/` and `netlist/spectre/` (`make snp2le`). `make sim-corners` runs the start-up transient over corners, and `vco_top_tb_tran_lpe` is the post-layout bench, on one KPEX netlist of the macro without the coil and the varactor array (`make klayout-pex-leads`). `make sim-powerup`, `make sim-trannoise` and `make sim-trannoise-lpe` run for hours, so on a compute host. Magic reads the `cap_cmomf` combs as plain metal: `LEADS_CUT` cuts the buffer's coupling caps out (`LEADS_CUT_GEOS`) and puts the PDK device back with the parasitics of `make sim-em-momf`, an EM run that needs a compute host, whose table is committed. The MoM caps are `cap_cmomf`: `make check-mom` checks their size and stack, which LVS does not, and `make check-coil-tap` checks the coil's center tap, which no LVS sees. One supply, `VDD`, which needs a quiet pad of its own: the coil's center tap hangs on a resistor from it. Not built by the chip yet.
 - `macros/Makefile`: one job, `make macro FROM=<macro> NAME=<name>` starts a new macro as a renamed copy of an existing one.
 - `ip/`: bondpad `sg13cmos5l_ip__bondpad_70x70`, RF pad `sg13cmos5l_ip__rfpad_70x70` and the logos `sg13cmos5l_ip__jku` and `sg13cmos5l_ip__jku_names` (template), each with a `Makefile`. `ip/sg13cmos5l_io_custom/` is third-party IHP IO cell data.
 - `schematic/xschem/`, `testbenches/xschem/`, `testbenches/cocotb/`: chip schematic, symbols and testbenches. Every folder holding schematics has its own `xschemrc`, see "Xschem Configuration" in `README.md`.
 - `layout/`, `netlist/`, `verification/`, `render/img/`: build outputs, committed. `packaging/` holds `config.yaml` and `scripts/run_bondplan.py` for `make bondplan` plus their committed outputs. `release/v.<VERSION>/` holds published versions.
-- `doc/`: hand-maintained `specifications.md`, `pinout.md` and `floorplan.md` plus tool and PDK notes. A number changed in `flow/librelane/config.yaml`, `rtl/` or `packaging/config.yaml` is mirrored there.
+- `doc/`: hand-maintained `specifications.md`, `pinout.md` and `floorplan.md` plus tool and PDK notes. A number changed in `flow/librelane/config.yaml`, `rtl/` or `packaging/config.yaml` is mirrored there, and a moved macro or a changed pad list also in the PREP-IC project `doc/prep-ic/chip_top.json`.
 <!-- template-only -->
 - `tutorial/` (template): the Quarto tutorial, `make -C tutorial` renders it locally.
 <!-- /template-only -->
@@ -44,11 +44,11 @@ make klayout-verify CELL=<cell>    # KLayout DRC and LVS of layout/<cell>.gds.gz
 make magic-verify CELL=<cell>      # Magic/Netgen LVS and Magic PEX, its DRC is commented out
 make gdscheck-drc CELL=<cell>      # gdscheck DRC of layout/<cell>.gds.gz
 make regression                    # the CI smoke test
-make -C macros/counter lint-verilog-all     # Verilator lint (template macro)
-make -C macros/counter sim-rtl-verilog      # Icarus Verilog testbench
-make -C macros/counter sim-rtl-cocotb       # cocotb testbench
-make -C macros/counter lec                  # prove the final netlist equivalent to the RTL (EQY)
-make -C macros/counter all                  # lint, FPGA build, LibreLane, LEC, Magic PEX, simulations
+make -C macros/counter_lv_ihp lint-verilog-all     # Verilator lint (template macro)
+make -C macros/counter_lv_ihp sim-rtl-verilog      # Icarus Verilog testbench
+make -C macros/counter_lv_ihp sim-rtl-cocotb       # cocotb testbench
+make -C macros/counter_lv_ihp lec                  # prove the final netlist equivalent to the RTL (EQY)
+make -C macros/counter_lv_ihp all                  # lint, FPGA build, LibreLane, LEC, Magic PEX, simulations
 make -C macros/inverter sim-xschem TB=<tb>  # one Xschem testbench in batch mode (template macro)
 make -C macros/inverter all                 # KLayout DRC/LVS, gdscheck DRC, Magic LVS/PEX, LEF/LIB/Verilog stub, simulations, CACE
 ```
@@ -56,7 +56,7 @@ make -C macros/inverter all                 # KLayout DRC/LVS, gdscheck DRC, Mag
 - Start with the narrowest target: lint and RTL simulation before any LibreLane run. CI allows `make regression` up to 360 minutes.
 - `make all` and the `build-*` and `copy-*` targets overwrite committed outputs. Check `git status` afterwards and commit outputs only when they belong to the change.
 - The Xschem targets netlist in batch mode and run `ngspice -b`, so `plot` commands in a testbench `.control` block do nothing. Testbenches write results with `wrdata` to `testbenches/xschem/plot_simulations/data/`, and `sim-view-xschem` plots them.
-- The top-level `sim-gl-xschem` includes `macros/counter/netlist/xspice/counter_top.xspice` (template), which `clean-all` deletes. Run `make build-counter` before it.
+- The top-level `sim-gl-xschem` includes `macros/counter_lv_ihp/netlist/xspice/counter_lv_ihp_top.xspice` (template), which `clean-all` deletes. Run `make build-counters` before it.
 - `kpex` does not support `ihp-sg13cmos5l` yet, so `klayout-pex` fails and `klayout-verify` leaves it out. Use `magic-pex` for parasitic extraction.
 - `build-top` runs `librelane-nodrc` on purpose until IHP fixes the `metal1_pin_offgrid` errors (see the comment in `Makefile`). Run DRC separately with `magic-drc`, `klayout-drc-minimum`, `klayout-drc-regular` or the matching `gdscheck-drc-*` targets. `DRC_JOBS=<n>` caps the KLayout processes and sets the gdscheck threads (default 4 and every CPU). More than 4 only pays off for the full chip on a server.
 - KLayout is the sign-off DRC. Magic flags IHP's own cells on the chip (the IO pads and the SRAM read hierarchically), so the flows leave the Magic DRC out until the upstream fixes are in the image: its lines are commented out in `magic-verify`, in the IP `all` and in `make all`. Fix such a report upstream, not with make's `-` prefix in a flow. Keep `-f` patterns for Magic away from the top cell: `sak-drc.sh` refuses one that matches it, because Magic would check an empty cell.

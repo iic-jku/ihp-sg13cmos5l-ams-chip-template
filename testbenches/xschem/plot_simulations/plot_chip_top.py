@@ -4,7 +4,7 @@
 # Author: Simon Dorrer
 # Description: Transient plots for the chip top-level testbench based on ngspice exports.
 # Created: 12.05.2026
-# Last Modified: 12.05.2026
+# Last Modified: 08.11.2026
 # ============================================
 
 # Imports
@@ -60,6 +60,13 @@ def plot_digital(fig_title, signals, data_time, figures_dir, filename, fig_heigh
     return fig
 # =========================================================================
 
+def moving_average(time_us, values, window_us):
+    """Average over window_us after resampling on a uniform grid, ngspice writes a non-uniform time axis."""
+    grid = np.arange(time_us[0], time_us[-1], window_us / 200.0)
+    uniform = np.interp(grid, time_us, values)
+    return grid, np.convolve(uniform, np.ones(200) / 200.0, mode="same")
+# =========================================================================
+
 def main():
     # Resolve data and output paths relative to this script
     script_dir = Path(__file__).resolve().parent
@@ -70,145 +77,102 @@ def main():
     # ------------------------------------------------------------------
     # 1. Load ngspice transient simulation data
     # ------------------------------------------------------------------
-    ngspice_file = data_dir / "chip_top_tb_tran.txt"
+    ngspice_file = str(data_dir / "chip_top_tb_tran.txt")
 
-    time       = ng.loadngspicecol(str(ngspice_file), "time")
-    clock      = ng.loadngspicecol(str(ngspice_file), "v(clock)")
-    reset_n    = ng.loadngspicecol(str(ngspice_file), "v(reset_n)")
-    enable     = ng.loadngspicecol(str(ngspice_file), "v(enable)")
-    sram_0_out = ng.loadngspicecol(str(ngspice_file), "v(sram_0_out)")
-    inv1_dout1 = ng.loadngspicecol(str(ngspice_file), "v(inv1_dout1)")
-    inv1_dout2 = ng.loadngspicecol(str(ngspice_file), "v(inv1_dout2)")
-    inv1_dout3 = ng.loadngspicecol(str(ngspice_file), "v(inv1_dout3)")
-    inv1_dout4 = ng.loadngspicecol(str(ngspice_file), "v(inv1_dout4)")
-    inv2_vin1  = ng.loadngspicecol(str(ngspice_file), "v(inv2_vin1)")
-    inv2_vout1 = ng.loadngspicecol(str(ngspice_file), "v(inv2_vout1)")
-    inv2_vin2  = ng.loadngspicecol(str(ngspice_file), "v(inv2_vin2)")
-    inv2_vout2 = ng.loadngspicecol(str(ngspice_file), "v(inv2_vout2)")
-    c2_b0      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value0)")
-    c2_b1      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value1)")
-    c2_b2      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value2)")
-    c2_b3      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value3)")
-    c2_b4      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value4)")
-    c2_b5      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value5)")
-    c2_b6      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value6)")
-    c2_b7      = ng.loadngspicecol(str(ngspice_file), "v(counter2_value7)")
-    c1_din1    = ng.loadngspicecol(str(ngspice_file), "v(counter1_value4_inv1_din1)")
-    c1_din2    = ng.loadngspicecol(str(ngspice_file), "v(counter1_value5_inv1_din2)")
+    time     = ng.loadngspicecol(ngspice_file, "time")
+    rst_n    = ng.loadngspicecol(ngspice_file, "v(rst_n)")
+    sel1     = ng.loadngspicecol(ngspice_file, "v(sel1)")
+    sel0     = ng.loadngspicecol(ngspice_file, "v(sel0)")
+    count    = [ng.loadngspicecol(ngspice_file, f"v(count{i})") for i in range(8)]
+    inv_dout = ng.loadngspicecol(ngspice_file, "v(inv_dout)")
+    inv_vin  = ng.loadngspicecol(ngspice_file, "v(inv_vin)")
+    inv_vout = ng.loadngspicecol(ngspice_file, "v(inv_vout)")
+    amp_vin  = ng.loadngspicecol(ngspice_file, "v(amp_vin)")
+    amp_vout = ng.loadngspicecol(ngspice_file, "v(amp_vout)")
+    ro_vout  = ng.loadngspicecol(ngspice_file, "v(ro_vout)")
+    i_vdd    = ng.loadngspicecol(ngspice_file, "i(vvdd)")
+    i_hv     = ng.loadngspicecol(ngspice_file, "i(vhv)")
 
     # Display-friendly axis scale
     time_us = time * 1e6
 
     # ------------------------------------------------------------------
-    # 2. Plot 1 (digital): CLK / RST_n / EN / SRAM / INV1 outputs
+    # 2. Plot 1 (digital): reset, counter select and the chip outputs
     # ------------------------------------------------------------------
-    signals1 = [
-        ("CLK",        clock,      "#0c5da5"),
-        ("RST_n",      reset_n,    "#00b945"),
-        ("EN",         enable,     "#ff9500"),
-        ("SRAM_out",   sram_0_out, "#e63946"),
-        ("INV1_dout1", inv1_dout1, "#845ec2"),
-        ("INV1_dout2", inv1_dout2, "#2c73d2"),
-        ("INV1_dout3", inv1_dout3, "#008f7a"),
-        ("INV1_dout4", inv1_dout4, "#ff6b35"),
+    colors = ["#ff6b35", "#845ec2", "#2c73d2", "#008f7a", "#c34a36", "#4d8076", "#7b2cbf", "#b39f00"]
+    signals = [
+        ("RST_n", rst_n, "#00b945"),
+        ("SEL1",  sel1,  "#0c5da5"),
+        ("SEL0",  sel0,  "#ff9500"),
     ]
+    signals += [(f"COUNT{i}", count[i], colors[i]) for i in range(8)]
+    signals += [("INV_DOUT", inv_dout, "#e63946")]
     plot_digital(
-        "Chip Top — Digital Inverter Outputs (INV1)",
-        signals1, time_us, figures_dir,
-        "chip_top_tb_tran_digital1",
-        fig_height=12,
+        "Chip Top: Counter Select and Digital Outputs",
+        signals, time_us, figures_dir,
+        "chip_top_tb_tran_digital",
+        fig_height=13,
     )
 
     # ------------------------------------------------------------------
-    # 3. Plot 2 (digital): CLK / RST_n / EN / counter2 bits
+    # 3. Plot 2 (analog): inverter, amplifier and ring oscillator
     # ------------------------------------------------------------------
-    signals2 = [
-        ("CLK",   clock,   "#0c5da5"),
-        ("RST_n", reset_n, "#00b945"),
-        ("EN",    enable,  "#ff9500"),
-        ("C2_B0", c2_b0,   "#ff6b35"),
-        ("C2_B1", c2_b1,   "#845ec2"),
-        ("C2_B2", c2_b2,   "#2c73d2"),
-        ("C2_B3", c2_b3,   "#008f7a"),
-        ("C2_B4", c2_b4,   "#c34a36"),
-        ("C2_B5", c2_b5,   "#4d8076"),
-        ("C2_B6", c2_b6,   "#7b2cbf"),
-        ("C2_B7", c2_b7,   "#b39f00"),
-    ]
-    plot_digital(
-        "Chip Top — Counter 2 Output Bits",
-        signals2, time_us, figures_dir,
-        "chip_top_tb_tran_digital2",
-        fig_height=12,
-    )
+    fig2, (ax1, ax2, ax3) = plt.subplots(3)
+    fig2.set_figwidth(14)
+    fig2.set_figheight(10)
+    fig2.suptitle("Chip Top: Analog Macros")
 
-    # ------------------------------------------------------------------
-    # 4. Plot 3 (digital): CLK / RST_n / EN / counter1→INV1 inputs
-    # ------------------------------------------------------------------
-    signals3 = [
-        ("CLK",          clock,   "#0c5da5"),
-        ("RST_n",        reset_n, "#00b945"),
-        ("EN",           enable,  "#ff9500"),
-        ("C1_val4/din1", c1_din1, "#845ec2"),
-        ("C1_val5/din2", c1_din2, "#ff6b35"),
-    ]
-    plot_digital(
-        "Chip Top — Counter 1 / INV1 Inputs (Bits 4–5)",
-        signals3, time_us, figures_dir,
-        "chip_top_tb_tran_digital3",
-    )
-
-    # ------------------------------------------------------------------
-    # 5. Plot 4 (analog): INV2 input / output voltages for both channels
-    # ------------------------------------------------------------------
-    fig4, (ax1, ax2) = plt.subplots(2, 1, sharex=True, figsize=(12, 6))
-    fig4.suptitle("Chip Top — Analog Inverter (INV2)")
-
-    ax1.plot(time_us, inv2_vin1,  color="#0c5da5", linewidth=1.5, label=r'$V_\mathrm{in,1}$')
-    ax1.plot(time_us, inv2_vout1, color="#ff6b35", linewidth=1.5, label=r'$V_\mathrm{out,1}$')
+    ax1.plot(time_us, inv_vin,  color="#0c5da5", linewidth=1.5, label=r'$V_\mathrm{in}$')
+    ax1.plot(time_us, inv_vout, color="#ff6b35", linewidth=1.5, label=r'$V_\mathrm{out}$')
     ax1.set_ylabel(r'$V$ (V)')
-    ax1.set_title("Channel 1 (200 kHz)")
+    ax1.set_xlabel(r'$t$ ($\mu$s)')
+    ax1.set_title("Inverter, Analog Channel (200 kHz)")
     ax1.legend(loc='best', fontsize=10)
     ax1.grid(True, alpha=0.4)
 
-    ax2.plot(time_us, inv2_vin2,  color="#2c73d2", linewidth=1.5, label=r'$V_\mathrm{in,2}$')
-    ax2.plot(time_us, inv2_vout2, color="#c34a36", linewidth=1.5, label=r'$V_\mathrm{out,2}$')
+    ax2.plot(time_us, amp_vin,  color="#2c73d2", linewidth=1.5, label=r'$V_\mathrm{in}$')
+    ax2.plot(time_us, amp_vout, color="#c34a36", linewidth=1.5, label=r'$V_\mathrm{out}$')
     ax2.set_ylabel(r'$V$ (V)')
     ax2.set_xlabel(r'$t$ ($\mu$s)')
-    ax2.set_title("Channel 2 (400 kHz)")
+    ax2.set_title("Amplifier (1 MHz)")
     ax2.legend(loc='best', fontsize=10)
     ax2.grid(True, alpha=0.4)
 
-    fig4.tight_layout(rect=[0, 0, 1, 0.98])
-    fig4.savefig(str(figures_dir / "chip_top_tb_tran_analog_inv.svg"), bbox_inches='tight')
-    fig4.savefig(str(figures_dir / "chip_top_tb_tran_analog_inv.pdf"), bbox_inches='tight')
+    # A few periods at the end of the run, when the ring oscillator has settled
+    zoom = time_us > time_us[-1] - 0.02
+    ax3.plot(time_us[zoom], ro_vout[zoom], color="#008f7a", linewidth=1.5)
+    ax3.set_ylabel(r'$V_\mathrm{out}$ (V)')
+    ax3.set_xlabel(r'$t$ ($\mu$s)')
+    ax3.set_title("Ring Oscillator")
+    ax3.grid(True, alpha=0.4)
+
+    fig2.tight_layout(rect=[0, 0, 1, 0.98])
+    fig2.savefig(str(figures_dir / "chip_top_tb_tran_analog.svg"), bbox_inches='tight')
+    fig2.savefig(str(figures_dir / "chip_top_tb_tran_analog.pdf"), bbox_inches='tight')
 
     # ------------------------------------------------------------------
-    # 6. Export combined CSV
+    # 4. Plot 3 (supply): average current of the core and the IHP HV counter
     # ------------------------------------------------------------------
-    np.savetxt(
-        str(figures_dir / "chip_top_tb_tran.csv"),
-        np.column_stack((
-            time_us, clock, reset_n, enable, sram_0_out,
-            inv1_dout1, inv1_dout2, inv1_dout3, inv1_dout4,
-            inv2_vin1, inv2_vout1, inv2_vin2, inv2_vout2,
-            c2_b0, c2_b1, c2_b2, c2_b3, c2_b4, c2_b5, c2_b6, c2_b7,
-            c1_din1, c1_din2,
-        )),
-        comments="",
-        header=(
-            "time_us,clock,reset_n,enable,sram_0_out,"
-            "inv1_dout1,inv1_dout2,inv1_dout3,inv1_dout4,"
-            "inv2_vin1,inv2_vout1,inv2_vin2,inv2_vout2,"
-            "counter2_value0,counter2_value1,counter2_value2,counter2_value3,"
-            "counter2_value4,counter2_value5,counter2_value6,counter2_value7,"
-            "counter1_value4_inv1_din1,counter1_value5_inv1_din2"
-        ),
-        delimiter=",",
-    )
+    fig3, ax = plt.subplots()
+    fig3.set_figwidth(14)
+    fig3.set_figheight(5)
+    fig3.suptitle("Chip Top: Supply Current, Averaged over 100 ns")
+
+    # A source sinks the supply current into its positive terminal, so the sign is flipped
+    for values, color, label in ((i_vdd, "#0c5da5", "VDD (core)"), (i_hv, "#ff6b35", "vdd_hv (IHP HV counter)")):
+        grid, avg = moving_average(time_us, -values, 0.1)
+        ax.plot(grid, avg * 1e3, color=color, linewidth=1.5, label=label)
+    ax.set_ylabel(r'$I$ (mA)')
+    ax.set_xlabel(r'$t$ ($\mu$s)')
+    ax.legend(loc='best', fontsize=10)
+    ax.grid(True, alpha=0.4)
+
+    fig3.tight_layout(rect=[0, 0, 1, 0.98])
+    fig3.savefig(str(figures_dir / "chip_top_tb_tran_supply.svg"), bbox_inches='tight')
+    fig3.savefig(str(figures_dir / "chip_top_tb_tran_supply.pdf"), bbox_inches='tight')
 
     # ------------------------------------------------------------------
-    # 7. Open the plot windows (blocks until they are closed)
+    # 5. Open the plot windows (blocks until they are closed)
     # ------------------------------------------------------------------
     plt.show()
     # ============================================

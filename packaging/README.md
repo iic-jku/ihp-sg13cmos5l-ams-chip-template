@@ -95,7 +95,7 @@ GUARDED_PINS: [[17, 18, 19, 20]]  # pins or [groups], where wires within
 GUARD_SPACING: 60                 #   one group are exempt from each other
 ```
 
-Grouping matters for differential pairs / quads or analog channels: the analog wires above (`analog_PAD[0..3]`, the inverter2 channels) may sit close to *each other* by design, but nothing else should crowd them.
+Grouping matters for differential pairs / quads or analog channels: the analog wires above may sit close to *each other* by design, but nothing else should crowd them.
 
 ### Drawing Sheet / Title Block
 

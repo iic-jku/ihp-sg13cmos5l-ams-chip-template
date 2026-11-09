@@ -30,16 +30,17 @@ CORE_LLY=365   # Core lower-left Y coordinate
 CORE_URX=1235  # Core upper-right X coordinate
 CORE_URY=1235  # Core upper-right Y coordinate
 
-# Logo placement relative to the core lower-left corner in um
+# Logo placement relative to the core lower-left corner in um. The bottom margin lifts the logo above the
+# VCO macro and the TopMetal1 rail pair over it: meerkat.py masks drawn TopMetal1 only, so it cannot see the coil keep-out.
 LOGO_CORE_MARGIN_LEFT=35
-LOGO_CORE_MARGIN_BOTTOM=165
+LOGO_CORE_MARGIN_BOTTOM=197
 
 # Fill distances in um between the generated filler shapes (smaller distance = higher fill density).
 # The global density windows of the regular KLayout DRC are 35 to 60 percent on Metal1 to Metal4,
 # 35 to 55 percent on Activ and 25 to 70 percent on TopMetal1. Measured on this chip with the values
-# below: Activ 46, Metal1 55, Metal2 51, Metal3 56, Metal4 55, TopMetal1 45 percent. Metal3 carries
-# the horizontal routing and the pad-ring rails, so it gets a larger distance than the other thin
-# metals (0.75 um would put it at 60.5 percent).
+# below: Activ 47, Metal1 55, Metal2 53, Metal3 55, Metal4 56, TopMetal1 45 percent. Metal3 carries
+# the horizontal routing and the pad-ring rails, and Metal4 also fills under the logo, so both get
+# a larger distance than the other thin metals.
 # DRC limits: M1Fil.b-M4Fil.b min filler space = 0.42 um; TM1Fil.b min filler space = 3.0 um, so the
 # TopMetal1 distance stays at the PDK default (3.05, as exactly 3.0 causes random DRC violations);
 # TM1Fil.c (filler to drawn TopMetal1, 3.0 um) is unaffected as it is handled by the exclusion sizing
@@ -47,7 +48,7 @@ LOGO_CORE_MARGIN_BOTTOM=165
 FILL_DIST_M1=0.75
 FILL_DIST_M2=0.75
 FILL_DIST_M3=1.25
-FILL_DIST_M4=0.75
+FILL_DIST_M4=1.25
 FILL_DIST_TM1=3.05
 
 # meerkat.py expects die-relative margins from layout origin (0,0)
@@ -77,15 +78,14 @@ LOGO_IMG="${IMG_DIR}/chip_logo_mono.png"
 #   die_margin_bottom = CORE_LLY + LOGO_CORE_MARGIN_BOTTOM
 #
 # For this chip (die = 1600 x 1600 µm, core LL = (365,365) µm,
-# logo core-relative margins = (35,165) µm):
+# logo core-relative margins = (35,197) µm):
 #
-#   die margins = (LOGO_MARGIN_LEFT, LOGO_MARGIN_BOTTOM) = (400,530) µm
+#   die margins = (LOGO_MARGIN_LEFT, LOGO_MARGIN_BOTTOM) = (400,562) µm
 #   max img_width  = (1600 - 2*400) / 2 = 400 px → 800 µm on-chip
-#   max img_height = (1600 - 2*530) / 2 = 270 px → 540 µm on-chip
 #
 # Current image (chip_logo_mono.png): 400x270 px → 800x540 µm on-chip
-#   placed symmetrically with die margins (left,right,bottom,top)
-#   = (400,400,530,530) µm
+#   placed 32 µm above center with die margins (left,right,bottom,top)
+#   = (400,400,562,498) µm
 # ─────────────────────────────────────────────────────────────────────────────
 
 echo "[INFO] Adding logo and fill to ${GDS_IN}"
@@ -130,12 +130,11 @@ python3 "${SCRIPTS_DIR}/meerkat.py" \
 
 # Add rectangles around the logo on specified layers
 # RECT_LAYERx: layer/datatype tuple (the nofill datatype 23 keeps the filler out), RECT_MARGINx: extra space in um
+# Only TopMetal1: the logo spans the core, and a Metal4 keep-out there leaves 19 percent in the central window of M4Fil.h (minimum 25).
 RECT_LAYER1="126/23"
 RECT_MARGIN1=20
-RECT_LAYER2="50/23"
-RECT_MARGIN2=0
 
-for RECT_LAYER_VAR in 1 2; do
+for RECT_LAYER_VAR in 1; do
     eval "RECT_LAYER=\$RECT_LAYER${RECT_LAYER_VAR}"
     eval "RECT_MARGIN=\$RECT_MARGIN${RECT_LAYER_VAR}"
     klayout -zz \
@@ -147,6 +146,23 @@ done
 
 # Merge logo into chip
 klayout -zz -rm "${SCRIPTS_DIR}/merge_logo.py"
+
+# Text logos in the two bottom corners, placed before the filler runs so that it keeps out of their NoMetFiller boxes
+for CORNER_LOGO in sg13cmos5l_ip__template_name:56.8 sg13cmos5l_ip__mpw_date:1443.2; do
+    klayout -zz         -rd "gds_file=$GDS_OUT"         -rd "cell_gds=../ip/${CORNER_LOGO%:*}/final/gds/${CORNER_LOGO%:*}.gds"         -rd "x=${CORNER_LOGO#*:}"         -rd "y=56.8"         -r add_cell.py
+done
+
+# NWell strips: where the rows of decap cells end beside a macro halo, the NWell has a concave corner 0.24 um from the
+# well ties of the decaps, and the deck reports NW.d on a tie although it lies inside the same well. Each strip spans the row
+# edge from corner to corner, in the empty halo, and moves it to 0.32 um from the ties, so that no corner is left near them.
+# The coordinates follow the placement, so recheck them after a new LibreLane run.
+NWELL_STRIPS="1140.24,476.67,1195.44,476.75 1140.24,521.17,1195.44,521.25 1070.16,673.23,1144.08,673.31 1070.16,778.21,1144.08,778.29 718.80,574.09,881.52,574.17"
+klayout -zz -rd "gds_file=$GDS_OUT" -rd "layer=31/0" -rd "boxes=$NWELL_STRIPS" -r add_boxes.py
+
+# VSS return of the VCO: the strap drawn in pdn_cfg.tcl lands on two 1 um Metal4 stripes, which alone would carry 2.7 mA each way
+# at the 10.8 mA of the VCO, above the 2 mA/um limit. TopMetal1 joins the strap to the VSS rail at y 382.66, and TopVia1 cuts add a third stripe.
+klayout -zz -rd "gds_file=$GDS_OUT" -rd "layer=126/0" -rd "boxes=577.0,381.66,621.0,390.0" -r add_boxes.py
+klayout -zz -rd "gds_file=$GDS_OUT" -rd "layer=125/0" -rd "boxes=578.07,384.29,578.49,384.71 578.07,385.13,578.49,385.55 578.07,385.97,578.49,386.39 578.07,386.81,578.49,387.23 578.07,387.65,578.49,388.07 578.07,388.49,578.49,388.91" -r add_boxes.py
 
 echo "[INFO] Logo added. Now adding fill patterns..."
 

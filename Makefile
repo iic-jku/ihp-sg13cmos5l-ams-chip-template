@@ -328,22 +328,41 @@ build-rfpad: ## Build the RF pad in ip/sg13cmos5l_ip__rfpad_70x70/
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__rfpad_70x70 all
 .PHONY: build-rfpad
 
-build-logos: ## Build the logos in ip/sg13cmos5l_ip__jku/ and ip/sg13cmos5l_ip__jku_names/
+build-logos: ## Build the logos in ip/sg13cmos5l_ip__jku/, ip/sg13cmos5l_ip__jku_names/, ip/sg13cmos5l_ip__template_name/ and ip/sg13cmos5l_ip__mpw_date/
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku all
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku_names all
+	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__template_name all
+	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__mpw_date all
 .PHONY: build-logos
 
-build-counter: ## Build the counter macro
-	@$(MAKE) -C $(MACROS_DIR)/counter all
-.PHONY: build-counter
+build-counters: ## Build the three counter macros (IHP LV, IHP HV and ETH LV)
+	@$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp all
+	@$(MAKE) -C $(MACROS_DIR)/counter_hv_kvc all
+	@$(MAKE) -C $(MACROS_DIR)/counter_lv_eth all
+.PHONY: build-counters
 
 build-inverter: ## Build the inverter macro
 	@$(MAKE) -C $(MACROS_DIR)/inverter all
 .PHONY: build-inverter
 
-build-macros: ## Build all enabled macros (counter and inverter)
-	$(MAKE) build-counter
+build-amplifier: ## Build the amplifier macro
+	@$(MAKE) -C $(MACROS_DIR)/amplifier all
+.PHONY: build-amplifier
+
+build-ringosc: ## Build the ring oscillator macro
+	@$(MAKE) -C $(MACROS_DIR)/ringosc all
+.PHONY: build-ringosc
+
+build-vco: ## Build the VCO macro
+	@$(MAKE) -C $(MACROS_DIR)/vco all
+.PHONY: build-vco
+
+build-macros: ## Build all enabled macros (counters, inverter, amplifier, ring oscillator and VCO)
+	$(MAKE) build-counters
 	$(MAKE) build-inverter
+	$(MAKE) build-amplifier
+	$(MAKE) build-ringosc
+	$(MAKE) build-vco
 .PHONY: build-macros
 
 # Adds the chip logo and fill structures to the final GDS.
@@ -435,6 +454,20 @@ klayout-lvs: ## Run KLayout LVS of the CELL cell (usage: make klayout-lvs [CELL=
 	sak-lvs.sh -d -k -w $(LVS_RPT_DIR) -s $(NET_SCH_DIR)/$(CELL)_klayout.cdl -l $(LAY_DIR)/$(CELL).gds.gz -c $(CELL)
 	mv $(LVS_RPT_DIR)/$(CELL).klayout.lvs/$(CELL)_extracted.cir $(NET_LAY_DIR)/$(CELL)_klayout.cir
 .PHONY: klayout-lvs
+
+# Parallel planted-defect runs of klayout-lvs-chip-controls
+# Override with: make klayout-lvs-chip-controls LVS_JOBS=<n>
+LVS_JOBS ?= 4
+
+klayout-lvs-chip: ## Run KLayout LVS of the finished chip at transistor level, against a reference built from the netlists (usage: make klayout-lvs-chip)
+	mkdir -p $(LVS_RPT_DIR)
+	python3 scripts/chip_lvs/run.py --gds $(LAY_DIR)/$(TOP)_logo_fill.gds.gz --top $(TOP)_logo_fill --gds-top $(TOP) --work $(LVS_RPT_DIR)/$(TOP)_logo_fill.chip_lvs
+.PHONY: klayout-lvs-chip
+
+klayout-lvs-chip-controls: ## Run klayout-lvs-chip and seven planted defects that each have to fail (usage: make klayout-lvs-chip-controls [LVS_JOBS=<n>])
+	mkdir -p $(LVS_RPT_DIR)
+	python3 scripts/chip_lvs/run.py --gds $(LAY_DIR)/$(TOP)_logo_fill.gds.gz --top $(TOP)_logo_fill --gds-top $(TOP) --work $(LVS_RPT_DIR)/$(TOP)_logo_fill.chip_lvs --negative --jobs $(LVS_JOBS)
+.PHONY: klayout-lvs-chip-controls
 
 magic-lvs-netlist: ## Export SPICE schematic netlist from Xschem for Magic + Netgen LVS (usage: make magic-lvs-netlist [CELL=<cellname>] [EV_PRECISION=<digits>])
 	mkdir -p $(NET_SCH_DIR)
@@ -603,19 +636,19 @@ regression: ## Regression test target for IIC-OSIC-TOOLS
 	$(MAKE) -C $(MACROS_DIR)/inverter build-top
 
 # 	Digital macro: counter (Verilator, Icarus, cocotb, yosys/FPGA, LibreLane, xspice)
-	$(MAKE) -C $(MACROS_DIR)/counter lint-verilog-all
-	$(MAKE) -C $(MACROS_DIR)/counter sim-rtl-verilog
-	$(MAKE) -C $(MACROS_DIR)/counter sim-rtl-cocotb
-	$(MAKE) -C $(MACROS_DIR)/counter build-fpga
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp lint-verilog-all
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-rtl-verilog
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-rtl-cocotb
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp build-fpga
 # 	librelane-magicdrc: full RTL-to-GDS. KLayout DRC skipped for runtime.
-	$(MAKE) -C $(MACROS_DIR)/counter librelane-magicdrc
-	$(MAKE) -C $(MACROS_DIR)/counter copy-final
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp librelane-magicdrc
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp copy-final
 # 	Gate-level flows that depend on the LibreLane outputs above.
-	$(MAKE) -C $(MACROS_DIR)/counter lec
-	$(MAKE) -C $(MACROS_DIR)/counter lec-mutant
-	$(MAKE) -C $(MACROS_DIR)/counter sim-gl-cocotb
-	$(MAKE) -C $(MACROS_DIR)/counter generate-xspice
-	$(MAKE) -C $(MACROS_DIR)/counter sim-gl-xschem
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp lec
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp lec-mutant
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-gl-cocotb
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp generate-xspice
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp sim-gl-xschem
 
 # 	Top-level assembly
 	$(MAKE) init-submodules
@@ -653,8 +686,15 @@ clean-all: ## Delete all generated files of the chip top-level, the IPs and the 
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__rfpad_70x70 clean
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku clean
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku_names clean
-	$(MAKE) -C $(MACROS_DIR)/counter clean
+	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__template_name clean
+	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__mpw_date clean
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp clean
+	$(MAKE) -C $(MACROS_DIR)/counter_hv_kvc clean
+	$(MAKE) -C $(MACROS_DIR)/counter_lv_eth clean
 	$(MAKE) -C $(MACROS_DIR)/inverter clean
+	$(MAKE) -C $(MACROS_DIR)/amplifier clean
+	$(MAKE) -C $(MACROS_DIR)/ringosc clean
+	$(MAKE) -C $(MACROS_DIR)/vco clean
 .PHONY: clean-all
 # ================================================================================================
 # template-only
