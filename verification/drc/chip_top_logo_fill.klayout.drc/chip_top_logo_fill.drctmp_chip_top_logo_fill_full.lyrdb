@@ -386,30 +386,6 @@
    </categories>
   </category>
  <category>
-   <name>TV1.a</name>
-   <description>5.21. TV1.a : Min. and max. TopVia1 width: 0.42 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>TV1.b</name>
-   <description>5.21. TV1.b : Min. TopVia1 space: 0.42 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>TV1.c</name>
-   <description>5.21. TV1.c : Min. Metal4 enclosure of TopVia1 is 0.1 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>TV1.d</name>
-   <description>5.21. TV1.d : Min. TopMetal1 enclosure of TopVia1 is 0.42 um</description>
-   <categories>
-   </categories>
-  </category>
- <category>
    <name>V2.a</name>
    <description>5.20. V2.a : Min. and max. Via2 width: 0.19 um</description>
    <categories>
@@ -446,6 +422,30 @@
    </categories>
   </category>
  <category>
+   <name>TV1.a</name>
+   <description>5.21. TV1.a : Min. and max. TopVia1 width: 0.42 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>TV1.b</name>
+   <description>5.21. TV1.b : Min. TopVia1 space: 0.42 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>TV1.c</name>
+   <description>5.21. TV1.c : Min. Metal4 enclosure of TopVia1 is 0.1 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>TV1.d</name>
+   <description>5.21. TV1.d : Min. TopMetal1 enclosure of TopVia1 is 0.42 um</description>
+   <categories>
+   </categories>
+  </category>
+ <category>
    <name>TM1.a</name>
    <description>5.22. TM1.a: Min. TopMetal1 width: 1.64 μm.</description>
    <categories>
@@ -466,24 +466,6 @@
   <category>
    <name>TM1Fil.a1</name>
    <description>5.23. TM1Fil.a1 : Max. TopMetal1:filler width is 10.0 um</description>
-   <categories>
-   </categories>
-  </category>
- <category>
-   <name>Pas.a</name>
-   <description>5.27. Pas.a:Min. Passiv width: 2.1 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>Pas.b</name>
-   <description>5.27. Pas.b: Min. Passiv space or notch: 3.5 um</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>Pas.c</name>
-   <description>5.27. Pas.c : Min. TopMetal1 enclosure of Passiv [Not checked outside of sealring (edge-seal-passive)] is 2.1 um </description>
    <categories>
    </categories>
   </category>
@@ -524,6 +506,24 @@
    </categories>
   </category>
  <category>
+   <name>Pas.a</name>
+   <description>5.27. Pas.a:Min. Passiv width: 2.1 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Pas.b</name>
+   <description>5.27. Pas.b: Min. Passiv space or notch: 3.5 um</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>Pas.c</name>
+   <description>5.27. Pas.c : Min. TopMetal1 enclosure of Passiv [Not checked outside of sealring (edge-seal-passive)] is 2.1 um </description>
+   <categories>
+   </categories>
+  </category>
+ <category>
    <name>Slt.e1_M1</name>
    <description>7.3. Slt.e1_M1 : No M1:slit required on MIM</description>
    <categories>
@@ -554,32 +554,38 @@
    </categories>
   </category>
  <category>
-   <name>Slt.i_M1</name>
-   <description>Min. metal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.a</name>
+   <description>9.1. LBE.a: Min. LBE width: 100.0 µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_M2</name>
-   <description>Min. metal2:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.b</name>
+   <description>9.1. LBE.b: Max. LBE width: 1500.0 µm.</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_M3</name>
-   <description>Min. metal3:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.b1</name>
+   <description>9.1. LBE.b1: Max. LBE area (µm²): 250000.0 .um</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_M4</name>
-   <description>Min. metal4:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.c</name>
+   <description>9.1. LBE.c: Min. LBE space or notch: 100.0 µm</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>Slt.i_TM1</name>
-   <description>Min. topmetal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
+   <name>LBE.d</name>
+   <description>9.1. LBE.d: Min. LBE space to inner edge of EdgeSeal: 150.0 µm</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>LBE.h</name>
+   <description>9.1. LBE.h: No LBE ring allowed.</description>
    <categories>
    </categories>
   </category>
@@ -626,98 +632,32 @@
    </categories>
   </category>
  <category>
-   <name>LBE.a</name>
-   <description>9.1. LBE.a: Min. LBE width: 100.0 µm</description>
+   <name>Slt.i_M1</name>
+   <description>Min. metal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>LBE.b</name>
-   <description>9.1. LBE.b: Max. LBE width: 1500.0 µm.</description>
+   <name>Slt.i_M2</name>
+   <description>Min. metal2:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>LBE.b1</name>
-   <description>9.1. LBE.b1: Max. LBE area (µm²): 250000.0 .um</description>
+   <name>Slt.i_M3</name>
+   <description>Min. metal3:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>LBE.c</name>
-   <description>9.1. LBE.c: Min. LBE space or notch: 100.0 µm</description>
+   <name>Slt.i_M4</name>
+   <description>Min. metal4:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
    <categories>
    </categories>
   </category>
   <category>
-   <name>LBE.d</name>
-   <description>9.1. LBE.d: Min. LBE space to inner edge of EdgeSeal: 150.0 µm</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>LBE.h</name>
-   <description>9.1. LBE.h: No LBE ring allowed.</description>
-   <categories>
-   </categories>
-  </category>
- <category>
-   <name>CMOS5L.FORB.Metal5</name>
-   <description>CMOS5L.FORB.Metal5 : 3.2. Metal5 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.Metal5.filler</name>
-   <description>CMOS5L.FORB.Metal5.filler : 3.2. Metal5.filler layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.Via4</name>
-   <description>CMOS5L.FORB.Via4 : 3.2. Via4 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.TopMetal2</name>
-   <description>CMOS5L.FORB.TopMetal2 : 3.2. TopMetal2 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.TopMetal2.filler</name>
-   <description>CMOS5L.FORB.TopMetal2.filler : 3.2. TopMetal2.filler layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.TopVia2</name>
-   <description>CMOS5L.FORB.TopVia2 : 3.2. TopVia2 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.TRANS</name>
-   <description>CMOS5L.FORB.TRANS : 3.2. TRANS layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.nBuLay</name>
-   <description>CMOS5L.FORB.nBuLay : 3.2. nBuLay layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.MIM</name>
-   <description>CMOS5L.FORB.MIM : 3.2. MIM layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
-   <categories>
-   </categories>
-  </category>
-  <category>
-   <name>CMOS5L.FORB.Vmim</name>
-   <description>CMOS5L.FORB.Vmim : 3.2. Vmim layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <name>Slt.i_TM1</name>
+   <description>Min. topmetal1:slit density for any Metal plate bigger than 35um x 35um [%] is 6.00.</description>
    <categories>
    </categories>
   </category>
@@ -788,6 +728,66 @@
    </categories>
   </category>
   <category>
+   <name>CMOS5L.FORB.Metal5</name>
+   <description>CMOS5L.FORB.Metal5 : 3.2. Metal5 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.Metal5.filler</name>
+   <description>CMOS5L.FORB.Metal5.filler : 3.2. Metal5.filler layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.Via4</name>
+   <description>CMOS5L.FORB.Via4 : 3.2. Via4 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.TopMetal2</name>
+   <description>CMOS5L.FORB.TopMetal2 : 3.2. TopMetal2 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.TopMetal2.filler</name>
+   <description>CMOS5L.FORB.TopMetal2.filler : 3.2. TopMetal2.filler layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.TopVia2</name>
+   <description>CMOS5L.FORB.TopVia2 : 3.2. TopVia2 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.TRANS</name>
+   <description>CMOS5L.FORB.TRANS : 3.2. TRANS layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.nBuLay</name>
+   <description>CMOS5L.FORB.nBuLay : 3.2. nBuLay layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.MIM</name>
+   <description>CMOS5L.FORB.MIM : 3.2. MIM layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+  <category>
+   <name>CMOS5L.FORB.Vmim</name>
+   <description>CMOS5L.FORB.Vmim : 3.2. Vmim layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
+   <categories>
+   </categories>
+  </category>
+ <category>
    <name>CMOS5L.FORB.Metal5</name>
    <description>CMOS5L.FORB.Metal5 : 3.2. Metal5 layer is prohibited in CMOS5L (M1-M4-TM1 stack).</description>
    <categories>
