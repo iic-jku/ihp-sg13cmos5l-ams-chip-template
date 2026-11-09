@@ -136,5 +136,6 @@ See [macros/inverter/README.md](../macros/inverter/README.md) for its own build 
 - `vdd_rf`, `vdd_ro` and `vdd_hv` are analog pads whose `padbare` feeds one macro each, so the ring keeps a single `VDD` and `IOVDD`. They have no RC clamp of their own to `VSS`.
 - Bring up `IOVDD` first and the ring `VDD` no later than `vdd_rf`, because the pad diodes of these pads and of the RF pads conduct into an unpowered rail.
 - Keep `vdd_hv` at or below 1.65 V: its counter outputs drive LV gates in the select multiplexer.
+- Current density was checked by hand on the pad-to-macro paths against the process specification limits for 11 years at 105 °C. At nominal current the tightest sections are the ring oscillator `VSS` at the macro pin (92 %), the `vdd_ro` via stack at the pin (82 %) and the VCO `VSS` return on three 1 µm Metal4 stripes (about 65 %). At the worst corner the first two reach 126 % and 113 %.
 - The `inverter_top` macro has its own internal power ring, 2.2 µm wide, with the horizontal segments on Metal3 and the vertical ones on Metal4. The chip's TopMetal1 stripes cross it and feed it through the macro grid in [pdn_cfg.tcl](../flow/librelane/pdn_cfg.tcl).
 - Active-low reset on `rst_n_PAD`. The counter macros convert polarity internally and feed a synchronous active-high reset to their FFs.

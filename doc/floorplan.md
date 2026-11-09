@@ -126,6 +126,8 @@ Two decorative IPs sit in the upper corners of the die (outside the core, betwee
 | `template_name` | `sg13cmos5l_ip__template_name` | 100 × 100 µm | (56.8, 56.8), placed by `scripts/add_logo_fill.sh` |
 | `mpw_date`   | `sg13cmos5l_ip__mpw_date`  | 100 × 100 µm | (1443.2, 56.8), placed by `scripts/add_logo_fill.sh` |
 
+`scripts/add_logo_fill.sh` also draws five NWell strips along the row edges beside the amplifier, inverter and VCO halos, which remove the `NW.d` markers at the row ends, and a TopMetal1 bridge from the VSS strap of the VCO to the VSS rail at y = 382.66 µm with six TopVia1 cuts onto one more Metal4 stripe. Their coordinates follow the placement, so recheck them after a new LibreLane run.
+
 Both logos are listed as `IGNORE_DISCONNECTED_MODULES` in [config.yaml](../flow/librelane/config.yaml) so LibreLane does not flag them as floating logic. Their pixels are drawn on Metal4, the top thin metal of this stack, where the SG13G2 logos use Metal5.
 
 The third logo, the chip logo in [flow/logo/](../flow/logo/), is not a macro. It is merged into the final GDS after the LibreLane run by [add_logo_fill.sh](../scripts/add_logo_fill.sh), on TopMetal1, together with the TopMetal1 filler.

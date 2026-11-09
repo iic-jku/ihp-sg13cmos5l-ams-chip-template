@@ -152,6 +152,18 @@ for CORNER_LOGO in sg13cmos5l_ip__template_name:56.8 sg13cmos5l_ip__mpw_date:144
     klayout -zz         -rd "gds_file=$GDS_OUT"         -rd "cell_gds=../ip/${CORNER_LOGO%:*}/final/gds/${CORNER_LOGO%:*}.gds"         -rd "x=${CORNER_LOGO#*:}"         -rd "y=56.8"         -r add_cell.py
 done
 
+# NWell strips: where the rows of decap cells end beside a macro halo, the NWell has a concave corner 0.24 um from the
+# well ties of the decaps, and the deck reports NW.d on a tie although it lies inside the same well. Each strip spans the row
+# edge from corner to corner, in the empty halo, and moves it to 0.32 um from the ties, so that no corner is left near them.
+# The coordinates follow the placement, so recheck them after a new LibreLane run.
+NWELL_STRIPS="1140.24,476.67,1195.44,476.75 1140.24,521.17,1195.44,521.25 1070.16,673.23,1144.08,673.31 1070.16,778.21,1144.08,778.29 718.80,574.09,881.52,574.17"
+klayout -zz -rd "gds_file=$GDS_OUT" -rd "layer=31/0" -rd "boxes=$NWELL_STRIPS" -r add_boxes.py
+
+# VSS return of the VCO: the strap drawn in pdn_cfg.tcl lands on two 1 um Metal4 stripes, which alone would carry 2.7 mA each way
+# at the 10.8 mA of the VCO, above the 2 mA/um limit. TopMetal1 joins the strap to the VSS rail at y 382.66, and TopVia1 cuts add a third stripe.
+klayout -zz -rd "gds_file=$GDS_OUT" -rd "layer=126/0" -rd "boxes=577.0,381.66,621.0,390.0" -r add_boxes.py
+klayout -zz -rd "gds_file=$GDS_OUT" -rd "layer=125/0" -rd "boxes=578.07,384.29,578.49,384.71 578.07,385.13,578.49,385.55 578.07,385.97,578.49,386.39 578.07,386.81,578.49,387.23 578.07,387.65,578.49,388.07 578.07,388.49,578.49,388.91" -r add_boxes.py
+
 echo "[INFO] Logo added. Now adding fill patterns..."
 
 # Add fill patterns with adjusted fill distances.
