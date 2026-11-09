@@ -328,9 +328,11 @@ build-rfpad: ## Build the RF pad in ip/sg13cmos5l_ip__rfpad_70x70/
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__rfpad_70x70 all
 .PHONY: build-rfpad
 
-build-logos: ## Build the logos in ip/sg13cmos5l_ip__jku/ and ip/sg13cmos5l_ip__jku_names/
+build-logos: ## Build the logos in ip/sg13cmos5l_ip__jku/, ip/sg13cmos5l_ip__jku_names/, ip/sg13cmos5l_ip__template_name/ and ip/sg13cmos5l_ip__mpw_date/
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku all
 	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku_names all
+	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__template_name all
+	@$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__mpw_date all
 .PHONY: build-logos
 
 build-counters: ## Build the three counter macros (IHP LV, IHP HV and ETH LV)
@@ -684,6 +686,8 @@ clean-all: ## Delete all generated files of the chip top-level, the IPs and the 
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__rfpad_70x70 clean
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku clean
 	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__jku_names clean
+	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__template_name clean
+	$(MAKE) -C $(IP_DIR)/sg13cmos5l_ip__mpw_date clean
 	$(MAKE) -C $(MACROS_DIR)/counter_lv_ihp clean
 	$(MAKE) -C $(MACROS_DIR)/counter_hv_kvc clean
 	$(MAKE) -C $(MACROS_DIR)/counter_lv_eth clean

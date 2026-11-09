@@ -123,6 +123,8 @@ Two decorative IPs sit in the upper corners of the die (outside the core, betwee
 | ------------ | -------------------------- | ------------ | ------------------------------------------------------------------------------- |
 | `jku_logo`   | `sg13cmos5l_ip__jku`       | 100 × 100 µm | `($DIE_AREA[0] + 36.4 + 20.4, $DIE_AREA[3] - 36.4 - 120.4)` = (56.8, 1443.2)    |
 | `jku_names`  | `sg13cmos5l_ip__jku_names` | 100 × 100 µm | `($DIE_AREA[2] - 36.4 - 120.4, $DIE_AREA[3] - 36.4 - 120.4)` = (1443.2, 1443.2) |
+| `template_name` | `sg13cmos5l_ip__template_name` | 100 × 100 µm | (56.8, 56.8), placed by `scripts/add_logo_fill.sh` |
+| `mpw_date`   | `sg13cmos5l_ip__mpw_date`  | 100 × 100 µm | (1443.2, 56.8), placed by `scripts/add_logo_fill.sh` |
 
 Both logos are listed as `IGNORE_DISCONNECTED_MODULES` in [config.yaml](../flow/librelane/config.yaml) so LibreLane does not flag them as floating logic. Their pixels are drawn on Metal4, the top thin metal of this stack, where the SG13G2 logos use Metal5.
 

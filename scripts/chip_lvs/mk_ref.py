@@ -35,7 +35,7 @@ MODULES = [
 TOP_MODULE = "chip_top"
 
 # no devices and no reference netlist: metal, passivation and labels only
-GEOM_ONLY = {"sg13cmos5l_ip__bondpad_70x70", "sealring", "sg13cmos5l_ip__jku", "sg13cmos5l_ip__jku_names",
+GEOM_ONLY = {"sg13cmos5l_ip__bondpad_70x70", "sealring", "sg13cmos5l_ip__jku", "sg13cmos5l_ip__jku_names", "sg13cmos5l_ip__template_name", "sg13cmos5l_ip__mpw_date",
              "FILLER1", "FILLER2", "FILLER4", "FILLER8", "FILLER16"}
 # a port of the cell that is the same conductor as another one and is not in its CDL
 PIN_ALIAS = {

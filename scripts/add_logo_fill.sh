@@ -147,6 +147,11 @@ done
 # Merge logo into chip
 klayout -zz -rm "${SCRIPTS_DIR}/merge_logo.py"
 
+# Text logos in the two bottom corners, placed before the filler runs so that it keeps out of their NoMetFiller boxes
+for CORNER_LOGO in sg13cmos5l_ip__template_name:56.8 sg13cmos5l_ip__mpw_date:1443.2; do
+    klayout -zz         -rd "gds_file=$GDS_OUT"         -rd "cell_gds=../ip/${CORNER_LOGO%:*}/final/gds/${CORNER_LOGO%:*}.gds"         -rd "x=${CORNER_LOGO#*:}"         -rd "y=56.8"         -r add_cell.py
+done
+
 echo "[INFO] Logo added. Now adding fill patterns..."
 
 # Add fill patterns with adjusted fill distances.
