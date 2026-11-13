@@ -229,6 +229,5 @@ Headless equivalent: `make klayout-drc CELL=<cellname> DRC_LEVEL=<precheck|macro
 ## Makefiles
 
 - Every macro folder contains Makefile targets for common verification and extraction flows, including DRC, LVS, and PEX with KLayout or Magic & Netgen.
-- `kpex` does not support `ihp-sg13cmos5l` yet, so `make klayout-pex` fails on this PDK. Use `make magic-pex` for parasitic extraction until that lands.
 
 ---
