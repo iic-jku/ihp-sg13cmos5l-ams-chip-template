@@ -147,7 +147,21 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 │  │  ├─ 📁 verification/
 │  │  ├─ Makefile
 │  │  └─ README.md
-│  └─ 📁 sg13cmos5l_ip__jku_names/
+│  ├─ 📁 sg13cmos5l_ip__jku_names/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 logo/
+│  │  ├─ 📁 script/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 sg13cmos5l_ip__mpw_date/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 logo/
+│  │  ├─ 📁 script/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  └─ 📁 sg13cmos5l_ip__template_name/
 │     ├─ 📁 final/
 │     ├─ 📁 logo/
 │     ├─ 📁 script/
@@ -162,7 +176,44 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 │  ├─ LicenseRef-EUROPRACTICE.txt
 │  └─ SHL-2.1.txt
 ├─ 📁 macros/
-│  ├─ 📁 counter/
+│  ├─ 📁 amplifier/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 layout/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 counter_hv_kvc/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 flow/
+│  │  ├─ 📁 fpga/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 rtl/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 counter_lv_eth/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 flow/
+│  │  ├─ 📁 fpga/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 rtl/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 counter_lv_ihp/
 │  │  ├─ 📁 final/
 │  │  ├─ 📁 flow/
 │  │  ├─ 📁 fpga/
@@ -176,6 +227,17 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 │  │  ├─ Makefile
 │  │  └─ README.md
 │  ├─ 📁 inverter/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 layout/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 ringosc/
 │  │  ├─ 📁 final/
 │  │  ├─ 📁 layout/
 │  │  ├─ 📁 netlist/
@@ -257,6 +319,7 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 │  │  ├─ chip_top_tb.py
 │  │  └─ chip_top_tb.surf.ron
 │  └─ 📁 xschem/
+│     ├─ 📁 models/
 │     ├─ 📁 plot_simulations/
 │     │  ├─ 📁 data/
 │     │  ├─ 📁 figures/
