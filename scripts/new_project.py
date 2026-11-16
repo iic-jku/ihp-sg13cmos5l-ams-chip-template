@@ -20,7 +20,7 @@ from pathlib import Path
 # ------------------------------------------------------------------------------------------------
 
 # Deleted together with everything below them
-TEMPLATE_ONLY_PATHS = ["tutorial", "render/chip_top_annotated.png", ".github/workflows/quarto-publish.yml", "doc/ihp-structure-proposals", "CITATION.cff", "measurements/v.1.0.0"]
+TEMPLATE_ONLY_PATHS = ["tutorial", "pcb", "render/chip_top_annotated.png", ".github/workflows/quarto-publish.yml", "doc/ihp-structure-proposals", "CITATION.cff", "measurements/v.1.0.0"]
 
 # Emptied, the folder itself stays because `make release` writes into it
 TEMPLATE_ONLY_CONTENTS = ["release"]

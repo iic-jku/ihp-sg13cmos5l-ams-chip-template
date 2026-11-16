@@ -22,6 +22,7 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 <!-- template-only -->
 - `measurements/v.1.0.0/` (template): placeholders for the chip of this branch (submitted as `SoC1693`), whose release files are in `release/v.1.0.0/`.
 - `tutorial/` (template): the Quarto tutorial, `make -C tutorial` renders it locally.
+- `pcb/` (template): KiCad 10 project of the development and test board of the `IHP-TO-2026-11` chip (SoC1693, QFN32), its pin map is `packaging/config.yaml` of that branch, see `pcb/README.md`.
 <!-- /template-only -->
 
 ## Environment and PDK

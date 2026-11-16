@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "ihp-sg13cmos5l_dev_board")(type "KiCad")(uri "${KIPRJMOD}/lib/ihp-sg13cmos5l_dev_board.pretty")(options "")(descr "IHP SG13CMOS5L dev board footprints"))
+)
