@@ -89,6 +89,8 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 - **[doc/pinout.md](doc/pinout.md)**: full 32-pad bondpad table per side, with the `chip_top` port and the role each pad carries inside `chip_core`.
 - **[doc/floorplan.md](doc/floorplan.md)**: die / core geometry, hard-macro placement coordinates, PDN strategy and the floorplan diagram.
 
+Measurements of the fabricated chip go into [measurements/](measurements/), one folder per taped-out release.
+
 
 ## Directory Structure
 
@@ -197,6 +199,16 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  │  ├─ Makefile
 │  │  └─ README.md
 │  ├─ Makefile
+│  └─ README.md
+├─ 📁 measurements/
+│  ├─ 📁 v.1.0.0/
+│  │  ├─ 📁 amplifier/
+│  │  ├─ 📁 chip/
+│  │  ├─ 📁 counters/
+│  │  ├─ 📁 inverter/
+│  │  ├─ 📁 ringosc/
+│  │  ├─ 📁 vco/
+│  │  └─ README.md
 │  └─ README.md
 ├─ 📁 netlist/
 │  ├─ 📁 layout/
