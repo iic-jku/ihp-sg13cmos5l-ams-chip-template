@@ -88,6 +88,9 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 - **[doc/specifications.md](doc/specifications.md)**: top-level specifications (technology, supplies, clock, macro inventory, functional behaviour).
 - **[doc/pinout.md](doc/pinout.md)**: full 32-pad bondpad table per side, with the `chip_top` port and the role each pad carries inside `chip_core`.
 - **[doc/floorplan.md](doc/floorplan.md)**: die / core geometry, hard-macro placement coordinates, PDN strategy and the floorplan diagram.
+<!-- template-only -->
+- **[pcb/README.md](pcb/README.md)**: KiCad 10 development and test board of the `IHP-TO-2026-11` chip (SoC1693) in its QFN32, with a Raspberry Pi Pico, per-domain supplies and current monitors, the analog pins on BNC and the VCO outputs on SMA.
+<!-- /template-only -->
 
 Measurements of the fabricated chip go into [measurements/](measurements/), one folder per taped-out release.
 
@@ -237,6 +240,13 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 │  ├─ config.yaml
 │  ├─ README.md
 │  └─ result.md
+├─ 📁 pcb/
+│  ├─ 📁 lib/
+│  ├─ 📁 render/
+│  ├─ ihp-sg13cmos5l_dev_board.kicad_pcb
+│  ├─ ihp-sg13cmos5l_dev_board.kicad_pro
+│  ├─ ihp-sg13cmos5l_dev_board.kicad_sch
+│  └─ README.md
 ├─ 📁 release/
 │  └─ 📁 v.1.0.0/
 │     ├─ 📁 gds/
@@ -1250,7 +1260,7 @@ make project NAME=<name>             # start the chip <name>
 `NAME` is a lowercase letter followed by lowercase letters, digits or underscores, and it must not be the name of a macro or an IP. The target needs no PDK. It refuses to run in a git tree with uncommitted changes and in a checkout whose `origin` is this template, `FORCE=1` skips both checks. Every change is planned first, so a refused run leaves the tree untouched. Then the target:
 
 1. Runs `make clean`, which deletes the committed outputs of the template chip. The macros and IPs keep their committed views, so the new chip builds without rebuilding them.
-2. Removes what only makes sense in the template: `tutorial/`, `.github/workflows/quarto-publish.yml`, `doc/ihp-structure-proposals/`, `CITATION.cff`, the content of `release/`, and every block between `template-only` markers in this README, `AGENTS.md`, the `Makefile` and the configuration files. Figures that a remaining file still shows move to `doc/fig/`, and `ToDo.md` starts empty.
+2. Removes what only makes sense in the template: `tutorial/`, `pcb/`, `.github/workflows/quarto-publish.yml`, `doc/ihp-structure-proposals/`, `CITATION.cff`, the content of `release/`, and every block between `template-only` markers in this README, `AGENTS.md`, the `Makefile` and the configuration files. Figures that a remaining file still shows move to `doc/fig/`, and `ToDo.md` starts empty.
 3. Renames `chip_top`, `chip_core` and `chip_logo` to `<name>_top`, `<name>_core` and `<name>_logo`, in file names and in file contents.
 4. Gives this README a new header that records the template version, and deletes itself (`scripts/new_project.py` and the `project` target).
 5. Checks that no old name, no link into a deleted path and no marker is left, runs `reuse lint` when it is installed, and lists what is left for you: the die area, the pad ring and the macro placements in [`flow/librelane/config.yaml`](flow/librelane/config.yaml), the `PINOUT` in [`packaging/config.yaml`](packaging/config.yaml), the chip documentation in [`doc/`](doc/), and the `regression` target once you replace the example macros. When the folder is not named `ihp-sg13cmos5l-<name>`, the list also gives the steps to rename it together with the GitHub repository and `origin`.
