@@ -396,7 +396,7 @@ Every component follows the same principle. The simulations always run last, so 
 | --- | --- |
 | [`macros/counter_lv_ihp/`](macros/counter_lv_ihp/) (digital) | lint -> build (FPGA and LibreLane, including the XSPICE model) -> extract (PEX of the hardened GDS) -> simulate. DRC and LVS run inside the LibreLane flow. |
 | [`macros/inverter/`](macros/inverter/) (analog) | verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate |
-| [`macros/vco/`](macros/vco/) (RF) | layouts (KLayout Python scripts) -> coil EM (Palace) -> lumped-element model (snp2le) -> verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate (ngspice and VACASK). Not part of the chip build yet. |
+| [`macros/vco/`](macros/vco/) (RF) | layouts (KLayout Python scripts) -> coil EM (Palace) -> lumped-element model (snp2le) -> verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate (ngspice and VACASK). `build-macros` builds it, and the chip places it. |
 | [`ip/*`](ip/) (bondpad, RF pad, logos) | build -> verify (DRC, and LVS on the RF pad) |
 | top level | build -> verify (DRC) -> simulate -> package |
 

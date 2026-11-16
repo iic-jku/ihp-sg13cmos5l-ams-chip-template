@@ -1523,7 +1523,7 @@ The [`vco`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/mai
 The VCO is a simple design to learn the RF flow on, not an optimized one. It goes through each step once, and the [vco README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/vco/README.md) lists where it falls short and what a better design would change.
 
 ::: {.callout-note}
-The VCO is not part of the chip top-level yet. Its integration needs a quiet analog pad of its own for the macro's `VDD`, RF pads or a divider for the 20 GHz output, and a gap in the chip power grid, since the coil occupies TopMetal1, the top layer of the power grid. The open steps are listed under [Open Points](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/vco/README.md#open-points) in the README.
+On the branch `IHP-TO-2026-11`, the chip top-level places the VCO: the macro's `VDD` comes from the analog pad `vdd_rf`, its outputs go to two RF pads arranged ground, signal, signal, ground, and `PDN_OBSTRUCTIONS` keeps the chip power grid off the coil. The placement and the drawn straps are in [doc/floorplan.md](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/IHP-TO-2026-11/doc/floorplan.md).
 :::
 
 ## Circuit {#sec-rf-circuit}

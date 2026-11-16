@@ -10,7 +10,7 @@
 
 A 20 GHz LC voltage-controlled oscillator built from CMOS devices only, the RF macro of this template. It is the starting point for RF blocks: next to the analog flow of the [inverter](../inverter/README.md) it carries layouts written by KLayout Python scripts, the EM simulation of the coil with AWS Palace, its lumped-element model from snp2le, the periodic steady-state, small-signal and noise analyses of VACASK, transient noise, and a post-layout simulation with the EM model of the coil in place. The core follows a published design, the 27 GHz cross-coupled VCO of Jung and Park [[1]](#references), scaled to 20 GHz and to the devices of this PDK. It is the VCO of the ihp-sg13g2 template, ported to a process without TopMetal2, Metal5, MIM capacitors and an inductor PCell, see [Porting from ihp-sg13g2](#porting-from-ihp-sg13g2).
 
-This is a simple VCO to learn the RF flow on, not an optimized design. It goes through each step once, and [Limitations](#limitations) lists where it falls short and what a better design would change. The chip top-level does not place it yet, see [Open Points](#open-points).
+This is a simple VCO to learn the RF flow on, not an optimized design. It goes through each step once, and [Limitations](#limitations) lists where it falls short and what a better design would change. The chip top-level places it, with its `VDD` on the analog pad `vdd_rf` and its outputs on two RF pads, see [doc/specifications.md](../../doc/specifications.md#vco) and [doc/floorplan.md](../../doc/floorplan.md).
 
 > [!IMPORTANT]
 > The VACASK testbenches need the IIC-OSIC-TOOLS container with tag `2026.10` or later: the oscillator PSS (`oscillator=1`), `pac` and `pnoise` arrived in VACASK after the `2026.09` image.
@@ -811,7 +811,6 @@ This VCO is kept simple on purpose. These are the places where it falls short, a
 
 ## Open Points
 
-- **Chip integration.** The chip top-level does not place the macro yet. It needs a quiet analog pad for the macro's `VDD`, RF pads or a divider to an existing pad for the 20 GHz outputs, and a gap in the chip power grid, since the coil occupies TopMetal1, the top layer of the chip power grid.
 - **More RF analyses.** HB, HBAC and HBNOISE on the buffer, and ACSP of the buffer.
 - **Layouts by other methods** for the tutorial: the coil hand-drawn in KLayout, and generated with GDSFactory.
 
