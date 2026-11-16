@@ -4,9 +4,13 @@ Every folder here is one macro with its own `Makefile` and `README.md`, followin
 
 | Macro | Kind | Source of truth | Flow |
 | --- | --- | --- | --- |
-| [`counter/`](counter/) | digital | SystemVerilog in `rtl/` | Verilator lint, Icarus Verilog and cocotb simulation, LibreLane hardening with DRC and LVS inside the run, XSPICE model for the mixed-signal Xschem simulation, FPGA emulation on three boards |
+| [`counter_lv_ihp/`](counter_lv_ihp/) | digital | SystemVerilog in `rtl/` | Verilator lint, Icarus Verilog and cocotb simulation, LibreLane hardening on the IHP LV cells `sg13cmos5l_stdcell` with DRC and LVS inside the run, XSPICE model for the mixed-signal Xschem simulation, FPGA emulation on three boards |
+| [`counter_lv_eth/`](counter_lv_eth/) | digital | the counter of `counter_lv_ihp/` under its own names | The flow of `counter_lv_ihp/`, hardened on the ETH LV cells `ez130_8t` |
+| [`counter_hv_kvc/`](counter_hv_kvc/) | digital | the counter of `counter_lv_ihp/` under its own names | The flow of `counter_lv_ihp/`, hardened on the IHP HV cells `sg13cmos5l_stdcell_hv`, plus `make sim-pex-low-vdd`, the post-layout simulation at the 1.2 V to 1.65 V of the chip |
 | [`inverter/`](inverter/) | analog | Xschem schematic and hand-drawn GDS in `layout/` | Four Xschem testbenches, KLayout DRC and LVS, gdscheck DRC, Magic LVS and PEX, LEF, Liberty and Verilog stub export by Magic, CACE characterization |
-| [`vco/`](vco/) | RF | Xschem schematic, layouts from KLayout Python scripts, the coil's Palace EM result and snp2le model | The analog flow plus lumped-element models from snp2le and the oscillator analyses of VACASK (PSS, PNOISE, PAC) and transient noise. The chip does not build it yet |
+| [`amplifier/`](amplifier/) | analog | Xschem schematic and a GDS in `layout/` that places the `inverter` unit cell of `inverter/` | The flow of `inverter/` with three Xschem testbenches, CACE of the gain and the bandwidth |
+| [`ringosc/`](ringosc/) | analog | Xschem schematic and a GDS in `layout/` that places the `inverter` unit cell of `inverter/` | The flow of `inverter/` with one Xschem testbench, CACE of the frequency and the supply current |
+| [`vco/`](vco/) | RF | Xschem schematic, layouts from KLayout Python scripts, the coil's Palace EM result and snp2le model | The analog flow plus lumped-element models from snp2le and the oscillator analyses of VACASK (PSS, PNOISE, PAC) and transient noise. The chip builds and places it |
 
 The `Makefile` in this folder has one job: it starts a new macro as a renamed copy of an existing one.
 
@@ -15,8 +19,12 @@ The `Makefile` in this folder has one job: it starts a new macro as a renamed co
 
 ```text
 📁 macros/
-├─ 📁 counter/                digital macro, see counter/README.md
+├─ 📁 amplifier/              analog macro on the inverter unit cell, see amplifier/README.md
+├─ 📁 counter_hv_kvc/         digital macro on the IHP HV cells, see counter_hv_kvc/README.md
+├─ 📁 counter_lv_eth/         digital macro on the ETH LV cells, see counter_lv_eth/README.md
+├─ 📁 counter_lv_ihp/         digital macro on the IHP LV cells, see counter_lv_ihp/README.md
 ├─ 📁 inverter/               analog macro, see inverter/README.md
+├─ 📁 ringosc/                analog macro on the inverter unit cell, see ringosc/README.md
 ├─ 📁 scripts/
 │  └─ rename_gds_cells.py     renames the cells inside a GDS, used by make macro
 ├─ 📁 vco/                    RF macro, see vco/README.md
@@ -39,7 +47,7 @@ make help
 `make macro` needs the `ihp-sg13cmos5l` PDK, only `help` is exempt. The target renames the cells inside the copied GDS with KLayout and produces a macro that the chip flow builds against `ihp-sg13cmos5l`, so the `ihp-sg13g2` the container starts with is caught before it starts:
 
 ```sh
-$ make macro FROM=inverter NAME=amplifier
+$ make macro FROM=inverter NAME=amp
 Makefile:18: *** PDK is "ihp-sg13g2", but the macros need "ihp-sg13cmos5l". Run `sak-pdk ihp-sg13cmos5l` in this shell and retry, or pass REQUIRED_PDK= to skip this check.  Stop.
 ```
 
@@ -52,7 +60,7 @@ The check is a parse-time conditional at the top of the Makefile, the same one e
 make macro FROM=<macro> NAME=<name>
 ```
 
-`FROM` is the macro to copy, `inverter` for an analog block, `counter` for a digital one, or any macro of your own that is already here. `NAME` is the name of the new macro: a lowercase letter followed by lowercase letters, digits or underscores, so that it works as a file name, a GDS cell name and a Verilog module name alike. The top cell follows the convention of the copied macro, so `NAME=amp` gives the cells `amp` and `amp_top` from the inverter, and `NAME=fifo` gives the module `fifo_top` from the counter.
+`FROM` is the macro to copy, `inverter` for an analog block, `counter_lv_ihp` for a digital one, or any macro of your own that is already here. `NAME` is the name of the new macro: a lowercase letter followed by lowercase letters, digits or underscores, so that it works as a file name, a GDS cell name and a Verilog module name alike. The top cell follows the convention of the copied macro, so `NAME=amp` gives the cells `amp` and `amp_top` from the inverter, and `NAME=fifo` gives the module `fifo_top` from the counter.
 
 The target refuses to run when `NAME` exists already. Otherwise it does, in this order:
 
@@ -72,7 +80,7 @@ For a new analog macro named `amp` and a new digital macro named `fifo`:
 ```sh
 cd macros
 make macro FROM=inverter NAME=amp
-make macro FROM=counter NAME=fifo
+make macro FROM=counter_lv_ihp NAME=fifo
 ```
 
 > [!NOTE]
@@ -104,10 +112,10 @@ The new macro still implements the copied design under its new name. What follow
     make all
     ```
 
-    The symbol has to exist before `generate-xspice` runs, so a `make all` on a macro that has none stops there and says so. Wire the Xschem testbench to the finished symbol afterwards, because its pins are what the testbench connects to by coordinate. See [Build the Xschem Symbol](counter/README.md#build-the-xschem-symbol).
+    The symbol has to exist before `generate-xspice` runs, so a `make all` on a macro that has none stops there and says so. Wire the Xschem testbench to the finished symbol afterwards, because its pins are what the testbench connects to by coordinate. See [Build the Xschem Symbol](counter_lv_ihp/README.md#build-the-xschem-symbol).
 3. Update `CLOCK_PORT` and `DIE_AREA` in `flow/librelane/config.yaml`, the pin placement in `flow/librelane/pin_order.cfg`, and the constraints in `impl.sdc` and `signoff.sdc`.
 4. Rewrite the testbenches in `testbenches/verilog/`, `testbenches/cocotb/` and `testbenches/xschem/`, and the plot script in `testbenches/xschem/plot_simulations/`.
-5. Update `DUT_SRCS` in `fpga/dut.mk` and the pin constraint file in each `fpga/<board>/` you care about to the ports of the new design. Delete the board folders you do not need, the dispatcher derives its board list from the folders that are there. See [fpga/README.md](counter/fpga/README.md).
+5. Update `DUT_SRCS` in `fpga/dut.mk` and the pin constraint file in each `fpga/<board>/` you care about to the ports of the new design. Delete the board folders you do not need, the dispatcher derives its board list from the folders that are there. See [fpga/README.md](counter_lv_ihp/fpga/README.md).
 6. Rewrite `README.md`, `fpga/README.md` and `render/blender/README.md`.
 
 

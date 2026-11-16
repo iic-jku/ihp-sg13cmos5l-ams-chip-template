@@ -89,6 +89,8 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 - **[doc/pinout.md](doc/pinout.md)**: full 32-pad bondpad table per side, with the `chip_top` port and the role each pad carries inside `chip_core`.
 - **[doc/floorplan.md](doc/floorplan.md)**: die / core geometry, hard-macro placement coordinates, PDN strategy and the floorplan diagram.
 
+Measurements of the fabricated chip go into [measurements/](measurements/), one folder per taped-out release.
+
 
 ## Directory Structure
 
@@ -145,7 +147,21 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  │  ├─ 📁 verification/
 │  │  ├─ Makefile
 │  │  └─ README.md
-│  └─ 📁 sg13cmos5l_ip__jku_names/
+│  ├─ 📁 sg13cmos5l_ip__jku_names/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 logo/
+│  │  ├─ 📁 script/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 sg13cmos5l_ip__mpw_date/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 logo/
+│  │  ├─ 📁 script/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  └─ 📁 sg13cmos5l_ip__template_name/
 │     ├─ 📁 final/
 │     ├─ 📁 logo/
 │     ├─ 📁 script/
@@ -160,7 +176,44 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  ├─ LicenseRef-EUROPRACTICE.txt
 │  └─ SHL-2.1.txt
 ├─ 📁 macros/
-│  ├─ 📁 counter/
+│  ├─ 📁 amplifier/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 layout/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 counter_hv_kvc/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 flow/
+│  │  ├─ 📁 fpga/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 rtl/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 counter_lv_eth/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 flow/
+│  │  ├─ 📁 fpga/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 rtl/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
+│  ├─ 📁 counter_lv_ihp/
 │  │  ├─ 📁 final/
 │  │  ├─ 📁 flow/
 │  │  ├─ 📁 fpga/
@@ -184,6 +237,17 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  │  ├─ 📁 verification/
 │  │  ├─ Makefile
 │  │  └─ README.md
+│  ├─ 📁 ringosc/
+│  │  ├─ 📁 final/
+│  │  ├─ 📁 layout/
+│  │  ├─ 📁 netlist/
+│  │  ├─ 📁 render/
+│  │  ├─ 📁 schematic/
+│  │  ├─ 📁 scripts/
+│  │  ├─ 📁 testbenches/
+│  │  ├─ 📁 verification/
+│  │  ├─ Makefile
+│  │  └─ README.md
 │  ├─ 📁 scripts/
 │  ├─ 📁 vco/
 │  │  ├─ 📁 final/
@@ -197,6 +261,16 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  │  ├─ Makefile
 │  │  └─ README.md
 │  ├─ Makefile
+│  └─ README.md
+├─ 📁 measurements/
+│  ├─ 📁 v.1.0.0/
+│  │  ├─ 📁 amplifier/
+│  │  ├─ 📁 chip/
+│  │  ├─ 📁 counters/
+│  │  ├─ 📁 inverter/
+│  │  ├─ 📁 ringosc/
+│  │  ├─ 📁 vco/
+│  │  └─ README.md
 │  └─ README.md
 ├─ 📁 netlist/
 │  ├─ 📁 layout/
@@ -245,6 +319,7 @@ A designer-oriented description of this chip can be found in [doc/](doc/):
 │  │  ├─ chip_top_tb.py
 │  │  └─ chip_top_tb.surf.ron
 │  └─ 📁 xschem/
+│     ├─ 📁 models/
 │     ├─ 📁 plot_simulations/
 │     │  ├─ 📁 data/
 │     │  ├─ 📁 figures/
@@ -384,7 +459,7 @@ Every component follows the same principle. The simulations always run last, so 
 | --- | --- |
 | [`macros/counter_lv_ihp/`](macros/counter_lv_ihp/) (digital) | lint -> build (FPGA and LibreLane, including the XSPICE model) -> extract (PEX of the hardened GDS) -> simulate. DRC and LVS run inside the LibreLane flow. |
 | [`macros/inverter/`](macros/inverter/) (analog) | verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate |
-| [`macros/vco/`](macros/vco/) (RF) | layouts (KLayout Python scripts) -> coil EM (Palace) -> lumped-element model (snp2le) -> verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate (ngspice and VACASK). Not part of the chip build yet. |
+| [`macros/vco/`](macros/vco/) (RF) | layouts (KLayout Python scripts) -> coil EM (Palace) -> lumped-element model (snp2le) -> verify (DRC, LVS, PEX) -> build (LEF, LIB, Verilog stub, GDS, render) -> simulate (ngspice and VACASK). `build-macros` builds it, and the chip places it. |
 | [`ip/*`](ip/) (bondpad, RF pad, logos) | build -> verify (DRC, and LVS on the RF pad) |
 | top level | build -> verify (DRC) -> simulate -> package |
 
