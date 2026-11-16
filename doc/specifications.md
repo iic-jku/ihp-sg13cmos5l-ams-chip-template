@@ -96,7 +96,7 @@ The three counters are 8-bit (`CTR_MAX = 255`) and share `clk_PAD` through their
 
 `count[6:0]` drives `output_PAD[6:0]` and `count[7]` drives `bidir_PAD`, whose output enable is tied high.
 
-Chip STA covers the LV counter with its own Liberty in all six corners. The ETH library has Liberty up to 1.32 V only, so its 1.35 V to 1.65 V corners reuse the nearest one. The HV library has Liberty at 3.0 V and above only, so chip STA cannot judge the HV counter at 1.2 V to 1.65 V. Its post-layout netlist in ngspice counted 259 clock edges through the wrap without an error at 50 MHz in seven cases from ss 125 °C at 1.2 V to ff -40 °C at 1.65 V, with the inputs at 1.2 V, see [macros/counter_hv_kvc/README.md](../macros/counter_hv_kvc/README.md).
+Chip STA covers the LV counter with its own Liberty in all six corners. The ETH library has Liberty up to 1.32 V only, so its 1.35 V to 1.65 V corners reuse the nearest one. The HV library has Liberty at 3.0 V and above only, so chip STA cannot judge the HV counter at 1.2 V to 1.65 V. Its post-layout netlist in ngspice counted 259 clock edges through the wrap without an error in seven cases, with the inputs at 1.2 V: 50 MHz at ss 125 °C and 1.2 V, at tt 27 °C and 1.2 V or 1.5 V and at ff -40 °C and 1.2 V or 1.65 V, plus 25 MHz and 12.5 MHz at ss 125 °C and 1.2 V, see [macros/counter_hv_kvc/README.md](../macros/counter_hv_kvc/README.md).
 
 ### Inverter
 
