@@ -38,7 +38,7 @@ The power of a counter is the rise of its supply current against `sel[1:0]` = `0
 | --- | --- | --- | --- | --- | --- |
 | Counts through the wrap | IHP LV | `VDD` 1.2 V, 50 MHz | no setup or hold violation in the six corners of chip STA | [chip STA][sta] | TBD |
 | Counts through the wrap | ETH LV | `VDD` 1.2 V, 50 MHz | as IHP LV. Its Liberty ends at 1.32 V, so the corners above reuse the nearest one | [chip STA][sta] | TBD |
-| Counts through the wrap | IHP HV | `vdd_hv` 1.2 V to 1.65 V, 50 MHz | 7 of 7 post-layout cases pass, with 50 MHz in each corner from ss 125 °C at 1.2 V to ff -40 °C at 1.65 V | [HV counter][hv-low-vdd] | TBD |
+| Counts through the wrap | IHP HV | `vdd_hv` 1.2 V to 1.65 V, 50 MHz | 7 of 7 post-layout cases pass: 50 MHz at ss 125 °C and 1.2 V, at tt 27 °C and 1.2 V or 1.5 V, at ff -40 °C and 1.2 V or 1.65 V, and 25 MHz and 12.5 MHz at ss 125 °C and 1.2 V | [HV counter][hv-low-vdd] | TBD |
 | Highest clock frequency | IHP LV | `VDD` 1.08 V, 1.2 V, 1.32 V | not simulated, chip STA ran at 50 MHz | | TBD |
 | Highest clock frequency | ETH LV | `VDD` 1.08 V, 1.2 V, 1.32 V | not simulated | | TBD |
 | Highest clock frequency | IHP HV | `vdd_hv` 1.2 V, 1.35 V, 1.5 V, 1.65 V | not simulated | | TBD |
