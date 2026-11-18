@@ -20,7 +20,7 @@ from pathlib import Path
 # ------------------------------------------------------------------------------------------------
 
 # Deleted together with everything below them
-TEMPLATE_ONLY_PATHS = ["tutorial", ".github/workflows/quarto-publish.yml", "doc/ihp-structure-proposals", "CITATION.cff"]
+TEMPLATE_ONLY_PATHS = ["tutorial", ".github/workflows/quarto-publish.yml", "doc/ihp-structure-proposals", "CITATION.cff", "measurements/v.1.0.0"]
 
 # Emptied, the folder itself stays because `make release` writes into it
 TEMPLATE_ONLY_CONTENTS = ["release"]
@@ -31,6 +31,7 @@ EMPTIED_FILES = {"ToDo.md": "# ToDo List\n"}
 # Files that put the template's identity on the die
 IDENTITY_FILES = [
     ("ip/sg13cmos5l_ip__jku_names/logo/jku_names.png", "the names of the template authors"),
+    ("ip/sg13cmos5l_ip__template_name/logo/template_name.png", "the template name in the bottom-left corner"),
     ("flow/logo/chip_logo_mono.png", "the AMS CHIP artwork, drawn on TopMetal1"),
     ("ip/sg13cmos5l_ip__jku/logo/jku_logo.png", "the JKU logo"),
 ]
