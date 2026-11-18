@@ -247,8 +247,7 @@ The phase noise at 1 MHz offset in PNOISE comes 56 % from the core (pair 40 %, v
 │  ├─ sim_corners.py
 │  ├─ sim_powerup.py
 │  ├─ sim_trannoise.py
-│  ├─ spice2spectre.py
-│  └─ tie_pex_substrate.py
+│  └─ spice2spectre.py
 ├─ 📁 testbenches/
 │  └─ 📁 xschem/
 │     ├─ 📁 models/
