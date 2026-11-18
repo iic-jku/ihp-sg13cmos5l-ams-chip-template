@@ -92,7 +92,7 @@ make -C macros/inverter all                 # KLayout DRC/LVS, gdscheck DRC, Mag
 <!-- template-only -->
 - The `project-check` job of `license-check.yml` runs `make project NAME=demo FORCE=1` on the checkout and `reuse lint` on the result, so that a change to the template that breaks the target fails in CI.
 <!-- /template-only -->
-- `.github/workflows/regression.yml`: `make regression` in `hpretl/iic-osic-tools:latest` with `PDK=ihp-sg13cmos5l`, nightly at 02:00 UTC (skipped when nothing was committed in the previous 25 hours) and on manual dispatch. It is a tool and flow smoke test with DRC skipped in the chip LibreLane run, not a sign-off. Logs go to the `regression-logs` artifact.
+- `.github/workflows/regression.yml`: `make regression` in `hpretl/iic-osic-tools:latest` with `PDK=ihp-sg13cmos5l`, on every push to `main` and on manual dispatch. It is a tool and flow smoke test with DRC skipped in the chip LibreLane run, not a sign-off. Logs go to the `regression-logs` artifact.
 <!-- template-only -->
 - `.github/workflows/quarto-publish.yml` (template): renders `tutorial/` and publishes it to `gh-pages` on every push to `main`. It installs `tutorial/requirements.txt`, so keep that file while the workflow exists.
 <!-- /template-only -->
