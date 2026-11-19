@@ -263,7 +263,7 @@ The [top-level Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-temp
 | `make build-counter` / `build-inverter` / `build-macros` | Build the digital and analog macros individually or together. |
 | `make build-top`    | Run LibreLane on the top-level, copy back all artifacts, add logos and fill structures, and render the final GDS. |
 | `make build-all`    | Init submodules, build bondpad, build RF pad, build logos, build macros, and build top-level.             |
-| `make klayout-verify` / `magic-verify` | Run DRC and LVS with KLayout, or LVS and PEX with Magic, for a given cell.   |
+| `make klayout-verify` / `magic-verify` | Run DRC, LVS, and PEX with KLayout, or LVS and PEX with Magic, for a given cell.   |
 | `make gdscheck-drc` (`DRC_LEVEL=<precheck\|macro\|regular>`, `GDSCHECK_SUITE=<suite>` or `GDSCHECK_DECKS=<decks>`) | Run the standalone gdscheck DRC for a given cell. |
 | `make bondplan`     | Generate the bondplan (die in package, bondwires, pin table) in `packaging/` (see @sec-packaging).        |
 | `make all`          | Full build, DRC verification, simulation, and bondplan generation.                        |
@@ -294,7 +294,7 @@ The [counter Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-templa
 | `make build-top`                                  | Run LibreLane, copy reports, netlists, and final views, generate the XSPICE model, and render the final GDS. |
 | `make lec` / `lec-mutant`                         | Prove the final netlist equivalent to the RTL with EQY (`LEC_NETLIST` selects another netlist), and check that the proof can fail. |
 | `make symbol-pex`                                 | Build the Xschem PEX symbol `<CELL>_pex.sym` from `<CELL>.sym`. Runs automatically before every extraction. |
-| `make klayout-pex` / `magic-pex` (`EXT_MODE=<1\|2\|3>`) | Extract the parasitics of the hardened macro from `final/gds/` into `netlist/pex/`. `klayout-pex` (KPEX) does not support the PDK yet and currently fails. |
+| `make klayout-pex` / `magic-pex` (`EXT_MODE=<1\|2\|3>`) | Extract the parasitics of the hardened macro from `final/gds/` into `netlist/pex/`. |
 | `make all`                                        | Run lint, the FPGA build, the full macro build flow, the equivalence check, the parasitic extraction, and all simulations. |
 | `make clean`                                      | Delete all generated files and folders of the macro, including the FPGA outputs. |
 
@@ -313,8 +313,8 @@ The [inverter Makefile](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-templ
 | `make gdscheck-drc` / `gdscheck-drc-all` (`GDSCHECK_SUITE=<suite>` or `GDSCHECK_DECKS=<decks>`) | Run the standalone gdscheck DRC for a given cell, or for `inverter` and `inverter_top`. |
 | `make klayout-lvs` / `magic-lvs`                  | Run LVS using KLayout or Magic + Netgen.                                    |
 | `make symbol-pex`                                 | Build the Xschem PEX symbol `<CELL>_pex.sym` from `<CELL>.sym`. Runs automatically before every extraction. |
-| `make klayout-pex` / `magic-pex` (`EXT_MODE=<1\|2\|3>`) | Run parasitic extraction in C, CC, or full-RC mode. `klayout-pex` (KPEX) does not support the PDK yet and currently fails. |
-| `make klayout-verify` / `magic-verify`            | Run DRC + LVS (KLayout) or LVS + PEX (Magic) for a given cell.        |
+| `make klayout-pex` / `magic-pex` (`EXT_MODE=<1\|2\|3>`) | Run parasitic extraction in C, CC, or full-RC mode. |
+| `make klayout-verify` / `magic-verify`            | Run DRC + LVS + PEX with KLayout, or LVS + PEX with Magic, for a given cell. |
 | `make lef` / `make lib` / `make verilog`          | Generate the LEF, the Liberty stub, and the Verilog stub for top-level integration.   |
 | `make check-boundary`                             | Check that the top cell layout carries the PR boundary box on layer 189 that the chip flow needs. |
 | `make build-top`                                  | Build the analog macro deliverables: PR boundary check, LEF, LIB, Verilog stub, GDS and rendered layout image. |
@@ -762,9 +762,6 @@ make magic-pex EXT_MODE=1                 # C-decoupled, fastest
 make magic-pex EXT_MODE=3 THRESHOLD=5000 MINRES=500 MINDELAY=2   # full-RC with custom extresist settings
 ```
 
-::: {.callout-warning}
-`make klayout-pex` runs [KLayout-PEX (KPEX)](https://github.com/iic-jku/klayout-pex), which does not support the `ihp-sg13cmos5l` PDK yet, so the target currently fails. Use `magic-pex` until KPEX gains SG13CMOS5L support.
-:::
 
 Both targets read `final/gds/<CELL>.gds`, so `make build-top` (or at least `make copy-final`) has to have run first, and both abort with a clear message if it is missing. They start by running `make symbol-pex`, which derives `schematic/xschem/counter_top_pex.sym` from `counter_top.sym` so the PEX symbol can never go stale, and they finish by reordering the extracted `.subckt` ports to that symbol's pin order with `sak-pin-reorder.py` and verifying them with `scripts/check_pex_ports.py`. For `counter_top`, the full-RC default extracts 4351 transistors and roughly 2100 capacitors and 4700 resistors. Magic's `extresist` step is not deterministic, so the exact R and C counts move slightly from run to run while the transistor count stays the same.
 
@@ -811,7 +808,7 @@ The full lint, build, verification, and simulation chain is run with the followi
 make all
 ```
 
-This calls `lint-verilog-all`, `build-fpga`, `build-top`, `lec`, `lec-mutant`, `magic-pex`, and `sim-all` in sequence. The simulations run after the build, so the gate-level simulations run on the netlists, the XSPICE model and the extracted netlist produced by this build. `klayout-pex` is commented out in the recipe, since it is a second full extraction that nothing in the flow consumes, and KPEX does not support the `ihp-sg13cmos5l` PDK yet anyway. DRC and LVS are already covered by the LibreLane verification steps, so `lec` and `lec-mutant` are the only extra verification targets of the digital macro.
+This calls `lint-verilog-all`, `build-fpga`, `build-top`, `lec`, `lec-mutant`, `magic-pex`, and `sim-all` in sequence. The simulations run after the build, so the gate-level simulations run on the netlists, the XSPICE model and the extracted netlist produced by this build. `klayout-pex` is commented out in the recipe, since it is a second full extraction that nothing in the flow consumes. DRC and LVS are already covered by the LibreLane verification steps, so `lec` and `lec-mutant` are the only extra verification targets of the digital macro.
 
 # Analog Macro Implementation {#sec-analog}
 
@@ -819,7 +816,7 @@ The [`inverter`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tre
 
 - Layout vs. Schematic ([LVS](https://en.wikipedia.org/wiki/Layout_versus_schematic)) with KLayout or Magic + Netgen,
 - Design Rule Checking ([DRC](https://en.wikipedia.org/wiki/Design_rule_checking)) with KLayout or Magic,
-- Parasitic Extraction ([PEX](https://en.wikipedia.org/wiki/Parasitic_extraction)) with Magic (KPEX, the KLayout extractor, does not support the PDK yet),
+- Parasitic Extraction ([PEX](https://en.wikipedia.org/wiki/Parasitic_extraction)) with KLayout or Magic,
 - [Monte Carlo](https://en.wikipedia.org/wiki/Monte_Carlo_method) simulation of process and mismatch variations with CACE.
 
 Two instances are used in the chip core. One is used as a 4-channel digital inverter (`inverter1`), and the other as a 2-channel analog inverter (`inverter2`). See the [chip specifications](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/specifications.md) for the full picture.
@@ -1339,7 +1336,7 @@ The layout drawing order follows the matching rules of analog design: active dev
 
 ## DRC, LVS, and PEX
 
-The inverter macro can be verified with two verification flows, either with KLayout or with Magic + Netgen. The Magic + Netgen flow covers DRC, LVS, and PEX, while the KLayout flow covers DRC and LVS, since KPEX does not support the `ihp-sg13cmos5l` PDK yet. Magic + Netgen provides only non-interactive command-line flows, while KLayout also has interactive GUI-based DRC and LVS.
+The inverter macro can be verified with two verification flows, either with KLayout or with Magic + Netgen. Each flow covers DRC, LVS, and PEX. Magic + Netgen provides only non-interactive command-line flows, while KLayout also has interactive GUI-based DRC and LVS.
 
 ### Design Rule Check
 
@@ -1453,8 +1450,8 @@ After the reorder, the PEX target runs [`scripts/check_pex_ports.py`](https://gi
 Every symbol in this template carries `spectre_format="@name ( @pinlist ) @symname"` next to its `format` line. Xschem writes that line itself whenever a symbol is generated from a schematic's pin list (key `a`), and only the Spectre netlister reads it, which is also the one that drives VACASK. The SPICE netlister used for Ngspice ignores it. Do not delete it: without it, instances of that symbol are silently dropped from a Spectre/VACASK netlist and its `subckt` line comes out with an empty port list, with no warning at all.
 :::
 
-::: {.callout-warning}
-`make klayout-pex [CELL=<cellname>] [EXT_MODE=<1|2|3>]` runs [KLayout-PEX (KPEX)](https://github.com/iic-jku/klayout-pex), which does not support the `ihp-sg13cmos5l` PDK yet, so the target currently fails. Use `magic-pex` until KPEX gains SG13CMOS5L support. For the same reason, `klayout-pex` is commented out in the `klayout-verify` target.
+::: {.callout-note}
+[KLayout-PEX (KPEX)](https://github.com/iic-jku/klayout-pex) extracts with its own 2.5D engine, so `klayout-pex` and `magic-pex` are two independent extractions. It runs through `sak-pex.sh -k`, which the image ships from `2026.11` on, and takes much longer than Magic.
 :::
 
 ### Post-Layout Simulation {#sec-postlayout}
@@ -1475,7 +1472,7 @@ Think about it before simulating. The extracted netlist adds the wiring resistan
 
 ### Run Full Verification Flow at Once
 
-If you want to run the full verification flow at once, the verify targets bundle LVS and PEX (`magic-verify`) or DRC and LVS (`klayout-verify`) in one command.
+If you want to run the full verification flow at once, the verify targets bundle DRC, LVS, and PEX with KLayout and LVS and PEX with Magic in one command.
 
 ```sh
 make klayout-verify [CELL=<cellname>]   # default CELL=inverter_top
@@ -1704,7 +1701,7 @@ The verification targets are those of the inverter, see @sec-analog: `klayout-dr
 The gaps have three reasons:
 
 - **Magic extracts the varactor as two two-terminal halves** and extracts no device for the coil or for `cap_cmomf`, so Netgen cannot compare a cell that holds the varactor or the coil, and compares the buffer without its coupling caps.
-- **KPEX cannot read Magic's extraction of the varactor**, which Magic writes as a Verilog-A device. Every cell above the array inherits it.
+- **`klayout-verify` leaves `klayout-pex` out.** The 2.5D engine of KPEX extracts every cell, but the pin reorder fails on `vco_ind`, whose layout labels `LA`, `LB` and `LC` are uppercase and whose symbol pins are lowercase. No testbench reads these cell netlists: the post-layout netlist comes from `klayout-pex-leads`, whose Magic engine could not keep the varactor array anyway, as Magic writes the varactor as a Verilog-A device.
 - **An RC extraction of a coil is not its RF model.** It misses the inductance and the coupling, and Magic's view of the coil's metal shorts `rf_p`, `rf_n` and `vdd_core`. The model of the coil is its EM simulation, see @sec-rf-em.
 
 The KLayout `macro` level of `klayout-drc` leaves out the density rules, and with them rules a macro has to meet on its own, such as the minimum metal areas `Mn.d` and `pSD.b`. So `klayout-verify-all` also runs `klayout-drc-regular` on `vco_top`, which fails on any rule but the global densities that only the chip's fill can meet.
@@ -1738,7 +1735,7 @@ make klayout-pex-leads   # netlist/pex/vco_top_leads_klayout_pex_3.spice and net
 - **The buffer's coupling caps go back in as PDK devices.** Magic extracts no `cap_cmomf` device and reads its comb as plain metal ([magic#552](https://github.com/RTimothyEdwards/magic/issues/552)), so the capacitance of a comb in the netlist is Magic's estimate of the metal: 152.6 fF for each coupling cap of the buffer against 170.2 fF by the model and 156.8 fF by EM. The tank sees these caps, so `LEADS_CUT` makes `drop_subcells.py` cut their combs out of the markers and leave a port on each feed, and [`momf_lpe.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/vco/scripts/momf_lpe.py) puts the PDK `cap_cmomf` back between them, with the series resistance and inductance of the comb and the substrate capacitance of its plates from @sec-rf-em-momf. The combs of the decoupling caps `Cct1` and `Cct2` stay metal: nothing depends on their parasitics, and Magic's 3.69 pF against 3.79 pF by the model is close enough.
 - [`spice2spectre.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/vco/scripts/spice2spectre.py) translates the netlist for VACASK, for the post-layout transient noise (@sec-rf-trannoise).
 
-The [Parasitic Extraction (PEX)](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/vco/README.md#parasitic-extraction-pex) section of the README covers the details, among them a net without a resistor network and why the extraction runs in KPEX and not in `sak-pex.sh`.
+The [Parasitic Extraction (PEX)](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/vco/README.md#parasitic-extraction-pex) section of the README covers the details, among them a net without a resistor network and why the extraction runs in the Magic engine of KPEX and not in `magic-pex`.
 
 ## EM Simulation of RF Passives {#sec-rf-em}
 
@@ -2235,7 +2232,7 @@ For your own chip, `make project` renames these files and every reference to the
 
 ## Planning the Chip with PREP-IC {#sec-prep-ic}
 
-Before you edit the files below, plan the chip as a whole: which pad sits where, how far each macro is from its pads, and whether everything fits on the die. [PREP-IC](https://github.com/iic-jku/prep-ic) (Pinout, Ring and Early floorplan Planner for ICs) does that for the IHP SG13G2 and SG13CMOS5L PDKs and their IO cells, and it knows the EUROPRACTICE packages. It needs neither RTL nor a LibreLane run, and one project file holds the whole plan.
+Before you edit the files below, plan the chip as a whole: which pad sits where, how far each macro is from its pads, and whether everything fits on the die. [PREP-IC](https://github.com/iic-jku/prep-ic) (Pinout, Ring and Early floorplan Planner for ICs) does that with the IO cells of the IHP SG13G2 and SG13CMOS5L PDKs, and since version 0.2.0 also of sky130A and gf180mcuD, and it knows the EUROPRACTICE packages. It needs neither RTL nor a LibreLane run, and one project file holds the whole plan.
 
 [`doc/prep-ic/chip_top.json`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/doc/prep-ic/chip_top.json) is this chip as a PREP-IC project. @fig-prep-ic-gui shows it in the GUI, and @fig-prep-ic-floorplan shows the floorplan on its own.
 
@@ -2258,7 +2255,7 @@ prep-ic doc/prep-ic/chip_top.json          # open this chip in the GUI, blocks u
 prep-ic check doc/prep-ic/chip_top.json    # print the findings, exit code 1 if there are any
 ```
 
-The GUI needs the container desktop. `prep-ic check` needs version 0.1.2 or newer, which `pip install --upgrade prep-ic` installs. The GUI does not follow the file on disk, so reopen a project you changed from outside.
+The GUI needs the container desktop. This section describes version 0.2.2, which `pip install --upgrade prep-ic` installs over an older one. The GUI does not follow the file on disk, so reopen a project you changed from outside.
 
 ### What It Can Do
 
@@ -2269,6 +2266,7 @@ The GUI needs the container desktop. `prep-ic check` needs version 0.1.2 or newe
 | `clk [in]` | digital input |
 | `dout[0] [out] [4mA]` | digital output with its drive strength, `[tri]` and `[io]` alike |
 | `ain [analog]` | analog pad |
+| `RF [analog] [rfpad]` | the RF pad [`ip/sg13cmos5l_ip__rfpad_70x70`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/tree/main/ip/sg13cmos5l_ip__rfpad_70x70) of this template instead of `IOPadAnalog`, `RFIN [gsg] [rfpad]` for the signal pad of a group |
 | `VDD [vdd]` | core supply, `[vss]`, `[iovdd]` and `[iovss]` alike |
 | `RFIN [gsg]`, `LO [gsgsg]` | an RF pad between two grounds, a differential pair with three grounds |
 | empty line | a free slot of one pitch |
@@ -2278,7 +2276,7 @@ Tag every pad: without a tag, PREP-IC guesses the function from the name, and th
 
 **Macros.** In the *Macros* tab, *Add Macro...* reads the size and the pins of a macro from the `final/lef/` folder of its directory, and *Add Placeholder...* stands in for a macro that does not exist yet. Tick the pins that go off-chip and drag the macro in the *Chip* tab. A flyline then runs from each ticked pin to its pad. *Add Missing Pads* adds a pad per ticked pin without one, *Suggest Supply Pads* proposes supply pads for macros without one in reach, and *Optimize Pad Order* sorts the connected pads of each side by their macro pins.
 
-**Checks.** The stat tiles and the warning line under the chip view report pads that do not fit, missing supply pads, a signal used twice, crossing flylines, pins without a pad, split differential pairs, a sensitive pad next to a noisy one, long analog flylines, and macros that overlap or leave the core. They are planning hints: a flyline is a straight line and not a route, and the limits are defaults you set in the *Settings* tab. A supply check only asks whether a supply pad is in reach, it knows nothing about current or ESD.
+**Checks.** The stat tiles and the warning line under the chip view report pads that do not fit, missing supply pads, a signal used twice, crossing flylines, pins without a pad, split differential pairs, a sensitive pad next to a noisy one, long analog flylines, macros that overlap or leave the core, and problems in the project file itself, such as a tag given twice or a value that does not load. They are planning hints: a flyline is a straight line and not a route, and the limits are defaults you set in the *Settings* tab. A supply check only asks whether a supply pad is in reach, it knows nothing about current or ESD.
 
 **Export.** The same plan gives the pin list, a drawing of the pad ring and the LibreLane files:
 
@@ -2287,7 +2285,7 @@ prep-ic export doc/prep-ic/chip_top.json \
     --csv pins.csv --svg padframe.svg --librelane <folder>
 ```
 
-The folder receives `pad_cfg.tcl` and `padring_config.yaml` (pad positions and die area), `macros.yaml` (macro views and positions), `chip_top.sv` and `chip_core_template.sv` (the pad instances and a starting point for the core), and `bondplan_pinout.yaml` for the bonding diagram of @sec-packaging. Existing files are overwritten without asking, so do not point it at `flow/librelane/` of this chip. In the GUI, the *File* menu exports the same files.
+The folder receives `pad_cfg.tcl` and `padring_config.yaml` (pad positions and die area), `macros.yaml` (macro views and positions), `chip_top.sv` and `chip_core_template.sv` (the pad instances and a starting point for the core), and `bondplan_pinout.yaml` for the bonding diagram of @sec-packaging. The export builds every file before it writes the first and writes all of them or none, but it overwrites existing files without asking, so do not point it at `flow/librelane/` of this chip. With an `[rfpad]` pad, `pad_cfg.tcl` also moves the RF pad outward by the bondpad depth and places its terminal, and `padring_config.yaml` names the four views of the IP to add to `config.yaml`. In the GUI, the *File* menu exports the same files.
 
 ### Reading the Plan of This Chip
 
@@ -2298,7 +2296,7 @@ The folder receives `pad_cfg.tcl` and `padring_config.yaml` (pad positions and d
 
 ### From the Plan to This Flow
 
-This chip keeps its own [`rtl/chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_top.sv) and the `PAD_*` lists instead of the export, because the export has no `padbare` connection: its analog pads reach the core through `padres`, behind the secondary ESD resistor, which the analog outputs of this chip avoid. It also writes no PDN and no timing constraints, those stay in [`pdn_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pdn_cfg.tcl) and [`chip_top.sdc`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/chip_top.sdc). So use the plan to settle the pad order and the positions, then carry them over by hand:
+This chip keeps its own [`rtl/chip_top.sv`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/rtl/chip_top.sv) and the `PAD_*` lists instead of the export, because the export connects `IOPadAnalog` through `padres`, behind the secondary ESD resistor, which the analog outputs of this chip avoid. Only the RF pad of `[rfpad]` reaches the core through `padbare`. The export also writes no PDN and no timing constraints, which stay in [`pdn_cfg.tcl`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/pdn_cfg.tcl) and [`chip_top.sdc`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/flow/librelane/chip_top.sdc). So use the plan to settle the pad order and the positions, then carry them over by hand:
 
 | In the plan | In this repository |
 | --- | --- |
@@ -2773,7 +2771,7 @@ The first build writes the layout, the netlists, the renders and the reports und
 
   The [macros README](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/macros/README.md#register-the-macro-at-the-chip-top-level) lists every place where a new macro is registered at the chip top-level. Remove the example macros once your own ones replace them.
 - **Floorplan, pinout and package.** Adapt the die area, the pad ring and the macro placements in `flow/librelane/config.yaml` (see @sec-top), the `PINOUT` map in `packaging/config.yaml` (see @sec-packaging), and the chip documentation in `doc/`. @sec-exercise4 and @sec-exercise5 walk through exactly these changes.
-- **Regression.** The `regression` target, which the nightly workflow runs, tests the counter and inverter macros. Point it at your own macros once the examples are gone.
+- **Regression.** The `regression` target, which CI runs on every push to `main`, tests the counter and inverter macros. Point it at your own macros once the examples are gone.
 
 ::: {.callout-important}
 The logos stay, and they put the template's identity on the die. Replace them before a tapeout, @sec-ip shows how the logo IPs are generated from PNG images:

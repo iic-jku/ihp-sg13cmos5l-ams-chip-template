@@ -17,8 +17,10 @@ This repo is the ihp-sg13cmos5l AMS template or a chip started from it. Items ma
 - `ip/`: bondpad `sg13cmos5l_ip__bondpad_70x70`, RF pad `sg13cmos5l_ip__rfpad_70x70` and the logos `sg13cmos5l_ip__jku`, `sg13cmos5l_ip__jku_names` and `sg13cmos5l_ip__template_name` (template), each with a `Makefile`. `ip/sg13cmos5l_io_custom/` is third-party IHP IO cell data.
 - `schematic/xschem/`, `testbenches/xschem/`, `testbenches/cocotb/`: chip schematic, symbols and testbenches. Every folder holding schematics has its own `xschemrc`, see "Xschem Configuration" in `README.md`.
 - `layout/`, `netlist/`, `verification/`, `render/img/`: build outputs, committed. `packaging/` holds `config.yaml` and `scripts/run_bondplan.py` for `make bondplan` plus their committed outputs. `release/v.<VERSION>/` holds published versions.
+- `measurements/v.<VERSION>/`: measurements of the fabricated chip of that release, one folder per block, hand-maintained. `measurements/README.md` gives the layout.
 - `doc/`: hand-maintained `specifications.md`, `pinout.md` and `floorplan.md` plus tool and PDK notes. A number changed in `flow/librelane/config.yaml`, `rtl/` or `packaging/config.yaml` is mirrored there, and a moved macro or a changed pad list also in the PREP-IC project `doc/prep-ic/chip_top.json`.
 <!-- template-only -->
+- `measurements/v.1.0.0/` (template): placeholders for the chip of branch `IHP-TO-2026-11` (submitted as `SoC1693`), whose release folder is on that branch. The `release/v.1.0.0/` of this branch holds another chip.
 - `tutorial/` (template): the Quarto tutorial, `make -C tutorial` renders it locally.
 <!-- /template-only -->
 
@@ -57,7 +59,7 @@ make -C macros/inverter all                 # KLayout DRC/LVS, gdscheck DRC, Mag
 - `make all` and the `build-*` and `copy-*` targets overwrite committed outputs. Check `git status` afterwards and commit outputs only when they belong to the change.
 - The Xschem targets netlist in batch mode and run `ngspice -b`, so `plot` commands in a testbench `.control` block do nothing. Testbenches write results with `wrdata` to `testbenches/xschem/plot_simulations/data/`, and `sim-view-xschem` plots them.
 - The top-level `sim-gl-xschem` includes `macros/counter/netlist/xspice/counter_top.xspice` (template), which `clean-all` deletes. Run `make build-counter` before it.
-- `kpex` does not support `ihp-sg13cmos5l` yet, so `klayout-pex` fails and `klayout-verify` leaves it out. Use `magic-pex` for parasitic extraction.
+- `klayout-pex` runs the 2.5D engine of `kpex` through `sak-pex.sh -k`, which the image ships from `2026.11` on (with kpex 0.10.0). A full-RC extraction of the small `inverter_top` takes about 2 min where Magic takes seconds, so use `magic-pex` for a quick netlist. `klayout-pex-leads` of the `vco` (template) stays on the Magic engine of kpex.
 - `build-top` runs `librelane-nodrc` on purpose until IHP fixes the `metal1_pin_offgrid` errors (see the comment in `Makefile`). Run DRC separately with `magic-drc`, `klayout-drc-minimum`, `klayout-drc-regular` or the matching `gdscheck-drc-*` targets. `DRC_JOBS=<n>` caps the KLayout processes and sets the gdscheck threads (default 4 and every CPU). More than 4 only pays off for the full chip on a server.
 - KLayout is the sign-off DRC. Magic flags IHP's own cells on the chip (the IO pads and the SRAM read hierarchically), so the flows leave the Magic DRC out until the upstream fixes are in the image: its lines are commented out in `magic-verify`, in the IP `all` and in `make all`. Fix such a report upstream, not with make's `-` prefix in a flow. Keep `-f` patterns for Magic away from the top cell: `sak-drc.sh` refuses one that matches it, because Magic would check an empty cell.
 
@@ -90,7 +92,7 @@ make -C macros/inverter all                 # KLayout DRC/LVS, gdscheck DRC, Mag
 <!-- template-only -->
 - The `project-check` job of `license-check.yml` runs `make project NAME=demo FORCE=1` on the checkout and `reuse lint` on the result, so that a change to the template that breaks the target fails in CI.
 <!-- /template-only -->
-- `.github/workflows/regression.yml`: `make regression` in `hpretl/iic-osic-tools:latest` with `PDK=ihp-sg13cmos5l`, nightly at 02:00 UTC (skipped when nothing was committed in the previous 25 hours) and on manual dispatch. It is a tool and flow smoke test with DRC skipped in the chip LibreLane run, not a sign-off. Logs go to the `regression-logs` artifact.
+- `.github/workflows/regression.yml`: `make regression` in `hpretl/iic-osic-tools:latest` with `PDK=ihp-sg13cmos5l`, on every push to `main` and on manual dispatch. It is a tool and flow smoke test with DRC skipped in the chip LibreLane run, not a sign-off. Logs go to the `regression-logs` artifact.
 <!-- template-only -->
 - `.github/workflows/quarto-publish.yml` (template): renders `tutorial/` and publishes it to `gh-pages` on every push to `main`. It installs `tutorial/requirements.txt`, so keep that file while the workflow exists.
 <!-- /template-only -->
