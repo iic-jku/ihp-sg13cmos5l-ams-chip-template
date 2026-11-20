@@ -1,4 +1,4 @@
-﻿# ihp-sg13cmos5l Inverter
+# ihp-sg13cmos5l Inverter
 
 <p align="center">
   <a href="render/img/inverter_top_white.png">
