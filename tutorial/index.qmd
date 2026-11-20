@@ -2225,7 +2225,7 @@ The available Makefile targets for the logos are summarised below.
 | Target        | What it does                                                                                       |
 | ------------- | -------------------------------------------------------------------------------------------------- |
 | `logo`        | Convert the PNG into a GDSII layout using [`img2lay.py`](https://github.com/iic-jku/ihp-sg13cmos5l-ams-chip-template/blob/main/ip/sg13cmos5l_ip__jku/script/img2lay.py). |
-| `lef`         | Emit a minimal LEF macro (`CLASS BLOCK`, full-area `OBS` on `LAYER_NAME`).                         |
+| `lef`         | Emit a minimal LEF macro (`CLASS BLOCK`, full-area `OBS` on `LAYER`).                              |
 | `lib`         | Emit a Liberty timing stub (empty cell) so the LibreLane flow can pick the cell up.                |
 | `verilog`     | Emit a Verilog blackbox stub (`module sg13cmos5l_ip__jku;`) with no ports.                             |
 | `klayout-drc` | Run KLayout DRC (same `DRC_LEVEL` selection as the bondpad).                                            |
