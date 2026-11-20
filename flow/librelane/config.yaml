@@ -249,9 +249,9 @@ STA_CORNERS:
 
 DEFAULT_CORNER: nom_typ_1p50V_25C
 
-# More post-CTS hold margin than the default of 0.1 ns.
-# Sign-off STA reads the counter SPEFs after the chip SPEF and times the chip-level nets without parasitics, which the default margin does not cover on the enable input.
-PL_RESIZER_HOLD_SLACK_MARGIN: 0.2
+# Sign-off STA times the hardened macros by their lib, as placement and timing repair do.
+# With nl and spef it reads the chip SPEF and then each macro SPEF, and each read drops the parasitics of the reads before it.
+STA_MACRO_PRIORITIZE_NL: false
 
 # Limit detailed routing to 10 iterations
 # DRT_OPT_ITERS: 10
