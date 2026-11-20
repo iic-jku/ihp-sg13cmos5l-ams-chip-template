@@ -63,6 +63,7 @@ DRC_RPT_DIR := verification/drc
 
 # Logo parameters
 IMG_FILE    := logo/template_name.png
+# Override with: make <target> BLOCK_SIZE=<um> PIXEL_SIZE=<um>
 BLOCK_SIZE  ?= 100
 # Pixel size in microns. Must be >= 0.21 um, the Metal4 minimum space (Mn.b), because single pixels and single-pixel gaps are drawn as is.
 PIXEL_SIZE  ?= 0.25
