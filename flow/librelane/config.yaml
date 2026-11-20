@@ -249,6 +249,10 @@ STA_CORNERS:
 
 DEFAULT_CORNER: nom_typ_1p50V_25C
 
+# More post-CTS hold margin than the default of 0.1 ns.
+# Sign-off STA reads the counter SPEFs after the chip SPEF and times the chip-level nets without parasitics, which the default margin does not cover on the enable input.
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.2
+
 # Limit detailed routing to 10 iterations
 # DRT_OPT_ITERS: 10
 
