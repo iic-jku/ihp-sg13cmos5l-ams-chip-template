@@ -1,4 +1,4 @@
-﻿# ihp-sg13cmos5l Counter
+# ihp-sg13cmos5l Counter
 
 <p align="center">
   <a href="render/img/counter_top_white.png">
