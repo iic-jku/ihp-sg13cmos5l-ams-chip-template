@@ -141,7 +141,7 @@ The `RM_IHPSG13_1P_1024x32_c2_bm_bist` macro is wired up for a simple read-only 
 
 The behavioural model has no `USE_POWER_PINS` block, so the Verilog instantiation only connects the functional/BIST ports. Physical supply hookup is handled at the PDN level via `PDN_MACRO_CONNECTIONS` in [config.yaml](../flow/librelane/config.yaml), which binds both the macro's `VDD!/VSS!` and its secondary `VDDARRAY!/VSS!` to the chip's `VDD`/`VSS`.
 
-The IHP SRAM macros are not characterised for every corner of this template, in particular not above 1.32 V. The `lib` block of the macro in [config.yaml](../flow/librelane/config.yaml) therefore reuses `RM_IHPSG13_1P_1024x32_c2_bm_bist_fast_1p32V_m55C.lib` for the three corners that have no matching Liberty (`nom_fast_1p65V_m40C`, `nom_slow_1p35V_125C`, `nom_typ_1p50V_25C`). That is a deliberate substitution, and `nom_typ_1p50V_25C` is the default corner, so any SRAM timing number the flow reports at the default corner is read from a 1.32 V / -55 °C model.
+The IHP SRAM macros are not characterised for every corner of this template, in particular not above 1.32 V. The `lib` block of the macro in [config.yaml](../flow/librelane/config.yaml) therefore reuses `RM_IHPSG13_1P_1024x32_c2_bm_bist_fast_1p32V_m55C.lib.gz` for the three corners that have no matching Liberty (`nom_fast_1p65V_m40C`, `nom_slow_1p35V_125C`, `nom_typ_1p50V_25C`). That is a deliberate substitution, and `nom_typ_1p50V_25C` is the default corner, so any SRAM timing number the flow reports at the default corner is read from a 1.32 V / -55 °C model.
 
 
 ## Power and reset
