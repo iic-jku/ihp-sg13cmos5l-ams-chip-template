@@ -111,7 +111,7 @@ Three decorative IPs sit in the corners of the die (outside the core, between th
 
 All three logos are listed as `IGNORE_DISCONNECTED_MODULES` in [config.yaml](../flow/librelane/config.yaml) so LibreLane does not flag them as floating logic. Their pixels are drawn on Metal4, the top thin metal of this stack, where the SG13G2 logos use Metal5.
 
-The fourth logo, the chip logo in [flow/logo/](../flow/logo/), is not a macro. It is merged into the final GDS after the LibreLane run by [add_logo_fill.sh](../scripts/add_logo_fill.sh), on TopMetal1, together with the TopMetal1 filler.
+The fourth logo, the chip logo in [flow/logo/](../flow/logo/), is not a macro. The step `ChipFinish.Logo` of the LibreLane flow draws it on TopMetal1 into `chip_top_logo_fill.gds`, before `ChipFinish.Fill` adds the filler (see `CHIP_FINISH_LOGO_*` in [config.yaml](../flow/librelane/config.yaml)).
 
 
 ## Constraints when editing the floorplan
