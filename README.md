@@ -119,6 +119,8 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 ├─ 📁 flow/
 │  ├─ 📁 artistic/
 │  ├─ 📁 librelane/
+│  │  ├─ 📁 plugins/
+│  │  │  └─ librelane_plugin_chip_finish.py
 │  │  ├─ chip_top.sdc
 │  │  ├─ config.yaml
 │  │  └─ pdn_cfg.tcl
@@ -257,8 +259,6 @@ Measurements of the fabricated chip go into [measurements/](measurements/), one 
 │     ├─ chip_top_pex.sym
 │     └─ xschemrc
 ├─ 📁 scripts/
-│  ├─ add_logo_fill.sh
-│  ├─ add_rectangle.py
 │  ├─ check_pex_ports.py
 │  └─ sim_gl_power.tcl
 ├─ 📁 testbenches/
@@ -637,9 +637,7 @@ make copy-reports
 This only works if the latest run completed without errors. This command is also available for the digital macros.
 
 > [!NOTE]
-> The Magic and KLayout DRC reports are temporarily not copied because IHP's
-> `metal1_pin_offgrid` rule trips on the pad ring (see [IHP-Open-PDK#683](https://github.com/IHP-GmbH/IHP-Open-PDK/issues/683#issuecomment-4065791975)).
-> Once it is fixed upstream, the corresponding `cp` lines in `Makefile :: copy-reports` will be re-enabled.
+> The Magic and KLayout DRC reports of the flow are not copied, since `make build-top` runs `librelane-nodrc`. The [DRC targets](#design-rule-check-drc) check both GDS afterwards.
 
 
 ### Copy the Final GDS
@@ -759,17 +757,16 @@ All analog macros are included in `build-macros` alongside the digital macros.
 
 ### Build Top
 
-To run LibreLane for the top-level chip and copy the resulting reports, GDS, netlist, and chip render back into the source tree, then add the logo + fill structures and render the final GDS, run:
+To run LibreLane for the top-level chip, including the logo and the fill structures, copy the resulting reports, both GDS, the netlist, and the chip render back into the source tree, and render the final GDS, run:
 
 ```sh
 make build-top
 ```
 
-Internally this executes (in order): `librelane-nodrc` -> `copy-reports` -> `copy-gds` -> `copy-netlist` -> `copy-render` -> `add-logo-fill` -> `render-gds`.
+Internally this executes (in order): `librelane-nodrc` -> `copy-reports` -> `copy-gds` -> `copy-netlist` -> `copy-render` -> `render-gds`.
 
 > [!NOTE]
-> `build-top` runs `librelane-nodrc` instead of `librelane` for the same reason the DRC reports are not copied: IHP's `metal1_pin_offgrid` rule trips on the pad ring (see [IHP-Open-PDK#683](https://github.com/IHP-GmbH/IHP-Open-PDK/issues/683#issuecomment-4065791975)).
-> Once it is fixed upstream, `Makefile :: build-top` switches back to `librelane`.
+> `build-top` runs `librelane-nodrc` on purpose: the [DRC targets](#design-rule-check-drc) check `chip_top` and `chip_top_logo_fill` afterwards, with KLayout, gdscheck or Magic.
 
 
 ### Build All
@@ -785,18 +782,29 @@ This is useful if you want to rebuild the chip from scratch. Clone the repositor
 
 ### Add Logo and Fill
 
-To add the chip logo (PNG -> GDS) and the fill structures on top of the LibreLane output (so the final GDS in `layout/` includes the artwork), run:
+The LibreLane flow adds the chip logo and the fill structures itself, with two steps from the plugin [`flow/librelane/plugins/librelane_plugin_chip_finish.py`](flow/librelane/plugins/librelane_plugin_chip_finish.py) that run after the seal ring:
+
+- `ChipFinish.Logo` draws `flow/logo/chip_logo_mono.png` with [ArtistIC](https://github.com/pulp-platform/artistic) on TopMetal1 and adds nofill rectangles (`126/23`, `50/23`) 20 µm around it.
+- `ChipFinish.Fill` adds the fill with the tool in `FILLER`, checks it and adds the die outline on `189/0` for the density checks. The step fails when fill lies on a layer's drawing, its nofill datatype or `NoMetFiller`, or outside the seal ring, and when `klayout` or `magic` leave a fill layer empty. `gdsfill` skips a layer that already meets its density target, so for it an empty layer is a warning.
+
+Both steps write `chip_top_logo_fill.gds`, whose top cell `chip_top_logo_fill` holds `chip_top`, the logo and the fill. The GDS of the flow stays `chip_top.gds` without logo and fill, and `make copy-gds` copies both into `layout/`. The `CHIP_FINISH_*` variables in `flow/librelane/config.yaml` set the logo image, its position relative to `CORE_AREA`, the fill layers with their keep-outs and the KLayout fill distances.
+
+The `FILLER` parameter selects the fill tool:
+
+| `FILLER` | Tool | Notes |
+| --- | --- | --- |
+| `klayout` _(default)_ | KLayout filler macros of the PDK | Fill distances from `CHIP_FINISH_KLAYOUT_DISTANCES`, set in copies of the macros. Gives the same layout as the former `scripts/add_logo_fill.sh`, whose output passes the regular KLayout DRC on this chip. |
+| `magic` | `generate_fill.py` of the PDK | Fixed fill pattern. Runs Magic with a home folder of its own, see [IHP-Open-PDK#1380](https://github.com/IHP-GmbH/IHP-Open-PDK/issues/1380). |
+| `gdsfill` | [gdsfill](https://github.com/aesc-silicon/gdsfill) | Fills towards a density target per layer (`CHIP_FINISH_GDSFILL_CONFIG`). Needs a gdsfill newer than 0.1.11: version 0.1.11 fills the nofill layers and `NoMetFiller` ([gdsfill#56](https://github.com/aesc-silicon/gdsfill/issues/56)), so the step fails with it. |
+
+To redo only the logo and the fill on the last LibreLane run, for example with another fill tool, run:
 
 ```sh
 make add-logo-fill
+make add-logo-fill FILLER=gdsfill
 ```
 
-This calls `scripts/add_logo_fill.sh` with `TOP` and writes `layout/chip_top_logo_fill.gds.gz`. The step is also called from `make build-top`.
-
-The script patches the fill distances of the PDK filler macros (they are hard-coded and only a GUI dialog can change them) so that every layer lands inside its global density window of the regular KLayout DRC, and it draws the die outline on `prBoundary.drawing` (189/0) at the end. The density checks take the chip area from the 189/0 polygons whenever any exist, and a LibreLane chip carries 189/0 only inside the macros it places (its own die area is on 189/4), so without the outline the deck measures the whole die against the bounding box of the macro boundaries and reports false maximum-density violations on every layer.
-
-> [!NOTE]
-> In the future, it is planned to replace this script and Makefile target with a custom LibreLane step.
+This reruns `ChipFinish.Logo` and `ChipFinish.Fill` on the state of the last LibreLane run in `flow/librelane/runs/`, which has to be a complete run of a `librelane*` target, and copies `chip_top_logo_fill.gds.gz` into `layout/`.
 
 
 ### Design Rule Check (DRC)
@@ -1165,10 +1173,10 @@ This target also runs automatically in continuous integration: the [`regression`
 To keep the runtime low while still covering the full toolchain, the regression makes the following trade-offs:
 
 - The counter macro is hardened with `librelane-magicdrc` (only **Magic DRC** enabled, the slower KLayout DRC is skipped). Netgen LVS still runs as part of the flow.
-- The chip top-level runs `librelane-nodrc`. All DRC checks are skipped to save runtime on the large top-level assembly. The macros and IP blocks are DRC-checked individually beforehand, so this only leaves the top-level routing/fill unchecked.
+- The chip top-level runs `librelane-nodrc`, including the logo and the KLayout fill. All DRC checks are skipped to save runtime on the large top-level assembly. The macros and IP blocks are DRC-checked individually beforehand, so this only leaves the top-level routing/fill unchecked.
 - KLayout DRC (`sak-drc.sh`) is skipped inside the LibreLane runs, but is still exercised in the bondpad, RF pad and logo IP builds, and in the inverter `klayout-verify`.
 - Magic DRC (`sak-drc.sh -m`) runs once, as `magic-drc` of the bondpad, which passes it, so a broken Magic fails the regression. gdscheck DRC (`sak-drc.sh -g`) runs in the bondpad, RF pad and logo IP builds.
-- Only **one** logo (`sg13cmos5l_ip__jku`) is regenerated. It is the only step that exercises the PNG to GDS flow. The other two logos (`sg13cmos5l_ip__jku_names`, `sg13cmos5l_ip__template_name`) use an identical toolchain and reuse their committed views.
+- Only **one** logo IP (`sg13cmos5l_ip__jku`) is regenerated. It is the only step that exercises the PNG to GDS script of the logo IPs. The other two logos (`sg13cmos5l_ip__jku_names`, `sg13cmos5l_ip__template_name`) use an identical toolchain and reuse their committed views.
 - Exactly **one** CACE parameter set is run (the AC VDD sweep `ac_params`, no Monte Carlo). Swap `ac_params` for `ac_mc_params` / `ac_mm_params` in the target to also exercise the Monte Carlo flow.
 - The vco runs only its layout scripts (`klayout-script-all`), which catch a PDK update that breaks one of them. The chip does not build the vco yet.
 
@@ -1211,7 +1219,7 @@ The following tools and flows are checked:
 - `render/img/` (the chip renders)
 - `verification/drc/`, `verification/lvs/` and `verification/reports/`
 - `schematic/xschem/simulations/`, `testbenches/xschem/simulations/` and the `plot_simulations/` outputs (`data/`, `figures/`, `__pycache__/`)
-- `testbenches/cocotb/sim_build/` and the `__pycache__` folders under `scripts/`, `packaging/scripts/` and `testbenches/cocotb/`
+- `testbenches/cocotb/sim_build/` and the `__pycache__` folders under `scripts/`, `packaging/scripts/`, `testbenches/cocotb/` and `flow/librelane/plugins/`
 - the bondplan outputs in `packaging/` (`render/`, `result.md`, and in `layout/` the generated `chip_top_bondplan.gds`, `chip_top_logo_TM1.gds.gz` and the extracted package footprint `OP_QFN32_A4_FIT.gds`)
 
 The macros under [`macros/`](macros/) and the IPs under [`ip/`](ip/) are left alone. `make clean-all` runs `clean` here and then `make clean` in every IP and macro:
@@ -1287,7 +1295,7 @@ Review the result, commit it and build the new chip:
 git status             # undo: git reset --hard && git clean -fd
 git add -A
 git commit -m "started <name> from ihp-sg13cmos5l-ams-chip-template"
-make init-submodules   # the logo and fill step needs flow/artistic
+make init-submodules   # the logo step of the flow needs flow/artistic
 make build-top         # or make all, which also fetches it
 ```
 
